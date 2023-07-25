@@ -1,0 +1,58 @@
+# VIM sachen
+etc/.vim/bundle/*
+!etc/.vim/bundle/README.md
+!etc/.vim/bundle/Vundle.vim
+etc/.vim/plugged/*
+etc/.vim/undodir/*
+!etc/.vim/undodir/.keep
+etc/.vim/spell/*.spl
+etc/.vim/spell/*.sug
+etc/.vim/view/*
+etc/.vim/.netrwhist
+
+# Opt Git repos
+opt/*
+!opt/.keep
+
+#Logs...
+etc/.maildirproc/log
+
+# Ignore Unison archive files
+etc/.unison/*
+!etc/.unison/*.prf
+
+# TaskWarrior Data
+etc/.task/*.data
+etc/.task/.vim_tw.history
+
+# Vim SWP ignorieren
+*.swp
+
+# Vimperator
+etc/.vimperator/info/*
+
+# JDownloader ignorieren
+opt/jdownloader
+
+# Powerline in bin ignorieren da dort pfad drin steht
+bin/powerline*
+
+# Android Sachen
+bin/adb
+bin/fastboot
+
+# Mutt
+etc/.mutt/cache
+etc/.mutt/temp
+
+# Gtk Zeug
+etc/.config/gtk-3.0/bookmarks
+etc/.config/gtk-3.0/servers
+
+# PYC
+*.pyc
+*.pyo
+
+# Include (excluded by global gitignore)
+!.clang-format
+!.ycm_extra_conf.py

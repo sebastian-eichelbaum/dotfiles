@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+BASE=~/.dotfiles
+BASE_ETC=$BASE/etc
+TARGET=~
+
+EXCLUDE=".config"
+
+# Alle files dieser Ebene
+for file in $(find $BASE_ETC -mindepth 1 -maxdepth 1  -name "*" -and -not -name "." )
+do
+  # Ausnahmen prüfen
+  skip=0
+  for excluded in $EXCLUDE
+  do
+    if [ "$excluded" = "`basename $file`" ]; then
+      skip=1
+    fi
+  done
+
+  if [ $skip -ne 0 ]; then
+    #echo "Skipping $file"
+    continue
+  fi
+
+  #echo "Linking: $file"
+  ln -sf $file $TARGET
+done
+
+#echo "Processing exceptions"
+mkdir -p $TARGET/.config/
+for file in $(find $BASE_ETC/.config -mindepth 1 -maxdepth 1  -name "*" -and -not -name "." )
+do
+  #echo "Linking: $file"
+  ln -sf $file $TARGET/.config/
+done
+
+#echo "Linking: $BASE/bin"
+mkdir -p $TARGET/.local/bin
+for file in $(find $BASE/bin -mindepth 1 -maxdepth 1  -name "*" -and -not -name "." )
+do
+    #echo $file
+    ln -sf $file $TARGET/.local/bin
+done
+#find . -type f -name '*.*' -print0 | while IFS= read -r -d '' file; do
+#    printf '%s\n' "$file"
+#done
+
+find $TARGET -type l -xtype l -print0 | while IFS= read -r -d '' file; do
+    if [[ "$file" == $HOME/Build/* ]] ||
+       [[ "$file" == $HOME/build/* ]] ||
+       [[ "$file" == $HOME/.steam/* ]] ||
+       [[ "$file" == $HOME/Spiele/* ]] ||
+       [[ "$file" == $HOME/.steampath ]] ||
+       [[ "$file" == $HOME/.PlayOnLinux/* ]] ||
+       [[ "$file" == $HOME/.kde/tmp-zen ]] ||
+       [[ "$file" == $HOME/.kde/socket-zen ]] ||
+       [[ "$file" == $HOME/.config/google-chrome/SingletonCookie ]] ||
+       [[ "$file" == $HOME/.config/google-chrome/SingletonLock ]] ||
+       [[ "$file" == $HOME/.config/google-chrome/SingletonSocket ]] ||
+       [[ "$file" == $HOME/.config/unityhub/SingletonCookie ]] ||
+       [[ "$file" == $HOME/.config/unityhub/SingletonSocket ]] ||
+       [[ "$file" == $HOME/.config/unityhub/SingletonLock ]] ||
+       [[ "$file" == $HOME/.config/unityhub/SS ]] ||
+       [[ "$file" == $HOME/.config/UnityHub/SingletonCookie ]] ||
+       [[ "$file" == $HOME/.config/UnityHub/SingletonLock ]] ||
+       [[ "$file" == $HOME/.config/UnityHub/SS ]] ||
+       [[ "$file" == $HOME/.config/Slack/SingletonCookie ]] ||
+       [[ "$file" == $HOME/.config/Slack/SingletonLock ]] ||
+       [[ "$file" == $HOME/.config/Slack/SingletonSocket ]] ||
+       [[ "$file" == $HOME/.config/Slack/SS ]] ||
+       [[ "$file" == $HOME/.config/Rocket.Chat/SingletonCookie ]] ||
+       [[ "$file" == $HOME/.config/Rocket.Chat/SingletonLock ]] ||
+       [[ "$file" == $HOME/.config/Rocket.Chat/SS ]] ||
+       [[ "$file" == $HOME/.local/Android/ndk/* ]] ||
+       [[ "$file" == $HOME/.mozilla/firefox/*/lock ]] ||
+       [[ "$file" == $HOME/.thunderbird/*/lock ]] ||
+       [[ "$file" == $HOME/.config/pulse/*-runtime ]] ||
+       [[ "$file" == $HOME/.cache/* ]] ||
+       [[ "$file" == $HOME/.var/app/* ]] ||
+       [[ "$file" == $HOME/Projekte/* ]] ||
+       [[ "$file" == $HOME/Daten/NOGOv2/* ]]
+    then
+        continue
+    fi
+    echo "WARN - broken link: $file"
+done
+

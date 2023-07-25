@@ -1,0 +1,110 @@
+{
+    // https://github.com/neoclide/coc.nvim/blob/master/data/schema.json
+    // Symbols: ●, , ▉
+
+    "diagnostic.errorSign": "▉",
+    "diagnostic.warningSign": "▉",
+    "diagnostic.infoSign": "▉",
+    "diagnostic.hintSign": "▉",
+
+    // Symbols: https://www.nerdfonts.com/cheat-sheet
+    // VS Code comparison: https://code.visualstudio.com/docs/editor/intellisense
+    "suggest.completionItemKindLabels": {
+
+        // Callable things
+        "function":       "     ",
+        "method":         "     ",
+        "constructor":    "     ",
+
+        // Classes and Types
+        "interface":      "     ",
+        "class":          "     ",
+        "struct":         "     ",
+        "enum":           "     ",
+        // NOTE: this is a namespace in C++
+        "module":         "     ",
+
+        // Value-things
+        "value":          "     ",
+        "text":           "     ",
+        "enumMember":     "     ",
+        "typeParameter":  "     ",
+
+        // Variable things (named symbols)
+        "variable":       "  ⒳   ",
+        "field":          "     ",
+        "property":       "     ",
+        "constant":       "     ",
+        "event":          "     ",
+
+        // Keywords and statements
+        "operator":       "     ",
+        "keyword":        "     ",
+
+        "reference":      "  ﬌   ",
+        "file":           "     ",
+        "folder":         "     ",
+        "color":          "     ",
+        "unit":           "     ",
+
+        "snippet":        "     ",
+
+        "default":        "     "
+    },
+
+    "suggest.labelMaxLength": 80,
+    "suggest.snippetsSupport": true,
+    // If true, show a preview of the suggested text inline
+    "suggest.virtualText": false,
+    // Preselect the first entry? Disabled because:
+    // You have class LogSink and want to create a new class Log. You press enter but instead of "class Log" you get "class LogSink" as it was pre-selected
+    "suggest.noselect": true,
+
+    // Possible values:
+    //  * shortcut is that [LS] or [A] at the end.
+    //  * abbr is the item itself
+    //  * menu?
+    //  * kind is the nice icon label describing what the item is
+    // "suggest.formatItems": ["abbr", "menu", "kind", "shortcut"],
+    "suggest.formatItems": ["kind", "abbr", "menu"],
+    "suggest.detailField": "abbr",
+
+    /*
+    "suggest.floatConfig": {
+        "border": true,
+        "rounded": true,
+        "borderhighlight": "FDCocFloatBorder",
+        "maxWidth": 120,
+        "shadow": true
+    },
+    */
+
+
+    // No float. Only use nice text right to the issue.
+    "diagnostic.virtualText": true,
+    "diagnostic.virtualTextCurrentLineOnly": false,
+    "diagnostic.virtualTextPrefix": " ❯❯ ",
+    // Only show errors as virtual text (inline text)
+    "diagnostic.virtualTextLevel": "warning",
+
+    // "diagnostic.virtualTextFormat": "%message",
+    "diagnostic.enableMessage": "always",
+    "diagnostic.messageDelay": 500,
+
+    "diagnostic.floatConfig": {
+        "border": true,
+        "borderhighlight": "FDCocFloatBorder",
+        "rounded": true,
+        "title": " "
+    },
+
+
+    "codeLens.enable": false,
+    "inlayHint.enable": false,
+    "inlayHint.enableParameter": false,
+    "inlayHint.display": false,
+
+    "clangd.inlayHints.enable": false
+
+}
+
