@@ -32,7 +32,7 @@
 	vimdiff = difftool
 
 [include]
-    path = ~/.gitconfig_extra
+    path = ~/.gitconfig_extra_default
 
 [pull]
 	rebase = false
