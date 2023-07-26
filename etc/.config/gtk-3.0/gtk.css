@@ -1,11 +1,3 @@
 @import '../gtk-4.0/gtk.css';
 
-.window-frame {
-    box-shadow: 0 0 0 0;
-    margin: 0;
-}
-window decoration {
-    margin: 0;
-    padding: 0;
-    border: none;
-}
+@import 'borderFix.css';
