@@ -1,0 +1,173 @@
+/* vim:ft=css
+ */
+
+/* global settings and color variables */
+* {
+   maincolor:        #ed8712;
+   promptcolor:      #005f87;
+   highlight:        bold #ed8712;
+   urgentcolor:      #b63b1b;
+
+   fgwhite:          #cfcfcf;
+   fgwhitebold:      #cfcfcf;
+   blackdarkest:     #1b1b1c;
+   blackwidget:      #1b1b1c;
+   blackentry:       #1e1e20;
+   /*blackselect:      #585858;*/
+   blackselect:      #313234;
+   /*blackselect:      #53595e;*/
+   darkgray:         #848484;
+   scrollbarcolor:   #505050;
+   font:             "Liberation Mono 11";
+   background-color: @blackdarkest;
+
+   border-color: #005f87;
+}
+
+window {
+    width: 100%;
+    height: 100%;
+    padding: 50% 30% 00% 30%;
+
+    orientation:    horizontal;
+    transparency: "real";
+    border: 0;
+    background-color: argb:44000000;
+}
+
+mainbox {
+    border: 2;
+    background-color: @blackdarkest;
+    spacing: 0px;
+    children: [message, listview, mode-switcher, inputbar];
+}
+
+message {
+   padding: 6px 10px;
+   background-color:@blackwidget;
+}
+
+textbox {
+   text-color:@darkgray;
+   background-color:@blackwidget;
+}
+
+listview {
+   dynamic: true;
+   scrollbar: false;
+   spacing: 0px;
+   padding: 0px 0px 0px 0px;
+   margin: 0px 0px -2px 0px;
+   background-color: @blackdarkest;
+}
+
+element {
+   padding: 5px 15px;
+}
+
+element normal.normal {
+   padding: 0px 15px;
+   background-color: @blackentry;
+   text-color: @fgwhite;
+}
+
+element normal.urgent {
+   background-color: @blackentry;
+   text-color: @urgentcolor;
+}
+
+element normal.active {
+   background-color: @blackentry;
+   text-color: @maincolor;
+}
+
+element selected.normal {
+    background-color: @blackselect;
+    text-color:       @fgwhite;
+}
+
+element selected.urgent {
+    background-color: @urgentcolor;
+    text-color:       @blackdarkest;
+}
+
+element selected.active {
+    background-color: @blackselect;
+    text-color:       @maincolor;
+}
+
+element alternate.normal {
+    background-color: @blackentry;
+    text-color:       @fgwhite;
+}
+
+element alternate.urgent {
+    background-color: @blackentry;
+    text-color:       @urgentcolor;
+}
+
+element alternate.active {
+    background-color: @blackentry;
+    text-color:       @maincolor;
+}
+
+element-icon {
+    background-color: transparent;
+    text-color:       @fgwhite;
+}
+
+element-index {
+    background-color: transparent;
+    text-color:       @fgwhite;
+}
+
+element-text{
+    background-color: transparent;
+    text-color:       @fgwhite;
+}
+
+scrollbar {
+   background-color: @blackwidget;
+   handle-color: @darkgray;
+   handle-width: 10px;
+}
+
+mode-switcher {
+   background-color: @blackwidget;
+   padding: 6px 9px;
+}
+
+button {
+    background-color: @blackwidget;
+    text-color:       @darkgray;
+    font:             "Font Awesome 5 Free Solid 11";
+    padding:          6px 9px;
+}
+
+button selected {
+    text-color:       @promptcolor;
+}
+
+inputbar {
+   background-color: @blackdarkest;
+   spacing: 0px;
+}
+
+prompt {
+   padding:6px 9px;
+   background-color: @promptcolor;
+   text-color: @fgwhitebold;
+   font:             "Font Awesome 5 Free Solid 11";
+}
+
+entry {
+   padding:6px 10px;
+   background-color:@blackwidget;
+   text-color: @fgwhite;
+}
+
+case-indicator {
+   padding:6px 10px;
+   text-color:@fgwhitebold;
+   background-color:@blackwidget;
+}

@@ -1,0 +1,53 @@
+/* vim:ft=css
+ */
+
+configuration {
+
+    display-window:  "  ";
+    display-drun:    "  ";
+    display-run:     "  ";
+    display-ssh:     "  ";
+    display-combi:   "  ";
+
+    combi-modi: "drun,run,window";
+    modi: "drun,window";
+
+    me-accept-entry: "MousePrimary";
+    me-select-entry: "";
+
+    /* 1 2 3
+     * 8 0 4
+     * 7 6 5
+     */
+    location: 6;
+    monitor: "primary";
+    sidebar-mode: true;
+    fullscreen: true;
+
+    max-history-size: 50;
+
+    sort: false;
+    case-sensitive: false;
+    /*matching: "normal";*/
+    tokenize: true;
+    /*cycle: true;*/
+
+    show-match: true;
+    show-icons: true;
+    icon-theme: "Papirus";
+
+    line-margin: -2;
+    line-padding: 3;
+
+    hide-scrollbar: false;
+    scrollbar-width: 6;
+
+    /*
+    color-normal: "argb:00000000, #ffffff, argb:00000000, #0091cd, #ffffff";
+    color-urgent: "argb:00000000, #dc322f, argb:00000000, #dc322f, #ffffff";
+    color-active: "argb:00000000, #0091cd, argb:00000000, #0091cd, #ffffff";
+    color-window: "argb:ee2d2d2d, #585858, #585858";
+    */
+}
+
+@theme "mytheme2"

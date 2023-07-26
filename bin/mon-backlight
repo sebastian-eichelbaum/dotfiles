@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+getBrightness()
+{
+    l=$(light -G)
+    roundedbrightness=$(echo "($l + 0.5)/1" |bc)
+    echo "$roundedbrightness"
+}
+
+report()
+{
+    local brightness=$(getBrightness)
+
+    apptitle="mon-backlight"
+
+    getProgressString () {
+        ITEMS="18" # The total number of items(the width of the bar)
+        FILLED_ITEM="<b>● </b>" # The look of a filled item
+        NOT_FILLED_ITEM="○ " # The look of a not filled item
+        #FILLED_ITEM="<b>⚪</b>" # The look of a filled item
+        #NOT_FILLED_ITEM=" " # The look of a not filled item
+
+        STATUS="$1" # The current progress status in percent
+
+        # calculate how many items need to be filled and not filled
+        FILLED_ITEMS=$(echo "((${ITEMS} * ${STATUS})/100 + 0.5) / 1" | bc)
+        NOT_FILLED_ITEMS=$(echo "$ITEMS - $FILLED_ITEMS" | bc)
+
+        # Assemble the bar string
+        msg=$(printf "%${FILLED_ITEMS}s" | sed "s| |${FILLED_ITEM}|g")
+        msg=${msg}$(printf "%${NOT_FILLED_ITEMS}s" | sed "s| |${NOT_FILLED_ITEM}|g")
+        echo "$msg"
+    }
+
+    # Arbitrary but unique message id
+    msgId="991059"
+
+    icon=mon-brightness-off
+    if (( $(echo "$brightness > 75" |bc -l) )); then
+        icon=mon-brightness-high
+    elif (( $(echo "$brightness > 35" |bc -l) )); then
+        icon=mon-brightness-medium
+    elif (( $(echo "$brightness > 4" |bc -l) )); then
+        icon=mon-brightness-low
+    fi
+
+    # Show the volume notification
+    dunstify -a $apptitle -u low -i $icon -r "$msgId" \
+    "Brightness: ${brightness}%" "$(getProgressString $brightness)"
+}
+
+getStepSize()
+{
+
+    local brightness=$(getBrightness)
+    local stepSize=5
+    if (( $(echo "$brightness > $1" |bc -l) )); then
+        stepSize=5
+    else
+        stepSize=1
+    fi
+
+    echo "$stepSize"
+}
+
+
+case "$1" in
+    incr)
+        light -A $(getStepSize 4)
+        report
+    ;;
+    decr)
+        light -U $(getStepSize 5)
+        report
+    ;;
+    get)
+        getBrightness
+        ;;
+    *)
+        echo "Use incr or decr as parameter"
+        exit 0
+    ;;
+esac

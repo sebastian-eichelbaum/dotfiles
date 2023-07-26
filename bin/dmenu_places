@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ ! -f "$HOME/.dmenu_places" ]; then
+  echo "Valid dmenu_places file is requiered."
+  exit 1
+fi
+
+HOST=`hostname`
+exe=`cat ~/.dmenu_places.$HOST ~/.dmenu_places | awk '{print $1}' | uniq | rofi -p "  " -i -dmenu ${1+"$@"}` || exit 0
+path=`cat ~/.dmenu_places.$HOST ~/.dmenu_places | awk '{if ($1=="'$exe'") print $2" "$3" "$4}' | awk '{sub(/[ \t]+$/, "");print}'`
+
+exec nautilus "$path"

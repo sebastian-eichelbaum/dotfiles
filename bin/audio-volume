@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+
+# Report current volume given in $1
+report()
+{
+    # Play the volume changed sound
+    # canberra-gtk-play -i audio-volume-change -d "changeVolume" &
+
+    apptitle="audio-volume"
+
+    getProgressString () {
+        ITEMS="18" # The total number of items(the width of the bar)
+        FILLED_ITEM="<b>● </b>" # The look of a filled item
+        NOT_FILLED_ITEM="○ " # The look of a not filled item
+
+        STATUS="$1" # The current progress status in percent
+
+        # calculate how many items need to be filled and not filled
+        FILLED_ITEMS=$(echo "((${ITEMS} * ${STATUS})/100 + 0.5) / 1" | bc)
+        NOT_FILLED_ITEMS=$(echo "$ITEMS - $FILLED_ITEMS" | bc)
+
+        # Assemble the bar string
+        msg=$(printf "%${FILLED_ITEMS}s" | sed "s| |${FILLED_ITEM}|g")
+        msg=${msg}$(printf "%${NOT_FILLED_ITEMS}s" | sed "s| |${NOT_FILLED_ITEM}|g")
+        echo "$msg"
+    }
+
+    # Arbitrary but unique message id
+    msgId="991049"
+
+    # Query amixer for the current volume and whether or not the speaker is muted
+    volume=$1
+
+    icon=audio-volume-low
+    if (( volume > 75 )); then
+        icon=audio-volume-high
+    elif (( volume > 35 )); then
+        icon=audio-volume-medium
+    fi
+
+    if [[ $volume == 0 ]]; then
+        # Show the sound muted notification
+        dunstify -a $apptitle -u low -i audio-volume-muted -r "$msgId" "Volume muted" " "
+    else
+        # Show the volume notification
+        dunstify -a $apptitle -u low -i $icon -r "$msgId" \
+        "Volume: ${volume}%" "$(getProgressString $volume)"
+    fi
+}
+
+# Get the channel volumes as average and the best fitting 5-multiple. Mute is 0
+getVolumes()
+{
+    local -n result=$2 # take array in $2 as reference
+
+    # Get the channel volumes and mute state from the last call of amixer
+    mute="$(echo "$1" | grep -E 'Playback [0-9]+ \[[0-9]{1,2}%\]' | awk '{print $6;}' | sed 's/[^a-z]*//g' | tail -1)"
+
+    if [[ "$mute" == "off" ]]; then
+        result=(0 0)
+    else
+        channels="$(echo "$1" | grep -E 'Playback [0-9]+ \[[0-9]{1,3}%\]' | awk '{print $5;}' | sed 's/[^0-9]*//g')"
+
+        vols=()
+        for c in $channels; do
+            vols+=($c)
+        done
+
+        # Min/Max
+        max=${vols[0]}
+        min=${vols[0]}
+        for i in "${vols[@]}"; do
+            (( i > max )) && max=$i
+            (( i < min )) && min=$i
+        done
+
+        avg=$(( ($min+$max)/2 ))
+        best=$(( 5 *( ($avg + 2) / 5) ))
+
+        # This rounds to the next 5-multiple.
+        #echo $avg
+        #echo $best
+        result=($avg $best)
+    fi
+}
+
+# Prints the current real volume (average of all channels)
+getCurrentVolume()
+{
+    local currentVolumes
+    getVolumes "$(amixer sget Master)" currentVolumes
+    echo ${currentVolumes[0]}
+}
+
+# Takes an array in $1 and fixes volume if both values mismatch
+fix(){
+    local -n fixVols=$1 # take array in $2 as reference
+
+    real=${fixVols[0]}
+    wanted=${fixVols[1]}
+    if (( $real != $wanted )); then
+        amixer sset Master "$wanted%"
+    fi
+}
+
+# Locked amixer operation and reporting
+mixerOp()
+{
+    (
+        flock -n 9 || exit 1
+
+        op=$1
+        local volumes
+        getVolumes "$(amixer sset Master $op)" volumes
+        fix volumes
+        report ${volumes[1]}
+    ) 9>/var/tmp/user-audio-volume-lock
+}
+
+# ... commands executed under lock ...
+case "$1" in
+    incr)
+        mixerOp "on 5%+"
+    ;;
+    decr)
+        mixerOp "on 5%-"
+    ;;
+    mute)
+        mixerOp "toggle"
+    ;;
+    get)
+        getCurrentVolume
+    ;;
+    *)
+        echo "Use get, incr, decr or mute as parameter"
+        exit 0
+    ;;
+esac
+
+

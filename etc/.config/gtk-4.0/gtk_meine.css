@@ -1,0 +1,12 @@
+@define-color headerbar_bg_color #2d2d2d;
+@define-color headerbar_fg_color rgb(246,245,244);
+@define-color headerbar_border_color rgb(255,118,123);
+
+@define-color popover_bg_color #2d2d2d;
+@define-color popover_fg_color rgb(246,245,244);
+
+.background {
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 0 0 0;
+}

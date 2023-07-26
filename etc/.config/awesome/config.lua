@@ -218,7 +218,7 @@ local rules = {
         tagId = "draw",
         rules = {
             { rule = { class = "Blender" },                          properties = { floating = false } },
-            { rule = { class = "Gimp" },                             properties = { floating = true } },
+            { rule = { class = "Gimp" },                             properties = { floating = false } },
             { rule = { class = "Inkscape" },                         properties = { } },
         }
     },

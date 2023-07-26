@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+## CONFIGURATION ##############################################################
+
+sysfs_path=/sys/class/backlight/intel_backlight/brightness
+
+fade_step_time=0.025
+fade_step_size=250
+
+# Brightness will be lowered to this value.
+min_brightness=1200
+
+case "$1" in
+    "off")
+        min_brightness=0
+        fade_step_size=2000
+        ;;
+    *)
+        ;;
+esac
+
+###############################################################################
+
+get_brightness() {
+    cat $sysfs_path
+}
+
+set_brightness() {
+    echo $1 > $sysfs_path
+}
+
+fade_brightness() {
+    local level
+    for level in `seq $(get_brightness) -$fade_step_size $1`; do
+        set_brightness $level
+        sleep $fade_step_time
+    done
+    set_brightness $1
+}
+
+current_brightness=$(get_brightness)
+min_brightness=$([ $min_brightness -le $current_brightness ] && echo "$min_brightness" || echo "$current_brightness")
+
+trap 'exit 0' TERM INT
+trap "set_brightness $current_brightness; kill %%" EXIT
+fade_brightness $min_brightness
+sleep 2147483647 &
+wait
