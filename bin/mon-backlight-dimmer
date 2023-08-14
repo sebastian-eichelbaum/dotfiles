@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 ## CONFIGURATION ##############################################################
 
@@ -41,8 +41,13 @@ fade_brightness() {
 current_brightness=$(get_brightness)
 min_brightness=$([ $min_brightness -le $current_brightness ] && echo "$min_brightness" || echo "$current_brightness")
 
+
+
 trap 'exit 0' TERM INT
 trap "set_brightness $current_brightness; kill %%" EXIT
+
+# Dim
 fade_brightness $min_brightness
+
 sleep 2147483647 &
 wait

@@ -51,6 +51,7 @@ tags
 
 # Backup files
 *.*~
+*.bak
 
 # Logs
 *.log

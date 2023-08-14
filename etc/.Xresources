@@ -1,0 +1,15 @@
+! XResources/XDefaults is not really used anymore. This file is here to make
+! the emergency fallback terminals XTerm and UXTerm a bit more legible.
+
+! Font
+UXTerm*faceName: Hack Nerd Font Mono
+XTerm*faceName: Hack Nerd Font Mono
+UXTerm*faceSize: 9
+XTerm*faceSize: 9
+
+! Colors
+UXTerm*background: black
+UXTerm*foreground: white
+XTerm*background: black
+XTerm*foreground: white
+UXTerm*cursorColor: white

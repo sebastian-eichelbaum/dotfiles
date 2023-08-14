@@ -15,10 +15,8 @@ report()
 
     getProgressString () {
         ITEMS="18" # The total number of items(the width of the bar)
-        FILLED_ITEM="<b>● </b>" # The look of a filled item
-        NOT_FILLED_ITEM="○ " # The look of a not filled item
-        #FILLED_ITEM="<b>⚪</b>" # The look of a filled item
-        #NOT_FILLED_ITEM=" " # The look of a not filled item
+        FILLED_ITEM="<b>▅</b>" # The look of a filled item
+        NOT_FILLED_ITEM="▁" # The look of a not filled item
 
         STATUS="$1" # The current progress status in percent
 

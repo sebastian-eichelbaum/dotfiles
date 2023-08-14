@@ -47,39 +47,49 @@ done
 #done
 
 find $TARGET -type l -xtype l -print0 | while IFS= read -r -d '' file; do
-    if [[ "$file" == $HOME/Build/* ]] ||
-       [[ "$file" == $HOME/build/* ]] ||
-       [[ "$file" == $HOME/.steam/* ]] ||
-       [[ "$file" == $HOME/Spiele/* ]] ||
-       [[ "$file" == $HOME/.steampath ]] ||
-       [[ "$file" == $HOME/.PlayOnLinux/* ]] ||
-       [[ "$file" == $HOME/.kde/tmp-zen ]] ||
-       [[ "$file" == $HOME/.kde/socket-zen ]] ||
-       [[ "$file" == $HOME/.config/google-chrome/SingletonCookie ]] ||
-       [[ "$file" == $HOME/.config/google-chrome/SingletonLock ]] ||
-       [[ "$file" == $HOME/.config/google-chrome/SingletonSocket ]] ||
-       [[ "$file" == $HOME/.config/unityhub/SingletonCookie ]] ||
-       [[ "$file" == $HOME/.config/unityhub/SingletonSocket ]] ||
-       [[ "$file" == $HOME/.config/unityhub/SingletonLock ]] ||
-       [[ "$file" == $HOME/.config/unityhub/SS ]] ||
-       [[ "$file" == $HOME/.config/UnityHub/SingletonCookie ]] ||
-       [[ "$file" == $HOME/.config/UnityHub/SingletonLock ]] ||
-       [[ "$file" == $HOME/.config/UnityHub/SS ]] ||
-       [[ "$file" == $HOME/.config/Slack/SingletonCookie ]] ||
-       [[ "$file" == $HOME/.config/Slack/SingletonLock ]] ||
-       [[ "$file" == $HOME/.config/Slack/SingletonSocket ]] ||
-       [[ "$file" == $HOME/.config/Slack/SS ]] ||
-       [[ "$file" == $HOME/.config/Rocket.Chat/SingletonCookie ]] ||
-       [[ "$file" == $HOME/.config/Rocket.Chat/SingletonLock ]] ||
-       [[ "$file" == $HOME/.config/Rocket.Chat/SS ]] ||
-       [[ "$file" == $HOME/.local/Android/ndk/* ]] ||
-       [[ "$file" == $HOME/.mozilla/firefox/*/lock ]] ||
-       [[ "$file" == $HOME/.thunderbird/*/lock ]] ||
-       [[ "$file" == $HOME/.config/pulse/*-runtime ]] ||
-       [[ "$file" == $HOME/.cache/* ]] ||
-       [[ "$file" == $HOME/.var/app/* ]] ||
-       [[ "$file" == $HOME/Projekte/* ]] ||
-       [[ "$file" == $HOME/Daten/NOGOv2/* ]]
+    if
+        # Nix
+        [[ "$file" == $HOME/.nix-defexpr/channels ]] ||
+        [[ "$file" == $HOME/.nix-profile ]] ||
+
+        [[ "$file" == $HOME/.local/share/Trash/* ]] ||
+
+        # Steam
+        [[ "$file" == $HOME/.local/share/Steam/* ]] ||
+        [[ "$file" == $HOME/.steam/* ]] ||
+        [[ "$file" == $HOME/Spiele/* ]] ||
+        [[ "$file" == $HOME/.steampath ]] ||
+
+        # Sockets and Locks
+        [[ "$file" == $HOME/.kde/tmp-zen ]] ||
+        [[ "$file" == $HOME/.kde/socket-zen ]] ||
+        [[ "$file" == $HOME/.config/google-chrome/SingletonCookie ]] ||
+        [[ "$file" == $HOME/.config/google-chrome/SingletonLock ]] ||
+        [[ "$file" == $HOME/.config/google-chrome/SingletonSocket ]] ||
+        [[ "$file" == $HOME/.config/unityhub/SingletonCookie ]] ||
+        [[ "$file" == $HOME/.config/unityhub/SingletonSocket ]] ||
+        [[ "$file" == $HOME/.config/unityhub/SingletonLock ]] ||
+        [[ "$file" == $HOME/.config/unityhub/SS ]] ||
+        [[ "$file" == $HOME/.config/UnityHub/SingletonCookie ]] ||
+        [[ "$file" == $HOME/.config/UnityHub/SingletonLock ]] ||
+        [[ "$file" == $HOME/.config/UnityHub/SS ]] ||
+        [[ "$file" == $HOME/.config/Slack/SingletonCookie ]] ||
+        [[ "$file" == $HOME/.config/Slack/SingletonLock ]] ||
+        [[ "$file" == $HOME/.config/Slack/SingletonSocket ]] ||
+        [[ "$file" == $HOME/.config/Slack/SS ]] ||
+        [[ "$file" == $HOME/.config/Rocket.Chat/SingletonCookie ]] ||
+        [[ "$file" == $HOME/.config/Rocket.Chat/SingletonLock ]] ||
+        [[ "$file" == $HOME/.config/Rocket.Chat/SS ]] ||
+
+        [[ "$file" == $HOME/.local/Android/ndk/* ]] ||
+        [[ "$file" == $HOME/.mozilla/firefox/*/lock ]] ||
+        [[ "$file" == $HOME/.thunderbird/*/lock ]] ||
+        [[ "$file" == $HOME/.config/pulse/*-runtime ]] ||
+        [[ "$file" == $HOME/.cache/* ]] ||
+        [[ "$file" == $HOME/.var/app/* ]] ||
+
+        [[ "$file" == $HOME/Projekte/* ]] ||
+        [[ "$file" == $HOME/Daten/NOGOv2/* ]]
     then
         continue
     fi

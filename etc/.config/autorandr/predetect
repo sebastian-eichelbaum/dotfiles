@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#dunstify -a "autorandr-predetect" -i display -r "154334" "Display Profile" "Detect in 5"
+#sleep 1
+#dunstify -a "autorandr-predetect" -i display -r "154334" "Display Profile" "Detect in 4"
+#sleep 1
+#dunstify -a "autorandr-predetect" -i display -r "154334" "Display Profile" "Detect in 3"
+#sleep 1
+#dunstify -a "autorandr-predetect" -i display -r "154334" "Display Profile" "Detect in 2"
+#sleep 1
+#dunstify -a "autorandr-predetect" -i display -r "154334" "Display Profile" "Detect in 1"
+sleep 1
+dunstify -a "autorandr-predetect" -i display -r "154334" "Display Profile" "Detecting ..."

@@ -9,7 +9,7 @@ configuration {
     display-ssh:     "  ";
     display-combi:   "  ";
 
-    combi-modi: "drun,run,window";
+    combi-modi: "drun,window";
     modi: "drun,window";
 
     me-accept-entry: "MousePrimary";

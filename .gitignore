@@ -56,3 +56,5 @@ etc/.config/gtk-3.0/servers
 # Include (excluded by global gitignore)
 !.clang-format
 !.ycm_extra_conf.py
+
+*.bak

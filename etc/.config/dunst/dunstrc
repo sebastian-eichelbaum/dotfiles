@@ -1,6 +1,6 @@
 [global]
     # font = Ubuntu 9
-    font = Liberation Sans 9
+    font = Liberation Sans 10
 
     # Allow a small subset of html markup:
     #   <b>bold</b>
@@ -157,7 +157,7 @@
 
     # Paths to default icons.
     # icon_folders = /usr/share/icons/gnome/32x32/status/:/usr/share/icons/gnome/32x32/devices/
-    icon_path = /home/seb/.icons:/usr/share/icons/Papirus/48x48/status:/usr/share/icons/Papirus/48x48/actions:/usr/share/icons/Papirus/48x48/apps:/usr/share/icons/Papirus/48x48/categories:/usr/share/icons/Papirus/48x48/devices:/usr/share/icons/Papirus/48x48/emblems:/usr/share/icons/Papirus/48x48/emotes:/usr/share/icons/Papirus/48x48/mimetypes:/usr/share/icons/Papirus/48x48/places:/usr/share/icons/Papirus/24x24/panel
+    icon_path = /home/seb/.icons:/run/current-system/sw/share/icons/Papirus/64x64/status:/run/current-system/sw/share/icons/Papirus/64x64/actions:/run/current-system/sw/share/icons/Papirus/64x64/apps:/run/current-system/sw/share/icons/Papirus/64x64/categories:/run/current-system/sw/share/icons/Papirus/64x64/devices:/run/current-system/sw/share/icons/Papirus/64x64/emblems:/run/current-system/sw/share/icons/Papirus/64x64/emotes:/run/current-system/sw/share/icons/Papirus/64x64/mimetypes:/run/current-system/sw/share/icons/Papirus/64x64/places:/run/current-system/sw/share/icons/Papirus/24x24/panel
 
     frame_width = 1
     frame_color = "#666666"

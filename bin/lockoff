@@ -1,0 +1,21 @@
+#!/bin/sh
+
+mon-backlight-dimmer off &
+dimmer_pid=$!
+
+sleep 2
+xset dpms force off &
+
+# Requires something like xss-lock or xautolock to react on screen saver events
+xset s activate &
+
+#if [ -x /usr/bin/slimlock ]; then
+#    slimlock &
+#elif [ -x /usr/bin/i3lock-fancy ]; then
+#    i3lock-fancy -f "Liberation-Sans" &
+#else
+#    notify-send -u critical "Lockoff" "No screen locker found" &
+#fi
+
+sleep 1
+kill $dimmer_pid

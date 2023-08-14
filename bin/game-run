@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# This script uses graphics offload if the system runs in PRIME mode.
+
+echo Starting "$@"
+
+if glxinfo -B | grep -q NVIDIA; then
+    export __NV_PRIME_RENDER_OFFLOAD=0
+    echo game-run: NVIDIA Mode. No offloading.
+else
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+
+    # Causes severe issues, like X freezes for some reason
+    #export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    #export __VK_LAYER_NV_optimus=NVIDIA_only
+
+    echo game-run: PRIME Mode. Using offloading.
+fi
+
+# VBlank off by default
+echo game-run: VBlank off
+export vblank_mode=0
+export __GL_SYNC_TO_VBLANK=0
+
+# NVAPI
+echo game-run: NVAPI on
+export PROTON_ENABLE_NVAPI=1
+
+echo game-run: gamemode on
+gamemoderun "$@"
+

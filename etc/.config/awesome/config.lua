@@ -190,8 +190,9 @@ local rules = {
     {
         tagId = "www",
         rules = {
+            { rule = { class = "firefox" },                          properties = { } },
             { rule = { class = "Firefox" },                          properties = { } },
-            { rule = { class = "Firefox", name = "Download" },       properties = { floating = true } },
+            { rule = { class = "firefox", name = "Download" },       properties = { floating = true } },
             { rule_any = { class = { "google-chrome", "Google-chrome" } }, properties = { tagId = "www" } },
         }
     },
@@ -218,7 +219,7 @@ local rules = {
         tagId = "draw",
         rules = {
             { rule = { class = "Blender" },                          properties = { floating = false } },
-            { rule = { class = "Gimp" },                             properties = { floating = false } },
+            { rule = { class = "Gimp" },                             properties = { floating = true } },
             { rule = { class = "Inkscape" },                         properties = { } },
         }
     },
@@ -248,6 +249,7 @@ local rules = {
             { rule = { class = "SideQuest" },                        properties = { floating = true } },
             { rule = { class = "Wine" },                             properties = { floating = true } },
             { rule = { name = "PlayOnLinux" },                       properties = { floating = true } },
+            { rule = { class = "yuzu" },                             properties = { floating = true } },
         }
     },
 

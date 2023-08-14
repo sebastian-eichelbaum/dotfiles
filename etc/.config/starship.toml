@@ -1,0 +1,139 @@
+format = """
+$battery\
+$nix_shell\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$__line_break\
+$jobs\
+$character"""
+
+# Wait a bit longer for git to answer
+command_timeout = 5000
+
+# The Shell Symbol
+[character]
+success_symbol = "[❯](blue)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+
+###############################################################################
+# Directory Segment
+
+[directory]
+style = "bold #dddddd"
+format = '[$path]($style)[$read_only]($read_only_style) '
+
+# The number of parent folders that the current directory should be truncated to.
+truncation_length = 3
+# Whether or not to truncate to the root of the git repo that you're currently in.
+truncate_to_repo = true
+# The symbol to prefix to truncated paths. eg: '…/'
+truncation_symbol = ' '
+#truncation_symbol = '󰇘 '
+
+#style = 'bold cyan'
+read_only = ' '
+read_only_style = 'bold red'
+
+# The style for the path segment above the root of the git repo. The default value is equivalent to style.
+# before_repo_root_style = 'red'
+
+# The style for the root of the git repo. The default value is equivalent to style.
+# repo_root_style = 'green bold'
+
+# The format of a git repo when before_repo_root_style and repo_root_style is defined.
+# repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) '
+
+home_symbol = '~'
+
+# Use the OS specific path separator instead of always using / (e.g. \ on Windows)
+use_os_path_sep = true
+
+###############################################################################
+# Standard Segments
+
+[hostname]
+ssh_only = true
+style = 'bold dimmed green'
+format = '[\($ssh_symbol$hostname\)]($style) '
+ssh_symbol = ' '
+
+[jobs]
+symbol_threshold = 1
+number_threshold = 1
+format = '[$symbol$number]($style) '
+symbol = '✦'
+style = 'bold white'
+
+[nix_shell]
+symbol = '󱄅'
+format = '[$symbol$state]($style) '
+#format = '[$symbol $state(\($name\))]($style) '
+impure_msg = ""
+pure_msg = " pure"
+style = 'bold green'
+
+[username]
+style_user = 'green bold'
+style_root = 'red bold'
+format = '[$user]($style) '
+show_always = false
+
+###############################################################################
+# Battery Segment
+
+[[battery.display]]
+threshold = 20
+style = 'bold red'
+discharging_symbol = '󰂃 '
+
+[[battery.display]]
+threshold = 30
+style = 'bold yellow'
+discharging_symbol = '󰂎 '
+
+###############################################################################
+# Git Segment
+
+[git_branch]
+format = "[$branch]($style) "
+style = "bold bright-black"
+# ignore_branches = ['main', 'master']
+
+[git_status]
+style = 'bold green'
+#style = 'bold #ff8600'
+
+# Show a * on change
+format = "[[( $conflicted$untracked$modified$staged$renamed$deleted)]($style)($ahead_behind$stashed )]($style)"
+# Symbols. Refer to the docs for defaults. Use "<200b>" as invisible char
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+ahead = "󰁞"
+behind = "󰁆"
+diverged = ''
+
+ignore_submodules = false
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[git_commit]
+format = '[\($hash$tag\)]($style)'
+style = "bold #ff8600"
+only_detached = true
+tag_disabled = true
+# How many commits to consider for tag display. The default only allows exact matches.
+tag_max_candidates = 0
+tag_symbol = ' 🏷 '

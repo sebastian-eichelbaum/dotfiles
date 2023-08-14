@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+cmd="rsync -av --progress --backup --backup-dir=.versions/$(date '+%y%m%d_%H%M') -e ssh"
+dst="expoze-sebastian@rsync.hidrive.strato.com:/users/expoze-sebastian/"
+
+what=("Fotos")
+options=("--delete --exclude=Handyfotos")
+
+for x in ${!what[@]}
+do
+    location=${what[$x]}
+    opt=${options[$x]}
+
+    echo $cmd $opt ~/$location $dst
+    $cmd $opt ~/$location $dst
+done

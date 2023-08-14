@@ -1,3 +1,15 @@
 [submodule "etc/.config/awesome/lain"]
 	path = etc/.config/awesome/lain
 	url = https://github.com/lcpz/lain
+[submodule "etc/.zsh/zsh-completions"]
+	path = etc/.zsh/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions
+[submodule "etc/.zsh/zsh-syntax-highlighting"]
+	path = etc/.zsh/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "etc/.zsh/zsh-autosuggestions"]
+	path = etc/.zsh/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "etc/.zsh/zsh-nix-shell"]
+	path = etc/.zsh/zsh-nix-shell
+	url = https://github.com/chisui/zsh-nix-shell.git

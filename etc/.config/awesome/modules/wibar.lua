@@ -30,23 +30,23 @@ local widgets = {
 
 local widgetContainer = function(widget, bg)
     -- box-style?
-    --[[return 
+    --[[return
         containers.box(
-            widget, 
+            widget,
             bg,
             lib.dpi(9), lib.dpi(9), lib.dpi(6), lib.dpi(6)
         )
     -]]
- 
+
     -- borderdBox-style?
-    return 
+    return
         containers.borderedBox(
             wibox.layout.margin(widget, lib.dpi(8), lib.dpi(8), lib.dpi(6), lib.dpi(6)),
             beautiful.palette.bg,
             bg,
             lib.dpi(0), lib.dpi(0), lib.dpi(0), lib.dpi(4)
         )
-   
+
     -- Pill-style?
     --[[return wibox.layout.margin(
         containers.roundedBox(
@@ -54,7 +54,7 @@ local widgetContainer = function(widget, bg)
             bg
             -- Clock specific?
             -- , lib.dpi(9), lib.dpi(9), lib.dpi(1), lib.dpi(1)
- 
+
         ),
         lib.dpi(3), lib.dpi(3), lib.dpi(3), lib.dpi(5))
     --]]
@@ -100,7 +100,7 @@ return {
             )
 
             -- Systray
-            beautiful.systray_icon_spacing = lib.dpi(5)
+            beautiful.systray_icon_spacing = lib.dpi(8)
             beautiful.bg_systray = beautiful.widgets.bg.systrayBuiltin
             local systray = widgetContainer(
                 wibox.widget.systray(),
@@ -123,7 +123,7 @@ return {
                 widgets.battery.make(),
                 beautiful.widgets.bg.battery
             )
-            
+
             local monitors = widgetContainer(
                 wibox.widget {
                     widgets.cpu.make({hideIcon = false}),
@@ -161,7 +161,9 @@ return {
                     layout = wibox.layout.fixed.horizontal,
 
                     wibox.layout.margin(taglist, lib.dpi(0), lib.dpi(0), lib.dpi(0), lib.dpi(0)),
-                    wibox.layout.margin(layoutBox, lib.dpi(10), lib.dpi(3), lib.dpi(3), lib.dpi(5)),
+                    wibox.layout.margin(layoutBox, lib.dpi(10), lib.dpi(10), lib.dpi(3), lib.dpi(5)),
+
+                    tasklistMinimized,
                 },
 
                 -- Middle widget
@@ -171,7 +173,6 @@ return {
 
                     layout = wibox.layout.fixed.horizontal,
 
-                    tasklistMinimized,
 
                     -- The common monitor widgets
                     -- Use different containers per widget:

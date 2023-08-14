@@ -215,7 +215,7 @@ return {
                         bottom = lib.dpi(4),
                         left = lib.dpi(1),
                         right = lib.dpi(3),
-                        widget  = wibox.container.margin                   
+                        widget  = wibox.container.margin
                     },
 
                     create_callback = function(self, c, index, objects) --luacheck: no unused args
