@@ -36,7 +36,7 @@ local widgetContainer = function(widget, bg)
             bg,
             lib.dpi(9), lib.dpi(9), lib.dpi(6), lib.dpi(6)
         )
-    -]]
+    --]]
 
     -- borderdBox-style?
     return
@@ -111,12 +111,14 @@ return {
             -- {{{ Additional Widgets - seperate
             local volume = widgetContainer(
                 widgets.volume.make(),
-                beautiful.widgets.bg.volume
+                "#555"
+                --beautiful.widgets.bg.volume
             )
 
             local brightness = widgetContainer(
                 widgets.brightness.make(),
-                beautiful.widgets.bg.brightness
+                "#555"
+                --beautiful.widgets.bg.brightness
             )
 
             local battery = widgetContainer(
@@ -144,7 +146,8 @@ return {
                     },
                     layout = wibox.layout.fixed.horizontal
                 },
-                beautiful.widgets.bg.monitors
+                --beautiful.widgets.bg.monitors
+                "#444"
             )
             -- }}}
 

@@ -178,7 +178,7 @@ local rules = {
         tagId = "media",
         rules = {
             { rule = { class = "Totem" },                            properties = {  } },
-            { rule = { class = "Vlc" },                              properties = {  } },
+            { rule = { class = "vlc" },                              properties = {  } },
             { rule = { class = "MPlayer" },                          properties = { floating = true } },
             { rule = { class = "[Ss]potify" },                       properties = { floating = false } },
             { rule = { class = "Deadbeef" },                         properties = { floating = true } },
