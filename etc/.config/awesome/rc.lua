@@ -86,7 +86,8 @@ require("modules.behaviors.clientOnParentTag").setup()
 require("modules.behaviors.noBorderOnSingleWindows").setup()
 require("modules.behaviors.unfocusOpacity").setup()
 
--- Still needed?
--- require("modules.behaviors.lateRules").setup()
+-- Qirks - Check regularly if they are still needed?
+-- require("modules.quirks.lateRules").setup()
+require("modules.quirks.unityRefresh").setup()
 
 

@@ -210,6 +210,7 @@ local rules = {
             { rule = { class = "TelegramDesktop" },                  properties = { size_hints_honor = true }, callback = awful.client.setslave },
             { rule = { class = "Signal" },                           properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
             { rule = { class = "Slack" },                            properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
+            { rule = { class = "discord" },                            properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
             { rule = { class = "Rocket.Chat" },                      properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
         }
     },
