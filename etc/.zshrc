@@ -161,6 +161,8 @@ fi
 # {{{ nix-shell integration
 #
 
+export NIXPKGS_ALLOW_UNFREE=1
+
 # If not used, nix-shell always spawns a shell with bash. This plugin switches to zsh automatically.
 if [ -f ~/.zsh/zsh-nix-shell/nix-shell.plugin.zsh ]; then
     source ~/.zsh/zsh-nix-shell/nix-shell.plugin.zsh
