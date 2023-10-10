@@ -38,6 +38,8 @@ gvim() {
 export GREP_COLORS='mt=33'
 alias grep='grep --color=auto'
 
+alias gitg=gittyup
+
 # }}}
 
 

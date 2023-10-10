@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Adapter called by gnome when opening something in a terminal. As gnome does not (yet) support setting a custom terminal,
+# this is called by gnome
+
+$TERMINAL -e "$@"
