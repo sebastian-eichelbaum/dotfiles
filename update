@@ -6,10 +6,26 @@ TARGET=~
 
 EXCLUDE=".config"
 
-# Alle files dieser Ebene
+###############################################################################
+# {{{ Create initial dir structure in HOME
+#
+
+mkdir -p ~/Archiv
+mkdir -p ~/Dokumente
+mkdir -p ~/Downloads
+#mkdir -p ~/Musik
+mkdir -p ~/Fotos
+mkdir -p ~/Shared
+mkdir -p ~/Daten
+
+# }}}
+
+###############################################################################
+# {{{ Link all files from etc
+#
+
 for file in $(find $BASE_ETC -mindepth 1 -maxdepth 1  -name "*" -and -not -name "." )
 do
-  # Ausnahmen prüfen
   skip=0
   for excluded in $EXCLUDE
   do
@@ -27,6 +43,12 @@ do
   ln -sf $file $TARGET
 done
 
+# }}}
+
+###############################################################################
+# {{{ Handle excluded subdirs
+#
+
 #echo "Processing exceptions"
 mkdir -p $TARGET/.config/
 for file in $(find $BASE_ETC/.config -mindepth 1 -maxdepth 1  -name "*" -and -not -name "." )
@@ -35,6 +57,12 @@ do
   ln -sf $file $TARGET/.config/
 done
 
+# }}}
+
+###############################################################################
+# {{{ Link scripts to .local/bin
+#
+
 #echo "Linking: $BASE/bin"
 mkdir -p $TARGET/.local/bin
 for file in $(find $BASE/bin -mindepth 1 -maxdepth 1  -name "*" -and -not -name "." )
@@ -42,9 +70,12 @@ do
     #echo $file
     ln -sf $file $TARGET/.local/bin
 done
-#find . -type f -name '*.*' -print0 | while IFS= read -r -d '' file; do
-#    printf '%s\n' "$file"
-#done
+
+# }}}
+
+###############################################################################
+# {{{ Verbose check for broken links
+#
 
 find $TARGET -type l -xtype l -print0 | while IFS= read -r -d '' file; do
     if
@@ -89,10 +120,11 @@ find $TARGET -type l -xtype l -print0 | while IFS= read -r -d '' file; do
         [[ "$file" == $HOME/.var/app/* ]] ||
 
         [[ "$file" == $HOME/Projekte/* ]] ||
-        [[ "$file" == $HOME/Daten/NOGOv2/* ]]
+        [[ "$file" == $HOME/Daten/* ]]
     then
         continue
     fi
     echo "WARN - broken link: $file"
 done
 
+# }}}
