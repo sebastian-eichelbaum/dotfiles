@@ -100,10 +100,10 @@ return {
         theme.bg_normal     = theme.palette.bg
         theme.bg_focus      = theme.palette.primary
         theme.bg_urgent     = theme.palette.attention
-        theme.bg_minimize   = theme.palette.unknown
+        theme.bg_minimize   = theme.palette.bg_lighter5
 
         theme.fg_normal     = theme.palette.fg
-        theme.fg_focus      = theme.palette.fg
+        theme.fg_focus      = theme.palette.fg_darker1
         theme.fg_urgent     = theme.palette.fg
         theme.fg_minimize   = theme.palette.fg
 
