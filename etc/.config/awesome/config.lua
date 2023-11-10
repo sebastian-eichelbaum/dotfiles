@@ -64,7 +64,7 @@ local style = {
 
     -- Focus/Unfocus transparency
     focusOpacity = 1.0,
-    unfocusOpacity = 0.7,
+    unfocusOpacity = 1.0,
 }
 -- }}}
 
