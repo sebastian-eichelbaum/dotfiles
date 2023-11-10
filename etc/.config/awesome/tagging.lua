@@ -45,7 +45,7 @@ end
 function makeTag(screen, tagCfg)
     local tag = awful.tag.add(
         -- Name
-        tagCfg.name, 
+        tagCfg.name,
 
         -- Use the properties as given but ensure layout and screen are resolved.
         gears.table.join(
@@ -141,11 +141,11 @@ return {
 
                 -- Configure the cascade layyout.
                 lain.layout.cascade.tile.offset_x      = 0
-                lain.layout.cascade.tile.offset_y      = 64
+                lain.layout.cascade.tile.offset_y      = 128
                 lain.layout.cascade.tile.extra_padding = 0
-                lain.layout.cascade.tile.nmaster       = 0
+                --lain.layout.cascade.tile.nmaster       = 0
                 lain.layout.cascade.tile.ncol          = 2
-                lain.layout.cascade.tile.mwfact        = 0.5
+                --lain.layout.cascade.tile.mwfact        = 0.5
             end
         end)
         -- }}}

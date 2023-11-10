@@ -29,6 +29,14 @@ local widgets = {
 }
 
 local widgetContainer = function(widget, bg)
+    -- Nothing at all
+    return
+        containers.box(
+            widget,
+            "transparent",
+            lib.dpi(9), lib.dpi(9), lib.dpi(6), lib.dpi(6)
+        )
+
     -- box-style?
     --[[return
         containers.box(
@@ -39,13 +47,13 @@ local widgetContainer = function(widget, bg)
     --]]
 
     -- borderdBox-style?
-    return
+    --[[return
         containers.borderedBox(
             wibox.layout.margin(widget, lib.dpi(8), lib.dpi(8), lib.dpi(6), lib.dpi(6)),
             beautiful.palette.bg,
             bg,
             lib.dpi(0), lib.dpi(0), lib.dpi(0), lib.dpi(4)
-        )
+        )--]]
 
     -- Pill-style?
     --[[return wibox.layout.margin(

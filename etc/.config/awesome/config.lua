@@ -64,7 +64,7 @@ local style = {
 
     -- Focus/Unfocus transparency
     focusOpacity = 1.0,
-    unfocusOpacity = 1.0,
+    unfocusOpacity = 0.7,
 }
 -- }}}
 
@@ -113,7 +113,7 @@ local tagging = {
                 name = " ",
                 layout = "cascadetile",
                 master_count = 1,
-                master_width_factor = 0.50
+                master_width_factor = 0.60,
             },
             { ids = { "www" },
                 -- name = " ",
@@ -210,8 +210,9 @@ local rules = {
             { rule = { class = "TelegramDesktop" },                  properties = { size_hints_honor = true }, callback = awful.client.setslave },
             { rule = { class = "Signal" },                           properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
             { rule = { class = "Slack" },                            properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
-            { rule = { class = "discord" },                            properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
+            { rule = { class = "discord" },                          properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
             { rule = { class = "Rocket.Chat" },                      properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
+            { rule = { class = "Ferdium" },                          properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
         }
     },
 
