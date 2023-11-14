@@ -20,6 +20,12 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or
 # Ensure LS_COLORS is set. The completion systen uses it too.
 eval `dircolors -b`
 
+# Although I love vim, I do not want to use VIM bindings on a console. Force emacs-mode.
+bindkey -e
+# Emacs mode does not bind HOME and END. Fix this:
+bindkey "$key[Home]" beginning-of-line
+bindkey "$key[End]" end-of-line
+
 # }}}
 
 #############################################################################################################
@@ -38,6 +44,7 @@ gvim() {
 export GREP_COLORS='mt=33'
 alias grep='grep --color=auto'
 
+# Lazy abrev
 alias gitg=gittyup
 
 # }}}

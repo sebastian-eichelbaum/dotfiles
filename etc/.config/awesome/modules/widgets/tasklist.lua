@@ -163,7 +163,7 @@ return {
                         align = "center",
                         widget = wibox.container.place,
                     },
-                    -- USe the focus color as bg?
+                    -- Use the focus color as bg?
                     -- id     = 'background_role',
                     widget = wibox.container.background,
                 }

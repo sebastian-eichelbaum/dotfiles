@@ -34,7 +34,7 @@ local widgetContainer = function(widget, bg)
         containers.box(
             widget,
             "transparent",
-            lib.dpi(9), lib.dpi(9), lib.dpi(6), lib.dpi(6)
+            lib.dpi(6), lib.dpi(5), lib.dpi(6), lib.dpi(6)
         )
 
     -- box-style?
@@ -66,6 +66,15 @@ local widgetContainer = function(widget, bg)
         ),
         lib.dpi(3), lib.dpi(3), lib.dpi(3), lib.dpi(5))
     --]]
+end
+
+local makeSpacer = function(width)
+    return
+        containers.box(
+           nil,
+           "transparent",
+           lib.dpi(0), lib.dpi(5), lib.dpi(0), lib.dpi(0)
+       )
 end
 
 return {
@@ -192,11 +201,14 @@ return {
 
                     brightness,
                     volume,
-                    battery,
 
+                    battery,
                     systray,
                     clock,
-                },
+
+                    makeSpacer(1),
+
+              },
             }
 
             -- This could be nested to add colored borders and such things.
