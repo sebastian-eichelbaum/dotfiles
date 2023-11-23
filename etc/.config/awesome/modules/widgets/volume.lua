@@ -57,7 +57,7 @@ return {
 
             -- Overrides for image and text widgets (margins, ...)
             gears.table.join(options or {}, {
-                
+
                 -- Button bindings
                 buttons = function(watch)
                     return {

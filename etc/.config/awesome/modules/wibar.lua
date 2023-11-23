@@ -127,13 +127,13 @@ return {
 
             -- {{{ Additional Widgets - seperate
             local volume = widgetContainer(
-                widgets.volume.make(),
+                widgets.volume.make({ hideText = true }),
                 "#555"
                 --beautiful.widgets.bg.volume
             )
 
             local brightness = widgetContainer(
-                widgets.brightness.make(),
+                widgets.brightness.make({ hideText = true }),
                 "#555"
                 --beautiful.widgets.bg.brightness
             )
@@ -198,11 +198,11 @@ return {
                     -- Use different containers per widget:
 
                     monitors,
+                    battery,
 
                     brightness,
                     volume,
 
-                    battery,
                     systray,
                     clock,
 

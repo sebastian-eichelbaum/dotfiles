@@ -6,6 +6,7 @@ eval "$(starship init zsh)"
 
 # Add .local/bin. NOTE: on nix, this is done by the configuration already.
 PATH=~/.local/bin:$PATH
+export RIPGREP_CONFIG_PATH=~/.config/ripgrep.conf
 
 # }}}
 
@@ -20,12 +21,6 @@ setopt PUSHD_SILENT         # Do not print the directory stack after pushd or
 # Ensure LS_COLORS is set. The completion systen uses it too.
 eval `dircolors -b`
 
-# Although I love vim, I do not want to use VIM bindings on a console. Force emacs-mode.
-bindkey -e
-# Emacs mode does not bind HOME and END. Fix this:
-bindkey "$key[Home]" beginning-of-line
-bindkey "$key[End]" end-of-line
-
 # }}}
 
 #############################################################################################################
@@ -33,7 +28,7 @@ bindkey "$key[End]" end-of-line
 #
 
 # Share the current dir
-alias share='sudo python3 -m http.server 80'
+# alias share='sudo python3 -m http.server 80'
 
 # Open Nvim in a new terminal
 gvim() {
@@ -41,11 +36,11 @@ gvim() {
 }
 
 # Colorful grep
-export GREP_COLORS='mt=33'
-alias grep='grep --color=auto'
+# export GREP_COLORS='mt=33'
+# alias grep='grep --color=auto'
 
 # Lazy abrev
-alias gitg=gittyup
+alias gitgui=gittyup
 
 # }}}
 

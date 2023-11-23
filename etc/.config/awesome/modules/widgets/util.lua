@@ -113,7 +113,7 @@ return {
 
                 local widget = wibox.widget {
                     marginedImg,
-                    marginedText,
+                    lib.ternary(overrides.hideText, nil, marginedText),
                     layout = wibox.layout.align.horizontal
                 }
 

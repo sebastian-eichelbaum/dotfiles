@@ -1,0 +1,43 @@
+gui:
+  windowSize: 'normal' # one of 'normal' | 'half' | 'full' default is 'normal'
+  sidePanelWidth: 0.3333 # number from 0 to 1
+  expandFocusedSidePanel: true
+  showFileTree: true # for rendering changes files in a tree format
+  showListFooter: false # for seeing the '5 of 20' message in list panels
+  showBranchCommitHash: false # show commit hashes alongside branch names
+  showBottomLine: false # for hiding the bottom information line (unless it has important information to tell you)
+  showPanelJumps: true # for showing the jump-to-panel keybindings as panel subtitles
+  showCommandLog: true
+  nerdFontsVersion: "3" # nerd fonts version to use ("2" or "3"); empty means don't show nerd font icons
+  commandLogSize: 6
+  theme:
+    activeBorderColor:
+      - '#4a88cc'
+      - bold
+    inactiveBorderColor:
+      - '#555557'
+    selectedLineBgColor:
+      - '#555557'
+    defaultFgColor:
+      - '#dddddd'
+    unstagedChangesColor:
+      - '#cccccd'
+    searchingActiveBorderColor:
+      - '#e79d31'
+    optionsTextColor:
+      - '#ff0000' # ?
+    selectedRangeBgColor:
+      - '#ff0000' # ?
+    cherryPickedCommitBgColor:
+      - '#ff00ff' # ?
+    cherryPickedCommitFgColor:
+      - '#ff00ff' # ?
+  authorColors:
+    'Sebastian Eichelbaum': '#777778'
+    'Dr. Sebastian Eichelbaum': '#777778'
+    # use blue for other authors
+    '*': '#aaaaab'
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
