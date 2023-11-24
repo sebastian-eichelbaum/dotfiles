@@ -13,7 +13,7 @@ gsettings set org.gnome.desktop.sound event-sounds false
 firefox &
 
 # If picom is not a systemd service, start as daemon
-if systemctl list-unit-files "picom*" ; then
+if systemctl --user list-unit-files "picom*" ; then
     echo "Picom is a service. Not starting."
 else
     picom --daemon &
