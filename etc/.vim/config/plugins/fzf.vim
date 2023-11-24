@@ -27,18 +27,14 @@ let g:fzf_preview_window = 'right:50%'
 " Ein prefix für alle Commands. Also FzfFiles statt Files
 let g:fzf_command_prefix = 'Fzf'
 
-" Ag zum listen von files nutzen
+" ripgrep rg zum listen von files nutzen. Im Gegensatz zu FzfFiles, ist rg smart bezüglich ignorierter files. Es ignoriert automatisch Dateien aus .gitignore!
 command! -bang -nargs=? -complete=dir FzfHFiles
-  \ call fzf#vim#files(<q-args>, {'source': 'ag --hidden --ignore .git --ignore "build*" -g ""', 'options': ''}, <bang>0)
-
-" Excludes für FzfAg:
-command! -bang -nargs=* FzfAg
-  \ call fzf#vim#ag(<q-args>, '--hidden --ignore .git --ignore "build*"', fzf#vim#with_preview(), <bang>0)
+  \ call fzf#vim#files(<q-args>, {'source': 'rg --hidden --glob="!.git/*" --files', 'options': ''}, <bang>0)
 
 " Dateien per leader-e
 nmap <leader>e :FzfHFiles<CR>
 
-" Ag/Grep per leader-/
-nmap <leader>/ :FzfAg<space>
-nnoremap <leader># :FzfAg <C-R><C-W><CR>
+" Grep per leader-/
+nmap <leader>/ :FzfRG<CR>
+nnoremap <leader># :FzfRg <C-R><C-W><CR>
 
