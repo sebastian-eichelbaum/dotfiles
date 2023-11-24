@@ -58,3 +58,6 @@ etc/.config/gtk-3.0/servers
 !.ycm_extra_conf.py
 
 *.bak
+
+# Ignore lazygit state
+etc/.config/lazygit/state.yml
