@@ -1,0 +1,2 @@
+# Note: fd automatically respects gitignore files in git repos.
+.git/*

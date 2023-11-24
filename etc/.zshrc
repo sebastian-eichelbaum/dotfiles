@@ -42,6 +42,9 @@ gvim() {
 # Lazy abrev
 alias gitgui=gittyup
 
+# I want to include dot files in search by default
+alias fd='fd --hidden --exclude ".git"'
+
 # }}}
 
 #############################################################################################################
@@ -141,17 +144,22 @@ zstyle ':completion:*' verbose true
 # {{{ fzf integration
 #
 
+# FZF is configured using some env vars.
+if [ -f ~/.config/fzf ]; then
+    source ~/.config/fzf
+fi
+
 # There is a more complex FZF plugin. It replaces the ZSH menu with fzf everywhere.
 #
-# git clone https://github.com/Aloxaf/fzf-tab ~/somewhere
-# source ~/somewhere/fzf-tab.plugin.zsh
+# git clone https://github.com/Aloxaf/fzf-tab ~/.zshrc
+# source ~/.zsh/fzf-tab/fzf-tab.plugin.zsh
 
 # To make grouping work, some things need to be configured differently
 #zstyle ':completion:*:descriptions' format '[%d]'
 #zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # Also, disable the above completion:*:*:*:*:descriptions formats.
 
-# Use the history search (CTRL-r) and filesearch (**) provided by fzf:
+# Use the history search (CTRL-r) and filesearch (**<TAB> or CTRL-t) provided by fzf:
 # NOTE: this is NixOS specific. Adapt to others as needed
 if [ -d /run/current-system/sw/share/fzf ]; then
     source /run/current-system/sw/share/fzf/completion.zsh
@@ -305,43 +313,6 @@ if [ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
     # - a command word other than one of those enumerated above (other than a command, precommand, alias, function, or shell builtin command).
     ZSH_HIGHLIGHT_STYLES[arg0]=fg=green,bold
 fi
-# }}}
-
-#############################################################################################################
-# {{{ Project specifics + Toolig ZSH Hocks
-#
-
-# Useful tool to hook unto events like chpwd
-autoload -U add-zsh-hook
-
-# node.js - init nvm only when entering directories that contain a .nvmrc
-export NVM_DIR="$HOME/.nvm"
-recognize_nodeproject() {
-    if [[ -f .nvmrc && -z ${NVM_LAZY_LOADED+x} ]]; then
-        NVM_LAZY_LOADED="yes"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    fi
-}
-add-zsh-hook chpwd recognize_nodeproject
-
-# Emscripten
-export EMSDK_DIR="$HOME/.emsdk"
-recognize_emscriptenproject() {
-    if [[ -f .emsdkrc && -z ${EMSDK_LAZY_LOADED+x} ]]; then
-        EMSDK_LAZY_LOADED="yes"
-        [ -s "$EMSDK_DIR/emsdk_env.sh" ] && \. "$EMSDK_DIR/emsdk_env.sh"
-    fi
-}
-add-zsh-hook chpwd recognize_emscriptenproject
-
-# Android Development
-#export ANDROID_HOME=$HOME/.local/Android
-#export ANDROID_SDK_ROOT=$ANDROID_HOME
-#export PATH=$PATH:$ANDROID_HOME/emulator
-#export PATH=$PATH:$ANDROID_HOME/tools
-#export PATH=$PATH:$ANDROID_HOME/tools/bin
-#export PATH=$PATH:$ANDROID_HOME/platform-tools
-
 # }}}
 
 #############################################################################################################

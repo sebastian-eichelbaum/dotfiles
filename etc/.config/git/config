@@ -1,0 +1,73 @@
+###############################################################################
+# Users
+#
+
+# Default if something goes wrong
+[user]
+    name = Sebastian Eichelbaum
+    email = code@nemtics.com
+
+# Defines the global user and includes project specific setups
+[include]
+    # Link the default to this.
+    path = user.conf
+
+###############################################################################
+# Core Setup
+#
+
+[core]
+    editor = vim/
+    # By default, this is .config/git/ignore. This can be overwritten.
+    # excludesfile = /home/seb/.gitignore_global
+
+[push]
+    # Git allows us to push branches individually or all at once.
+    # "simple" = push the current branch only (RECOMMENDED!)
+    # "matching" = push all matching branches
+    default = simple
+
+[pull]
+    # Rebase my own changes when pulling? If true, it effectively is git pull --rebase
+    rebase = false
+
+[init]
+	defaultBranch = main
+
+[credential]
+	helper = store
+
+###############################################################################
+# Convenience and Style
+#
+
+[alias]
+	st = status
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+###############################################################################
+# Tools/Commands
+#
+
+[include]
+    path = delta.conf
+
+

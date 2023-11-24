@@ -1,8 +1,0 @@
-[user]
-    name = Dr. Sebastian Eichelbaum
-    email = code@nemtics.com
-    signingkey = 790C22D6D843AB01
-
-[commit]
-    # Automatisch signieren?
-    # gpgsign = false

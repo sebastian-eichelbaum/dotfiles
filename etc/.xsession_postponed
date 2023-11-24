@@ -5,12 +5,19 @@ gsettings set org.gnome.desktop.sound event-sounds false
 # }}}
 
 # Config the razer specific stuff like keyboard and power mode
-if [ "$HOSTNAME" = worky ]; then
-  razer balance &
-fi
+#if [ "$HOSTNAME" = worky ]; then
+#  razer balance &
+#fi
 
 # Ich will meinen Brauser immer haben
 firefox &
+
+# If picom is not a systemd service, start as daemon
+if systemctl list-unit-files "picom*" ; then
+    echo "Picom is a service. Not starting."
+else
+    picom --daemon &
+fi
 
 # Wird nach dem booten manchmal nicht automatisch erkannt. Also erneut setzen.
 (sleep 3 && autorandr --change) &

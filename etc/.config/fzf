@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# FZF is configurable using env vars. Source this file in your shell rc
+
+###############################################################################
+# Colors
+#
+
+# Check https://minsw.github.io/fzf-color-picker
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+--color=fg:#b4b4b4,bg:#19191a,hl:#e79d31
+--color=fg+:#e4e4e4,bg+:#262626,hl+:#e79d31
+--color=info:#e79d31,prompt:#4a88cc,pointer:#4a88cc
+--color=marker:#85b038,spinner:#e79d31,header:#4a88cc
+--color=gutter:#19191a,border:#2a2a2c
+'
+
+
+###############################################################################
+# Nice preview
+#
+
+# Support the colored output of below generators and commands.
+# export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS' --ansi'
+
+# Use a nice preview. This shows dir trees, file contents, images
+preview='
+    fn=`readlink -f {}`
+    mime=`file --mime-type "$fn"`
+
+    if command -v kitty &> /dev/null
+    then
+        kitty icat --clear --transfer-mode=memory --stdin=no
+    fi
+
+    if echo $mime | grep -qF image/; then
+        if command -v kitty &> /dev/null
+        then
+            kitty icat --clear --transfer-mode=memory --stdin=no --place=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0 "$fn"
+        fi
+    elif echo $mime | grep -qF inode/directory; then
+        tree -C {} -L 2 | head -200
+    else
+        bat --color=always --style=numbers "$fn"
+    fi
+'
+
+# Enable preview for all completions in the shell.
+export FZF_COMPLETION_OPTS=$FZF_COMPLETION_OPTS"--ansi --preview '$preview'"
+
+# Config CTRL-T and CTRL-R
+export FZF_CTRL_R_OPTS=$FZF_CTRL_R_OPTS' --layout=reverse'
+export FZF_CTRL_T_OPTS=$FZF_CTRL_T_OPTS" --preview '$preview'"
+
+###############################################################################
+# Customize generators/commands
+#
+
+# Use fd (https://github.com/sharkdp/fd) instead of the default find
+# command for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+_fzf_compgen_path() {
+  fd --hidden --follow --exclude ".git" --color=always . "$1"
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  fd --type d --hidden --follow --exclude ".git" --color=always . "$1"
+}
+
+# By default use this command
+export FZF_DEFAULT_COMMAND='fd --strip-cwd-prefix --hidden --follow --exclude ".git" --type f --color=always'
+
