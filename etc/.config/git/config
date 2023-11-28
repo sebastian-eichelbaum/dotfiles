@@ -17,7 +17,7 @@
 #
 
 [core]
-    editor = vim/
+    editor = vim
     # By default, this is .config/git/ignore. This can be overwritten.
     # excludesfile = /home/seb/.gitignore_global
 
@@ -35,7 +35,11 @@
 	defaultBranch = main
 
 [credential]
-	helper = store
+    helper = store
+
+[merge]
+    # Add the common ancestor for conflicting parts at ||||||| mark
+    conflictstyle = diff3
 
 ###############################################################################
 # Convenience and Style
