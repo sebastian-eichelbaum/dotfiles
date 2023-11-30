@@ -8,11 +8,12 @@
 
 # Check https://minsw.github.io/fzf-color-picker
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
---color=fg:#b4b4b4,bg:#19191a,hl:#e79d31
---color=fg+:#e4e4e4,bg+:#262626,hl+:#e79d31
---color=info:#e79d31,prompt:#4a88cc,pointer:#4a88cc
---color=marker:#85b038,spinner:#e79d31,header:#4a88cc
---color=gutter:#19191a,border:#2a2a2c
+ --ansi
+ --color=fg:#b4b4b4,bg:#19191a,hl:#e79d31
+ --color=fg+:#e4e4e4,bg+:#262626,hl+:#e79d31
+ --color=info:#e79d31,prompt:#4a88cc,pointer:#4a88cc
+ --color=marker:#85b038,spinner:#e79d31,header:#4a88cc
+ --color=gutter:#19191a,border:#2a2a2c
 '
 
 
@@ -46,7 +47,7 @@ preview='
 '
 
 # Enable preview for all completions in the shell.
-export FZF_COMPLETION_OPTS=$FZF_COMPLETION_OPTS"--ansi --preview '$preview'"
+export FZF_COMPLETION_OPTS=$FZF_COMPLETION_OPTS" --ansi --preview '$preview'"
 
 # Config CTRL-T and CTRL-R
 export FZF_CTRL_R_OPTS=$FZF_CTRL_R_OPTS' --layout=reverse'

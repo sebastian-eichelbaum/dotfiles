@@ -1,0 +1,15 @@
+# Common behavior
+--tabs 4
+--nonprintable-notation unicode
+
+# Never page. Make it behave like cat
+--paging never
+
+# Set the theme to "TwoDark"
+--theme="base16"
+
+# Show line numbers, Git modifications and file header (but no grid)
+--style="numbers,changes,header"
+
+# Use C++ syntax for Arduino .ino files
+--map-syntax "*.ino:C++"
