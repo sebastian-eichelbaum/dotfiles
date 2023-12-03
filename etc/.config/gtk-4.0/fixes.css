@@ -16,34 +16,3 @@ window decoration {
     border: none;
 }
 
-
-/* Color Menus like Headerbar and Popover */
-menubar {
-    background-color: @popover_bg_color;
-    color: @popover_fg_color;
-    padding: 2px;
-}
-
-menuitem {
-    color: @popover_fg_color;
-    margin: 1px;
-}
-
-menuitem label{
-    margin: 3px;
-}
-
-menuitem:disabled,
-menuitem *:disabled {
-    color: mix(@popover_fg_color, @popover_bg_color, 0.6);
-}
-
-menu separator {
-    margin: 6px;
-    background: mix(@popover_fg_color, @popover_bg_color, 0.9);
-}
-
-menu {
-    border: 0;
-}
-
