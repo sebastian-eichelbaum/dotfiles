@@ -6,10 +6,12 @@
 --paging never
 
 # Set the theme to "TwoDark"
---theme="base16"
+--theme="FetzDark"
 
 # Show line numbers, Git modifications and file header (but no grid)
---style="numbers,changes,header"
+# --style="numbers,changes,header"
+# OK so the numbers and changes look nice but make it impossible to copy parts of the output. This is more like classic cat + syntax
+--style="header"
 
 # Use C++ syntax for Arduino .ino files
 --map-syntax "*.ino:C++"

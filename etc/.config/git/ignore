@@ -13,7 +13,6 @@ lvimrc
 *.swp
 *.swo
 #.clang-format
-.clangd
 .cache
 
 # Generated doc
