@@ -2,3 +2,6 @@ Home          /home/seb
 Downloads     /home/seb/Downloads
 Dokumente     /home/seb/Dokumente
 NFK           /home/seb/.NFK
+Projekte      /home/seb/Projekte
+Expoze_Projekte_Cloud    sftp://expoze-cloud@sftp.hidrive.strato.com/users/expoze-cloud/Projekte/
+Expoze_Dokumente_Cloud   sftp://expoze-cloud@sftp.hidrive.strato.com/users/expoze-cloud/EXPOZE/Sonstige%20Dokumente%20und%20Schriftverkehr/

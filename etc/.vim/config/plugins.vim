@@ -75,6 +75,12 @@ Plug 'junegunn/fzf.vim'
 " Views automatisch erstellen um Folds usw zu erhalten
 Plug 'vim-scripts/restore_view.vim'
 
+" Neo-tree and its dependencies
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'nvim-neo-tree/neo-tree.nvim', { 'branch': 'v3.x' }
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Programmierzeugs
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

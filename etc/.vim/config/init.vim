@@ -27,6 +27,9 @@ source $HOME/.vim/config/keys.vim
 for rcfile in split(globpath("~/.vim/config/plugins", "*.vim"), '\n')
     execute('source '.rcfile)
 endfor
+for rcfile in split(globpath("~/.vim/config/plugins", "*.lua"), '\n')
+    execute('luafile '.rcfile)
+endfor
 
 " Statuszeile und Farben
 source $HOME/.vim/config/style.vim
