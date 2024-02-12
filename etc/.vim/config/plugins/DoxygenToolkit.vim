@@ -12,6 +12,7 @@ let g:DoxygenToolkit_classTag = "@class "
 let g:DoxygenToolkit_templateParamTag_pre = "@tparam "
 
 function! DoxyKeys()
-  nnoremap <silent> <leader>d :Dox<CR>
+  "nnoremap <silent> <leader>d :Dox<CR>
 endfunction
 au BufNewFile,BufRead *.glsl,*.vs,*.fs,*.java,*.cc,*.c,*.cpp,*.h,*.hh,*.hpp,*.js call DoxyKeys()
+

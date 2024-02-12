@@ -1,175 +1,99 @@
 #!/usr/bin/env bash
 
-basepath="/sys/module/razercontrol/drivers/hid:Razer laptop System control driver"
-path=""
-
-function FindSysPath()
+function rzr()
 {
-    # The specific device directory changes from time to time.
-    # Find the one containing the required interfaces.
-    # NOTE: the slash after basepath is important
-    find "$basepath/" -type l -name "*:*:*\.*" -print0 | sort -z | while read -d $'\0' devpath
-    do
-        if [ -e "$devpath/power_mode" ]; then
-            echo "$devpath"
-            path=$devpath
-            break
-        fi
-    done
+    razer-cli "$@" > /dev/null 2>&1
 }
 
-function EnsureSysPath()
-{
-    path=$(FindSysPath)
+# Turn off the logo
+rzr write logo ac 0
+rzr write logo bat 0
 
-    if [ -z "$path" ]; then
-        echo "Driver not loaded?"
-        dunstify -a "Razer Control" -u low -i "error" -r "75924" "Razer Power Mode" "Unable to set mode"
-        exit -1
-    fi
-}
+# Auto fan on AC/Bat
+rzr write fan ac 0
+rzr write fan bat 0
 
-function SetKbdColor()
-{
-    # Kbd light. For some reasom, this is needed to enable the brightness keys.
-    if [ -e "/sys/class/leds/razerlaptop::kbd_backlight" ]; then
+# Subtle keyboard brightness
+rzr write brightness ac 10
+rzr write brightness bat 10
 
-        # Key colormap
-        colormap_base64=$1
-
-        # is set using /root/hardware_helpers:
-        pushd "/sys/devices/pci0000:00/0000:00:14.0/usb1/1-8" > /dev/null
-        find . -name "key_colour_map" -print0 | while read -d $'\0' file
-        do
-            # echo "Set key colormap on $file"
-            echo "$colormap_base64" | base64 --decode | sudo dd status=none of="$file"
-        done
-        popd > /dev/null
-
-        # Brightness
-        light -s sysfs/leds/razerlaptop::kbd_backlight -S 12
-        # light -s sysfs/leds/razerlaptop::kbd_backlight -S 18
-    fi
-}
-
-function SetPower()
-{
-    power=$(cat "$path/power_mode")
-
-    # Balance is the default
-    mode=0
-    gpu_boost=1
-    cpu_boost=1
-    if [ $# -ne 0 ]; then
-        mode=$1
-    else
-        # toggle next if not specified
-        case $power in
-            [0]*)
-                mode=1
-            ;;
-            [1]*)
-                mode=2
-            ;;
-            [2]*)
-                mode=4
-            ;;
-            [4]*)
-                mode=0
-            ;;
-        esac
-    fi
-
-    if [ $mode -eq 4 ]; then
-        cpu_boost=3
-        gpu_boost=2
-    fi
-
-    echo $gpu_boost | sudo tee "$path/gpu_boost" > /dev/null
-    echo $cpu_boost | sudo tee "$path/cpu_boost" > /dev/null
-    echo $mode | sudo tee "$path/power_mode" > /dev/null
-    echo $gpu_boost | sudo tee "$path/gpu_boost" > /dev/null
-    echo $cpu_boost | sudo tee "$path/cpu_boost" > /dev/null
-    echo $mode | sudo tee "$path/power_mode" > /dev/null
-}
-
-function Status()
-{
-    power=$(cat "$path/power_mode")
-    powerName="Unknown"
-    kbd=""
-    icon=""
-
-    # Tip: echo "code" | base64 --decode > file
-    #      Dann bearbeiten mit hex editor. Jedes 3er Pack bytes ist RGB
-    #      -> encode aus datei cat keycolormap_blueish | base64 -w 10000
-
-    case $power in
-        [0]*)
-            powerName="Balanced"
-            # Default blue-ish
-            kbd="qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/"
-            icon="power-mode-balance"
-        ;;
-        [1]*)
-            powerName="Gaming - Max GPU"
-            kbd="qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr//wAFqqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr//wAF/wAF/wAFqqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/"
-            #kbd="qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/Bf8Fqqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/Bf8FBf8FBf8Fqqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/"
-            icon="power-mode-game"
-            ;;
-        [2]*)
-            powerName="Creator - Max CPU"
-            # Green-ish ESC
-            kbd="Bf8Fqqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/"
-            icon="power-mode-create"
-        ;;
-        [4]*)
-            powerName="Manual - Max Boost"
-            # Red-ish ESC
-            kbd="/wAFqqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/qqr/"
-            icon="power-mode-boost"
-        ;;
-    esac
-
-    SetKbdColor $kbd
-
-    echo "Power: $power ($powerName)"
-    echo CPU Boost [0...3]: $(cat "$path/cpu_boost")
-    echo GPU Boost [0...2]: $(cat "$path/gpu_boost")
-
-    dunstify -a "Razer Control" -u low -i "$icon" -r "75924" "Razer Power Mode" "$powerName"
-}
-
-
-EnsureSysPath
-echo "Using $path"
-
-echo "Quit. Bug!"
-#exit 0
+powerName="Unknown"
+icon=""
 
 case "$1" in
-    toggle)
-        SetPower
-    ;;
     balance | 0)
-        SetPower 0
+        # White keyboard, subtle
+        rzr standard-effect static 255 255 255
+
+        # Balanced power profile
+        rzr write power ac 0
+        rzr write power bat 0
+
+        powerName="Balanced"
+        icon="power-mode-balance"
     ;;
     gaming | 1)
-        SetPower 1
+        # White keyboard, subtle
+        rzr standard-effect static 255 0 10
+
+        # Brighten the keys
+        rzr write brightness ac 20
+        rzr write brightness bat 20
+
+        # Game mode - GPU focus
+        rzr write power ac 1
+        rzr write power bat 1
+
+        powerName="Gaming"
+        icon="power-mode-game"
     ;;
-    creator | 2)
-        SetPower 2
-    ;;
-    boost | 3 | 4)
-        SetPower 4
+    cpu | 2)
+        # CPU Focus - blueish like intel
+        rzr standard-effect static 20 70 255
+
+        # Brighten the keys
+        rzr write brightness ac 20
+        rzr write brightness bat 20
+
+        # Custom: low GPU, boost CPU
+        rzr write power ac 4 3 0
+        rzr write power bat 4 3 0
+
+        powerName="CPU Boost"
+        icon="power-mode-cpu"
+     ;;
+    gpu | 2)
+        # GPU Focus - greenish nvidia color
+        rzr standard-effect static 20 255 10
+
+        # Brighten the keys
+        rzr write brightness ac 20
+        rzr write brightness bat 20
+
+        # Custom: low GPU, boost CPU
+        rzr write power ac 4 0 2
+        rzr write power bat 4 0 2
+
+        powerName="GPU Boost"
+        icon="power-mode-gpu"
+     ;;
+    restart | st)
+        echo "Stopping daemon"
+        systemctl --user stop razerdaemon
+        rm -f /tmp/razercontrol-socket
+        echo "Starting daemon"
+        systemctl --user start razerdaemon
+        systemctl --user status razerdaemon
     ;;
     status | st)
+        razer-cli read power ac
     ;;
     *)
-        echo "razer balance|gaming|creator|boost|status|toggle"
+        echo "razer balance|gaming|creator|boost|status"
         exit 0
     ;;
 esac
 
-Status
+
+dunstify -a "Razer Control" -u low -i "$icon" -r "75924" "Razer Power Mode" "$powerName"
 

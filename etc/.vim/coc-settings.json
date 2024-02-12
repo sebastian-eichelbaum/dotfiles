@@ -2,52 +2,54 @@
     // https://github.com/neoclide/coc.nvim/blob/master/data/schema.json
     // Symbols: ●, , ▉
 
-    "diagnostic.errorSign": "▉",
-    "diagnostic.warningSign": "▉",
-    "diagnostic.infoSign": "▉",
-    "diagnostic.hintSign": "▉",
+    "diagnostic": {
+        "errorSign": "▉",
+        "warningSign": "▉",
+        "infoSign": "▉",
+        "hintSign": "▉",
+    },
 
     // Symbols: https://www.nerdfonts.com/cheat-sheet
     // VS Code comparison: https://code.visualstudio.com/docs/editor/intellisense
     "suggest.completionItemKindLabels": {
 
         // Callable things
-        "function":       "     ",
-        "method":         "     ",
+        "function":       "  󰅲   ",
+        "method":         "  󰅩   ",
         "constructor":    "     ",
 
         // Classes and Types
         "interface":      "     ",
-        "class":          "     ",
-        "struct":         "     ",
+        "class":          "     ",
+        "struct":         "  󰙅   ",
         "enum":           "     ",
         // NOTE: this is a namespace in C++
-        "module":         "     ",
+        "module":         "     ",
 
         // Value-things
-        "value":          "     ",
-        "text":           "     ",
+        "value":          "  󰎠   ",
+        "text":           "  󰉿   ",
         "enumMember":     "     ",
         "typeParameter":  "     ",
 
         // Variable things (named symbols)
-        "variable":       "  ⒳   ",
+        "variable":       "  󰫧   ",
         "field":          "     ",
         "property":       "     ",
-        "constant":       "     ",
+        "constant":       "  󰏿   ",
         "event":          "     ",
 
         // Keywords and statements
-        "operator":       "     ",
-        "keyword":        "     ",
+        "operator":       "  󰆕   ",
+        "keyword":        "     ",
 
-        "reference":      "  ﬌   ",
-        "file":           "     ",
-        "folder":         "     ",
+        "reference":      "  󰈇   ",
+        "file":           "     ",
+        "folder":         "     ",
         "color":          "     ",
-        "unit":           "     ",
+        "unit":           "     ",
 
-        "snippet":        "     ",
+        "snippet":        "     ",
 
         "default":        "     "
     },
@@ -99,12 +101,12 @@
     },
 
 
-    "codeLens.enable": false,
-    "inlayHint.enable": false,
-    "inlayHint.enableParameter": false,
-    "inlayHint.display": false,
+    "codeLens.enable": true,
+    "inlayHint.enable": true,
+    "inlayHint.enableParameter": true,
+    "inlayHint.display": true,
 
-    "clangd.inlayHints.enable": false
+    "clangd.inlayHints.enable": true
 
 }
 

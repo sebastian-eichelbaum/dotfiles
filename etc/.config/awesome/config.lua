@@ -235,6 +235,8 @@ local rules = {
             { rule = { name = "Oracle VM VirtualBox Manager" },      properties = { floating = true, size_hints_honor = true } },
             { rule = { class = "Virt-manager" },                     properties = { } },
             { rule = { class = "Virt-viewer" },                      properties = { } },
+            { rule = { class = ".qemu-system-x86_64-wrapped" },      properties = { } },
+            { rule = { class = "Spicy" },                            properties = { } },
         }
     },
 
