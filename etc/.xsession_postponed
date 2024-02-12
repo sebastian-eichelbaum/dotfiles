@@ -5,9 +5,9 @@ gsettings set org.gnome.desktop.sound event-sounds false
 # }}}
 
 # Config the razer specific stuff like keyboard and power mode
-#if [ "$HOSTNAME" = worky ]; then
-#  razer balance &
-#fi
+if [ "$HOSTNAME" = worky ]; then
+  razer balance &
+fi
 
 # Ich will meinen Brauser immer haben
 firefox &
