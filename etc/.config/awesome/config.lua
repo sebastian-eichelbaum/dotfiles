@@ -167,8 +167,8 @@ local rules = {
             { rule = { class = "openwalnut" },                       properties = { floating = true } },
             { rule = { class = "Openwalnut" },                       properties = { floating = true } },
 
-            { rule = { class = "UnityHub" },                         properties = { floating = true } },
-            { rule = { class = "unityhub" },                         properties = { floating = true } },
+            { rule = { class = "UnityHub" },                         properties = { floating = false } },
+            { rule = { class = "unityhub" },                         properties = { floating = false } },
             { rule = { class = "Unity", type = "normal" },           properties = { floating = false } },
         }
     },
