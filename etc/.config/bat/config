@@ -6,6 +6,7 @@
 --paging never
 
 # Set the theme to "TwoDark"
+# ATTENTION: Missing theme? Run `bat cache --build`
 --theme="FetzDark"
 
 # Show line numbers, Git modifications and file header (but no grid)

@@ -87,9 +87,10 @@ case "$1" in
     ;;
     status | st)
         razer-cli read power ac
+        exit 0
     ;;
     *)
-        echo "razer balance|gaming|creator|boost|status"
+        echo "razer balance|gaming|cpu|gpu|status"
         exit 0
     ;;
 esac
