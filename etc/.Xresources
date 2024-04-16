@@ -1,6 +1,8 @@
 ! XResources/XDefaults is not really used anymore. This file is here to make
 ! the emergency fallback terminals XTerm and UXTerm a bit more legible.
 
+Xft.dpi: 120
+
 ! Font
 UXTerm*faceName: Hack Nerd Font Mono
 XTerm*faceName: Hack Nerd Font Mono

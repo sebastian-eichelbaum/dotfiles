@@ -21,6 +21,17 @@ powerName="Unknown"
 icon=""
 
 case "$1" in
+    powersave | 0)
+        # White greenish keyboard, subtle
+        rzr standard-effect static 128 255 128
+
+        # Balanced power profile
+        rzr write power ac 4 0 0
+        rzr write power bat 4 0 0
+
+        powerName="Powersave"
+        icon="power-mode-powersave"
+    ;;
     balance | 0)
         # White keyboard, subtle
         rzr standard-effect static 255 255 255
@@ -33,7 +44,7 @@ case "$1" in
         icon="power-mode-balance"
     ;;
     gaming | 1)
-        # White keyboard, subtle
+        # Red keyboard
         rzr standard-effect static 255 0 10
 
         # Brighten the keys

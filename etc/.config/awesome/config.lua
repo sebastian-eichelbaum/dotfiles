@@ -159,6 +159,14 @@ local rules = {
         }
     },
 
+    -- Primary work tools
+    {
+        tagId = "primary",
+        rules = {
+            { rule = { class = "Unity", type = "normal" },           properties = { floating = false } },
+        }
+    },
+
     -- Secondary work tools
     {
         tagId = "secondary",
@@ -169,7 +177,6 @@ local rules = {
 
             { rule = { class = "UnityHub" },                         properties = { floating = false } },
             { rule = { class = "unityhub" },                         properties = { floating = false } },
-            { rule = { class = "Unity", type = "normal" },           properties = { floating = false } },
         }
     },
 
