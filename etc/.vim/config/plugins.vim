@@ -90,7 +90,8 @@ Plug 'sheerun/vim-polyglot'
 
 " Doxygen Kommentare aus der Signatur erzeugen.
 " Plug 'vim-scripts/DoxygenToolkit.vim'
-Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
+" Modified version using custom styles
+Plug 'sebastian-eichelbaum/vim-doge' ", { 'do': { -> doge#install() } }
 
 " Ultimatives auto completion plugin
 Plug 'neoclide/coc.nvim', {'branch': 'release'}

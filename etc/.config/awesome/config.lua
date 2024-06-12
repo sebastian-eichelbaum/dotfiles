@@ -308,9 +308,9 @@ local commands = {
 
     -- System monitors
     monitors = {
-        cpu = "x-terminal-emulator -e htop -t",
-        mem = "x-terminal-emulator -e htop -s PERCENT_MEM",
-        bat = "uxterm -e \"/usr/bin/sudo /sbin/powertop\"" -- NOTE: use uxterm as other terms do not find sudo/powertop ?!
+        cpu = "kitty htop -t",
+        mem = "kitty htop -s PERCENT_MEM",
+        bat = "kitty sudo powertop" -- NOTE: use uxterm as other terms do not find sudo/powertop ?!
     },
 
     -- Runners

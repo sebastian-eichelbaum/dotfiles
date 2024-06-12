@@ -27,8 +27,6 @@ export __GL_SYNC_TO_VBLANK=0
 echo game-run: NVAPI on
 export PROTON_ENABLE_NVAPI=1
 
-
-
 echo game-run: razer game mode
 razer gaming
 

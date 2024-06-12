@@ -2,8 +2,12 @@
 
 function rzr()
 {
-    razer-cli "$@" > /dev/null 2>&1
+    #echo "razer-cli $@ >" >> /home/seb/clilog
+    # LD_PRELOAD="" linux64 razer-cli "$@" >> /home/seb/clilog 2>&1
+    LD_PRELOAD="" razer-cli "$@" > /dev/null 2>&1
 }
+
+command -v razer-cli >/dev/null 2>&1 || { dunstify -u critical -i error "razer-cli not found!"; exit 1; }
 
 # Turn off the logo
 rzr write logo ac 0
@@ -23,7 +27,7 @@ icon=""
 case "$1" in
     powersave | 0)
         # White greenish keyboard, subtle
-        rzr standard-effect static 128 255 128
+        rzr effect static 128 255 128
 
         # Balanced power profile
         rzr write power ac 4 0 0
@@ -34,7 +38,7 @@ case "$1" in
     ;;
     balance | 0)
         # White keyboard, subtle
-        rzr standard-effect static 255 255 255
+        rzr effect static 255 255 255
 
         # Balanced power profile
         rzr write power ac 0
@@ -45,7 +49,7 @@ case "$1" in
     ;;
     gaming | 1)
         # Red keyboard
-        rzr standard-effect static 255 0 10
+        rzr effect static 255 0 10
 
         # Brighten the keys
         rzr write brightness ac 20
@@ -60,7 +64,7 @@ case "$1" in
     ;;
     cpu | 2)
         # CPU Focus - blueish like intel
-        rzr standard-effect static 20 70 255
+        rzr effect static 20 70 255
 
         # Brighten the keys
         rzr write brightness ac 20
@@ -75,7 +79,7 @@ case "$1" in
      ;;
     gpu | 2)
         # GPU Focus - greenish nvidia color
-        rzr standard-effect static 20 255 10
+        rzr effect static 20 255 10
 
         # Brighten the keys
         rzr write brightness ac 20

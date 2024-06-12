@@ -1,5 +1,0 @@
-[global]
-warn_timeout = "3m"
-
-[whitelist]
-prefix = [ "/home/seb/Projekte", "/home/seb/Projects" ]
