@@ -4,6 +4,7 @@
 
 echo Starting "$@"
 
+# If tyhe GL vendor is NVIDIA, the system runs on the NVIDIA already. No offloading needed.
 if glxinfo -B | grep -q NVIDIA; then
     export __NV_PRIME_RENDER_OFFLOAD=0
     echo game-run: NVIDIA Mode. No offloading.
@@ -18,20 +19,26 @@ else
     echo game-run: PRIME Mode. Using offloading.
 fi
 
-# VBlank off by default
+# VBlank off by default - on high refresh rate monitors,
+# this is fine and reduces latency dramatically.
 echo game-run: VBlank off
 export vblank_mode=0
 export __GL_SYNC_TO_VBLANK=0
 
-# NVAPI
+# NVAPI to support raytracing, dlss, ...
 echo game-run: NVAPI on
 export PROTON_ENABLE_NVAPI=1
 
+# Switch power modes
 echo game-run: razer game mode
 razer gaming
 
+# Use gamemode
 echo game-run: gamemode on
 gamemoderun "$@"
 
+# Reset after running:
+
+# Power modes
 echo game-run: razer balance mode
 razer balance
