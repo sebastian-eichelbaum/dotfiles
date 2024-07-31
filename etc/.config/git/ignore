@@ -70,6 +70,9 @@ __pycache__
 # Devbox virtual envs
 .devbox
 
+# Direnv
+.direnv
+
 # OpenOffice Locks
 .~lock.*
 
