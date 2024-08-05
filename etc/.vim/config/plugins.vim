@@ -2,7 +2,6 @@
 " Programmierzeugs
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
 " Doxygen Kommentare aus der Signatur erzeugen.
 " Plug 'vim-scripts/DoxygenToolkit.vim'
 " Modified version using custom styles

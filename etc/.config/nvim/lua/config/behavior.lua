@@ -65,6 +65,10 @@ vim.opt.list = true
 -- Indent and automatic formatting
 vim.opt.smartindent = true
 --vim.opt.cindent = true
+
+--- Formatoptions: default tcqj
+-- Be aware that plugins/ftplugins can override these
+
 -- Automatically wrap lines at textwidth
 vim.opt.formatoptions:append "t"
 -- Ensure comment-continuation
@@ -72,7 +76,6 @@ vim.opt.formatoptions:append "r"
 vim.opt.formatoptions:append "o" -- also for new lines via "o"
 -- Continuation for numbered lists.
 vim.opt.formatoptions:append "n"
-
 
 --- Search
 -- In searches, match ignoring the case by default

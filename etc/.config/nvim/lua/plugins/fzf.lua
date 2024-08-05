@@ -6,11 +6,14 @@ return {
     'junegunn/fzf.vim',
     dependencies = { 'junegunn/fzf' },
 
-    config = function()
+    lazy = true,
+    event = "VeryLazy",
+
+    init = function()
         vim.cmd([[
 
             " Move FZF down
-            let g:fzf_layout = { 'down': '~50%' }
+            let g:fzf_layout = { 'down': '~40%' }
 
             " fzf.vim specific settings go in here
             let g:fzf_vim = {}

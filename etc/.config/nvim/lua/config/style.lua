@@ -9,6 +9,8 @@
 
 -- Colorscheme
 vim.cmd [[colorscheme FetzDark]]
+-- Should be on by default in NeoVim - use GUI colors in the terminal
+vim.opt.termguicolors = true
 
 -- Line numbering
 vim.opt.number = true
@@ -18,6 +20,9 @@ vim.opt.relativenumber = false
 
 -- A line for all those signs (modified, errors, ...)
 vim.opt.signcolumn = "yes"
+
+-- Have a column at the current textwidth. This automatically tracks the textwidth option.
+vim.opt.colorcolumn = "+0"
 
 -- Have a distinct highlight for the cursor's line
 vim.opt.cursorline = true
@@ -29,3 +34,5 @@ vim.opt.showmode = false
 vim.opt.title = true
 vim.opt.titlestring = "[%n] %<%t %m%r"
 
+-- Ensure a default textwidth.
+vim.opt.textwidth = 120

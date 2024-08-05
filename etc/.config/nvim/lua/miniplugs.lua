@@ -43,20 +43,6 @@ vim.cmd([[
     endfunction
 ]])
 
--------------------------------------------------------------------------------
--- Short highlight of n/N matches when jumping through
-vim.cmd([[
-    function! HLNext (blinktime)
-        let [bufnum, lnum, col, off] = getpos('.')
-        let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
-        let target_pat = '\c\%#\%('.@/.'\)'
-        let ring = matchadd('SearchCurrent', target_pat, 101)
-        redraw
-        exec 'sleep ' . float2nr(a:blinktime * 500) . 'm'
-        call matchdelete(ring)
-        redraw
-    endfunction
-]])
 
 -------------------------------------------------------------------------------
 -- Switch de/en/none spelllang
@@ -79,12 +65,6 @@ vim.cmd([[
             echo "toogle spell" &spelllang
         endif
     endfunction
-]])
-
--------------------------------------------------------------------------------
--- Jump to the last cursor position when opening a file
-vim.cmd([[
-    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 ]])
 
 -------------------------------------------------------------------------------
@@ -123,19 +103,6 @@ vim.cmd([[
             \   let b:old_changedtick = b:changedtick | diffupdate |
             \ endif
     augroup END
-]])
-
--------------------------------------------------------------------------------
--- Some text width magic.
--- TODO: still needed?
-vim.cmd([[
-    func! UpdateTextwidth(width)
-        let &l:textwidth=a:width
-        let tooLargeColumn=a:width+1
-        let &l:colorcolumn=tooLargeColumn
-    endfunc
-
-    au BufReadPost * :call UpdateTextwidth(120)
 ]])
 
 -------------------------------------------------------------------------------

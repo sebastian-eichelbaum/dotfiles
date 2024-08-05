@@ -142,3 +142,8 @@ binarize
 struct
 binarized
 AbortButton/!
+init
+config
+backend
+VUE
+neovim

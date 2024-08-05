@@ -118,7 +118,7 @@ let s:palette.primaryVariant           = ['#005f87', 24]
 " the most important things.
 let s:palette.secondary                = ['#85b038', 107]
 let s:palette.secondaryBG              = ['#303329', 236]
-" The variant of secondary is used to dostinguish strings
+" The variant of secondary is used to distinguish strings
 let s:palette.secondaryVariant         = ['#a2bf6d', 143]
 
 " Some color for some ui elements and stuff without a particular meaning
@@ -238,9 +238,9 @@ call s:hi("VisualNOS",                 s:none,                       s:palette.s
 
 call s:hi("IncSearch",                 s:palette.highlight,          s:none,                       [s:attrs.b])
 call s:hi("Search",                    s:palette.highlight,          s:none,                       [s:attrs.b])
-" A custom plugin uses this to highlight the current search result when moving
-" through results with n/N
-call s:hi("SearchCurrent",             s:palette.highlight,          s:none,                       [s:attrs.inv])
+" The search result at the cursor
+call s:hi("CurSearch",                 s:palette.highlight,          s:none,                       [s:attrs.inv])
+
 call s:hi("MatchParen",                s:palette.highlight,          s:none,                       [s:attrs.inv])
 
 "}}}
@@ -272,9 +272,20 @@ call s:hi("Warning",                   s:palette.warn,               s:none,    
 call s:hi("Hint",                      s:palette.hint,               s:none,                       [s:attrs.b])
 call s:hi("Info",                      s:palette.info,               s:none,                       [s:attrs.b])
 
-" The bar when splitting vertically (:vertical sb). The Special color is the
-" color of the symbol in the middle of the bar.
-call s:hi("VertSplit",                 s:palette.bgL3,               s:palette.bgL2,               [],                           s:palette.bgL3)
+"}}}
+"
+"{{{ GUI Elements - Windows, Floats and Splits
+
+" The bar when splitting vertically (:vsplit). 
+call s:hi("VertSplit",                 s:palette.bgL3,               s:none,                       [])
+" Separators between window splits.
+hi! link WinSeparator  VertSplit
+" Floating window border
+hi! link FloatBorder  VertSplit
+"FloatTitle
+"FloatFooter
+
+"}}}
 
 "{{{ Side column content
 
@@ -586,9 +597,17 @@ hi! link CocSymbolNamespace             WTF
 
 "{{{ Signify
 
-call s:hi("SignifySignAdd",            s:palette.secondary,          s:palette.sideBG,             [s:attrs.b])
-call s:hi("SignifySignChange",         s:palette.unobtrusive,        s:palette.sideBG,             [s:attrs.b])
-call s:hi("SignifySignDelete",         s:palette.critical,           s:palette.sideBG,             [s:attrs.b])
+call s:hi("SignifySignAdd",            s:palette.secondary,          s:palette.sideBG,             [])
+call s:hi("SignifySignChange",         s:palette.unobtrusive,        s:palette.sideBG,             [])
+call s:hi("SignifySignDelete",         s:palette.critical,           s:palette.sideBG,             [])
 hi link SignifySignDeleteFirstLine     SignifySignDelete
+
+"}}}
+
+
+"{{{ indent-blankline.nvim and others to denote vertical indentation levels and scopes
+
+call s:hi("ScopeLine",                 s:palette.bgL2,               s:none,                       [])
+call s:hi("IndentLine",                s:palette.bgL1,               s:none,                       [])
 
 "}}}

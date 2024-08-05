@@ -1,7 +1,10 @@
 return {
-{
     'mhinz/vim-startify',
-    config = function ()
+
+    -- Required at startup
+    lazy = false,
+
+    init = function ()
         vim.cmd([[
             " Do not change dir on file selection. vim-rooter is doing it already
             let g:startify_change_to_dir = 0
@@ -47,6 +50,4 @@ return {
         ]])
 
     end
-}
-
 }

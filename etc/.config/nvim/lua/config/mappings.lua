@@ -17,6 +17,14 @@ vim.opt.timeoutlen=1000
 vim.opt.ttimeoutlen=10
 
 -------------------------------------------------------------------------------
+-- Annoyances
+--
+
+-- Quite often I hit q before ":" - although I want ":q" - this opens the
+-- command history window. This eliminates that. Open History via Ctrl-f
+keymap("n", "q:", "<nop>")
+
+-------------------------------------------------------------------------------
 -- Movement
 --
 
@@ -44,13 +52,9 @@ keymap("n", "<leader>Q", ":qa<CR>", opts)
 -- Search and highlight
 --
 
--- short highlight when jumping through search matches
-keymap("n", "n", "n:call HLNext(0.25)<CR>", opts)
-keymap("n", "N", "N:call HLNext(0.25)<CR>", opts)
-
 -- Like */# but directly jump to the next result
-keymap("n", "*", "*``", opts)
-keymap("n", "#", "#``", opts)
+--keymap("n", "*", "*``", opts)
+--keymap("n", "#", "#``", opts)
 
 -- Close match highlights
 keymap("n", "<leader><ESC>", ":nohlsearch<CR>", opts)
