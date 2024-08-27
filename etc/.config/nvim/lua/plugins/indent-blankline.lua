@@ -4,7 +4,7 @@ return {
     main = "ibl",
 
     lazy = true,
-    event = { 'BufReadPost' },
+    event = { "BufReadPost", "BufNewFile" },
 
     opts = {
         -- Indent lines
@@ -31,10 +31,10 @@ return {
 
         -- Alternating highlight of the indent-level background
         -- whitespace = {
-        --     enabled = false,
-        --     -- Alternate these hightlights
-        --     highlight = { "CursorColumn", "Whitespace" },
-        --     remove_blankline_trail = false,
+        --      -- Alternate these highlights
+        --      highlight = { "Normal", "CursorLine" },
+        --      -- Required.
+        --      remove_blankline_trail = true,
         -- },
     },
 

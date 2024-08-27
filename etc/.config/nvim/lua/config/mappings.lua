@@ -1,20 +1,4 @@
--- Common options for each map
-local opts = { noremap = true, silent = true }
-
--- Shorten function name
-local keymap = vim.keymap.set
-
--------------------------------------------------------------------------------
--- Base Setup
---
-
--- The leader key is mapped to ",". It is the prefix for a lot of custom commands
-vim.g.mapleader = ","
-
--- Timeout for key combinations
-vim.opt.timeoutlen=1000
--- Timeout for terminal keycodes. This influences ESC for example.
-vim.opt.ttimeoutlen=10
+local map = require("util.keymap")
 
 -------------------------------------------------------------------------------
 -- Annoyances
@@ -22,7 +6,7 @@ vim.opt.ttimeoutlen=10
 
 -- Quite often I hit q before ":" - although I want ":q" - this opens the
 -- command history window. This eliminates that. Open History via Ctrl-f
-keymap("n", "q:", "<nop>")
+map.n( "q:", "<nop>")
 
 -------------------------------------------------------------------------------
 -- Movement
@@ -30,35 +14,30 @@ keymap("n", "q:", "<nop>")
 
 -- Modern Home: jump to the first non-whitespace character in a line or to its
 -- beginning.
-keymap("n", "<Home>", ":call ExtendedHome()<CR>", opts)
-keymap("i", "<Home>", "<C-O>:call ExtendedHome()<CR>", opts)
-keymap("v", "<Home>", "<C-O>:call ExtendedHome()<CR>", opts)
+map.n("<Home>", ":call ExtendedHome()<CR>")
+map.i("<Home>", "<C-O>:call ExtendedHome()<CR>")
+-- map.v("<Home>", "<C-O>:call ExtendedHome()<CR>") -- Not working?
 
 -------------------------------------------------------------------------------
 -- Buffers
 --
 
 -- Switch buffers via leader-tab
-keymap("n", "<leader><s-tab>", "<ESC>:bprevious!<CR>", opts)
-keymap("n", "<leader><tab>", "<ESC>:bnext!<CR>", opts)
+map.n("<leader><s-tab>", "<ESC>:bprevious!<CR>", { desc = "Prev buffer", icon = "󰓩" })
+map.n("<leader><tab>", "<ESC>:bnext!<CR>", { desc = "Next buffer", icon = "󰓩" } )
 
 -- Fast write and close
-keymap("n", "<leader>w", ":update<CR>", opts)
-keymap("n", "<leader>q", ":call QuitIfLastBuffer()<CR>", opts)
-keymap("n", "<leader>Q", ":qa<CR>", opts)
+map.n("<leader>w", ":update<CR>", { desc = "Write file", icon = "󰆓" })
+map.n("<leader>q", ":call QuitIfLastBuffer()<CR>", { desc = "Quit", icon = "󰈆" })
+map.n("<leader>Q", ":qa<CR>", { desc = "Quit all", icon ="󰈆" })
 
 
 -------------------------------------------------------------------------------
 -- Search and highlight
 --
 
--- Like */# but directly jump to the next result
---keymap("n", "*", "*``", opts)
---keymap("n", "#", "#``", opts)
-
 -- Close match highlights
-keymap("n", "<leader><ESC>", ":nohlsearch<CR>", opts)
-
+map.n("<leader><ESC>", ":nohlsearch<CR>", { desc = "Clear match highlights", icon = "" })
 
 -------------------------------------------------------------------------------
 -- Utility
@@ -67,11 +46,77 @@ keymap("n", "<leader><ESC>", ":nohlsearch<CR>", opts)
 -- Using DEL to delete lines in normal mode should not put the deleted content
 -- into the PRIMARY/SECONDARY clipboard. Avoids a lot of clip entries when using
 -- DEL.
-keymap("n", "<Del>", '"0x', opts)
+map.n("<Del>", '"0x')
 
 -- Allow pasting into the command prompt (must not be silent)
-keymap("c", "<c-v>", '<c-r>+', { noremap = true, silent = false })
+map.c("<c-v>", '<c-r>+', { silent = false })
 
 -- Switch spell languages
-keymap("n", "<leader>s", ":call ToggleSpell()<CR>", opts)
+map.n("<leader>s", ":call ToggleSpell()<CR>", { desc = "Switch spell lang", icon = "" })
 
+
+-- {{{ Utility functions used in these mappings
+
+-------------------------------------------------------------------------------
+-- Close the current buffer and quit VIM if the last buffer is closed.
+vim.cmd([[
+    function QuitIfLastBuffer()
+        let cnt = 0
+        for nr in range(1,bufnr("$"))
+             if buflisted(nr) " && ! empty(bufname(nr))
+                 let cnt += 1
+             endif
+        endfor
+        if &mod
+            echohl ErrorMsg
+            echo 'Unsaved Changes.'
+            echohl NONE
+            return
+        endif
+
+        if cnt == 1
+            :q
+        else
+            :bd
+        endif
+    endfunction
+]])
+
+
+-------------------------------------------------------------------------------
+-- Jump to the first non-whitespace character in a line, or to the beginning
+-- of a line
+vim.cmd([[
+    function ExtendedHome()
+        let column = col('.')
+        normal! ^
+        if column == col('.')
+            normal! 0
+        endif
+    endfunction
+]])
+
+-------------------------------------------------------------------------------
+-- Switch de/en/none spelllang
+vim.cmd([[
+    function! ToggleSpell()
+        if &spell
+            if &spelllang == "de"
+                set spelllang=de,en
+                echo "toggle spell" &spelllang
+            elseif &spelllang == "de,en"
+                set spelllang=en
+                echo "toggle spell" &spelllang
+            else
+                set spell!
+                echo "toggle spell off"
+            endif
+        else
+            set spelllang=de
+            set spell!
+            echo "toogle spell" &spelllang
+        endif
+    endfunction
+]])
+
+-- }}}

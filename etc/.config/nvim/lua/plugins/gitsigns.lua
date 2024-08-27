@@ -15,6 +15,13 @@ local function makeSigns()
     }
 end
 
+vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "vcsSignAdd" })
+vim.api.nvim_set_hl(0, "GitSignsChange", { link = "vcsSignChange" })
+vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "vcsSignDelete" })
+vim.api.nvim_set_hl(0, "GitSignsUntracked", { link = "vcsSignAdd" })
+-- Also allows to modify staged versions, virtual lines, ...
+-- Staged versions seem to be derived automatically from the non-staged versions.
+
 local gitsigns = {
     "lewis6991/gitsigns.nvim",
 

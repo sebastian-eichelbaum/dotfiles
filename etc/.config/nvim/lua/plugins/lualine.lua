@@ -2,42 +2,36 @@
 -- Provides an airline-like statusbar
 --
 
-local function getColor(group, attr)
-    local matched = vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID(group)), attr)
-    if matched == nil then
-        return "#ff0000"
-    end
-    return matched
-end
+local hlUtils = require('util.highlight')
 
 local themeAdapter =
 {
     normal = {
-        a = { fg = "#ffffff", bg = getColor("FetzDarkPrimary", "bg#"), gui = "bold" },
-        b = { fg = getColor("StatusLine", "fg#"), bg = getColor("StatusLine", "bg#") },
-        c = { fg = getColor("StatusLineNC", "fg#"), bg = getColor("StatusLineNC", "bg#") },
+        a = { fg = "#ffffff", bg = hlUtils.bg("FetzDarkPrimary"), gui = "bold" },
+        b = { fg = hlUtils.fg("StatusLine"), bg = hlUtils.bg("StatusLine") },
+        c = { fg = hlUtils.fg("StatusLineNC"), bg = hlUtils.bg("StatusLineNC") },
     },
 
     insert = {
-        a = { fg = getColor("Visual", "fg#"), bg = getColor("Visual", "bg#"), gui = "bold" },
+        a = { fg = hlUtils.fg("Visual"), bg = hlUtils.bg("Visual"), gui = "bold" },
     },
 
     replace = {
-        a = { fg = getColor("Visual", "fg#"), bg = getColor("Visual", "bg#"), gui = "bold" },
+        a = { fg = hlUtils.fg("Visual"), bg = hlUtils.bg("Visual"), gui = "bold" },
     },
 
     visual = {
-        a = { fg = getColor("Visual", "fg#"), bg = getColor("Visual", "bg#"), gui = "bold" },
+        a = { fg = hlUtils.fg("Visual"), bg = hlUtils.bg("Visual"), gui = "bold" },
     },
 
     command = {
-        a = { fg = getColor("Normal", "bg#"), bg = getColor("Search", "fg#"), gui = "bold" },
+        a = { fg = hlUtils.bg("Normal"), bg = hlUtils.fg("Search"), gui = "bold" },
     },
 
     inactive = {
-        a = { fg = getColor("StatusLineNC", "fg#"), bg = getColor("StatusLineNC", "bg#") },
-        b = { fg = getColor("StatusLineNC", "fg#"), bg = getColor("StatusLineNC", "bg#") },
-        c = { fg = getColor("StatusLineNC", "fg#"), bg = getColor("StatusLineNC", "bg#") },
+        a = { fg = hlUtils.fg("StatusLineNC"), bg = hlUtils.bg("StatusLineNC") },
+        b = { fg = hlUtils.fg("StatusLineNC"), bg = hlUtils.bg("StatusLineNC") },
+        c = { fg = hlUtils.fg("StatusLineNC"), bg = hlUtils.bg("StatusLineNC") },
     },
 }
 
@@ -133,6 +127,7 @@ return {
                     icon_only = false, -- Display only an icon for filetype
                     icon = { align = 'left' }, -- Display filetype icon on the right hand side
                 },
+                -- "vim.lsp.status()"
             },
 
             lualine_y = {

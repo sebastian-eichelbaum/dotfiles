@@ -74,6 +74,7 @@ let s:attrs = {
       \ 'u': 'underline',
       \ 'c': 'undercurl',
       \ 'inv': 'inverse',
+      \ 's': 'strikethrough',
       \}
 "}}}
 
@@ -84,11 +85,11 @@ let s:attrs = {
 " the cursor. Defined in miniplugs.vim
 
 "{{{ Color Palette
-let s:palette                          = {}
+let s:palette                          = g:fetzDark_Palette
 
 "{{{ FG and BG and some shades
 
-let s:palette.fg                       = ['#e4e4e4', 254]
+"let s:palette.fg                       = ['#e4e4e4', 254]
 let s:palette.fgD1                     = ['#bcbcbc', 250]
 let s:palette.fgD2                     = ['#8a8a8a', 245]
 let s:palette.fgD3                     = ['#626262', 241]
@@ -97,22 +98,24 @@ let s:palette.fgD4                     = ['#555557', 239]
 let s:palette.bgL3                     = ['#585858', 240]
 let s:palette.bgL2                     = ['#363637', 237]
 let s:palette.bgL1                     = ['#262626', 235]
-let s:palette.bg                       = ['#1b1b1c', 234]
+"let s:palette.bg                       = ['#1b1b1c', 234]
 let s:palette.bgD1                     = ['#19191a', 233]
+let s:palette.bgD2                     = ['#101011', 231]
 
 "}}}
 
 "{{{ Core color scheme
 
 " A eye-pain inducing color used to flag unset or unknown highlights
-let s:palette.wtf                      = ['#ff00ff', 201]
+"let s:palette.wtf                      = ['#ff00ff', 201]
+
 
 " A primary color used for statements, keywords and other, important,
 " structural elements.
-let s:palette.primary                  = ['#4a88cc', 68]
-let s:palette.primaryBG                = ['#27323e', 236]
+"let s:palette.primary                  = ['#4a88cc', 68]
+"let s:palette.primaryBG                = ['#27323e', 236]
 " An primary variant for UI elements - bit more subtle as BG
-let s:palette.primaryVariant           = ['#005f87', 24]
+"let s:palette.primaryVariant           = ['#005f87', 24]
 
 " A secondary color is used to denote values and things that are not
 " the most important things.
@@ -176,10 +179,11 @@ let s:palette.selectionFG              = s:palette.fg
 let s:palette.selectionBG              = s:palette.bgL3
 
 " PMenu and Wildcard - ever so slightly blue-ish grey
+let s:palette.popupBGL2                = ['#88888a', 240]
 let s:palette.popupBGL1                = ['#555558', 240]
-let s:palette.popupBG                  = ['#333337', 237]
-let s:palette.popupBGD1                = ['#2a2a2e', 236]
-let s:palette.popupBGD2                = ['#222226', 235]
+let s:palette.popupBG                  = ['#333336', 237]
+let s:palette.popupBGD1                = ['#232325', 236]
+let s:palette.popupBGD2                = ['#141418', 235]
 let s:palette.popupFG                  = ['#bbbbbb', 250]
 
 "}}}
@@ -196,7 +200,6 @@ call s:hi("FetzDarkAirlineWarn",       s:palette.warnBG,             s:palette.w
 call s:hi("WTF",                       s:palette.fg,                 s:palette.wtf)
 
 
-
 " These are the styles that describe the editor and text-content itself
 " without any code syntax elements.
 
@@ -207,7 +210,8 @@ call s:hi("Normal",                    s:palette.fg,                 s:palette.b
 call s:hi("NonText",                   s:palette.fgD4,               s:palette.bg,                 [s:attrs.b])
 
 " Unprintable Symbols - tabs and stuff like that. Refer to listchars, the
-" highlight group 'Whitespace' might be interesting here.
+" NOTE: Some plugins use whitespace (i.e. indent line plugins) to color the indent areas.
+call s:hi("Whitespace",                s:none,                       s:none,                       [s:attrs.b])
 call s:hi("SpecialKey",                s:none,                       s:none,                       [s:attrs.b])
 hi! link SpecialChar                   SpecialKey
 hi! link Special                       SpecialKey
@@ -274,18 +278,58 @@ call s:hi("Info",                      s:palette.info,               s:none,    
 
 "}}}
 "
-"{{{ GUI Elements - Windows, Floats and Splits
+"{{{ GUI Elements - Windows, Floats, Popups
 
-" The bar when splitting vertically (:vsplit). 
+" The bar when splitting vertically (:vsplit).
 call s:hi("VertSplit",                 s:palette.bgL3,               s:none,                       [])
 " Separators between window splits.
 hi! link WinSeparator  VertSplit
+
+" {{{ Floats:
+
 " Floating window border
-hi! link FloatBorder  VertSplit
+hi! link FloatBorder VertSplit
+" The background and foreground of floats. I.e. the whichkey float, lazy, mason, ...
+" hi! link NormalFloat PMenu
+call s:hi("NormalFloat",               s:palette.fg,                 s:palette.bgD2)
 "FloatTitle
 "FloatFooter
 
 "}}}
+
+"{{{ Popup Menus
+
+" NOTE: depending on the completion menu, this might be used automatically, or not. If not, you might want to
+" link the highlights of the plugin to these
+
+" Background and foreground
+call s:hi("Pmenu",                     s:palette.popupFG,            s:palette.popupBG)
+" Selected line
+call s:hi("PmenuSel",                  s:palette.selectionFG,        s:palette.selectionBG,        [s:attrs.b])
+
+" The kind text/icon in common complete menus
+call s:hi("PmenuKind",                 s:palette.secondary,          s:palette.popupBGD1,          [s:attrs.b])
+call s:hi("PmenuKindSel",              s:palette.secondary,          s:palette.selectionBG,        [s:attrs.b])
+
+" The kind text/icon in common complete menus
+call s:hi("PmenuDeprecated",           s:palette.fgD2,            s:palette.popupBG,            [s:attrs.s])
+
+" The extra text usually showing "[LSP]", .. in common complete menus
+call s:hi("PmenuExtra",                s:palette.fgD3,               s:none,                       [])
+call s:hi("PmenuExtraSel",             s:palette.fgD3,               s:palette.selectionBG,        [])
+
+" Scrollbar Thumb
+call s:hi("PmenuThumb",                s:none,                       s:palette.popupBGL2)
+" Scrollbar BG
+call s:hi("PmenuSbar",                 s:none,                       s:palette.popupBGD2)
+
+
+
+" Still used?
+call s:hi("WildMenu",                  s:palette.wtf,                s:palette.wtf,                [s:attrs.b])
+
+"}}}
+
 
 "{{{ Side column content
 
@@ -319,27 +363,6 @@ call s:hi("MoreMsg",                   s:none,                       s:none,    
 call s:hi("Title",                     s:palette.info,               s:none,                       [s:attrs.b])
 " Whenever a question or prompt is shown on the command line
 call s:hi("Question",                  s:none,                       s:none,                       [s:attrs.b])
-
-"}}}
-
-"{{{ Tabbing
-
-"hi TabLineSel -- no settings --
-"hi TabLineFill -- no settings --
-"hi TabLine -- no settings --
-
-"}}}
-
-"{{{ Popup Menus
-
-call s:hi("PMenu",                     s:palette.popupFG,            s:palette.popupBG)
-" Scrollbar Thumb
-call s:hi("PMenuThumb",                s:none,                       s:palette.popupBGL1)
-" Scrollbar BG
-call s:hi("PMenuSbar",                 s:none,                       s:palette.popupBGD2)
-" Selected
-call s:hi("PMenuSel",                  s:palette.selectionFG,        s:palette.selectionBG,        [s:attrs.b])
-call s:hi("WildMenu",                  s:palette.wtf,                s:palette.wtf,                [s:attrs.b])
 
 "}}}
 
@@ -407,87 +430,87 @@ call s:hi("PreCondit",                 s:palette.fg,                 s:palette.b
 
 "{{{ CPP Specific
 
-hi! link cppAccess                     cppStatement
-hi! link cppCast                       cppStatement
-hi! link cppExceptions                 Exception
-hi! link cppOperator                   Operator
-hi! link cppStatement                  Statement
-hi! link cppType                       Type
-hi! link cppStorageClass               StorageClass
-hi! link cppStructure                  Structure
-hi! link cppBoolean                    Boolean
-hi! link cppConstant                   Constant
-hi! link cppRawDelimiter               Delimiter
-hi! link cppRawString                  String
-
-hi! link cppSTLfunction                Function
-hi! link cppSTLfunctional              Typedef
-hi! link cppSTLconstant                Constant
-hi! link cppSTLnamespace               Keyword
-hi! link cppSTLtype                    Typedef
-hi! link cppSTLexception               Exception
-hi! link cppSTLiterator                Typedef
-hi! link cppSTLiterator_tag            Typedef
-hi! link cppSTLenum                    Typedef
-hi! link cppSTLios                     Function
-hi! link cppSTLcast                    Statement
+"hi! link cppAccess                     cppStatement
+"hi! link cppCast                       cppStatement
+"hi! link cppExceptions                 Exception
+"hi! link cppOperator                   Operator
+"hi! link cppStatement                  Statement
+"hi! link cppType                       Type
+"hi! link cppStorageClass               StorageClass
+"hi! link cppStructure                  Structure
+"hi! link cppBoolean                    Boolean
+"hi! link cppConstant                   Constant
+"hi! link cppRawDelimiter               Delimiter
+"hi! link cppRawString                  String
+"
+"hi! link cppSTLfunction                Function
+"hi! link cppSTLfunctional              Typedef
+"hi! link cppSTLconstant                Constant
+"hi! link cppSTLnamespace               Keyword
+"hi! link cppSTLtype                    Typedef
+"hi! link cppSTLexception               Exception
+"hi! link cppSTLiterator                Typedef
+"hi! link cppSTLiterator_tag            Typedef
+"hi! link cppSTLenum                    Typedef
+"hi! link cppSTLios                     Function
+"hi! link cppSTLcast                    Statement
 
 "}}}
 
 "{{{ VIM Specific
 
-hi link vimOption                      Identifier
-hi link vimEnvvar                      Identifier
-
-hi link vimBufnrWarn                   WarningMsg
-hi link vimHiAttrib                    Number
-"vimCommentTitle
-hi link vimHLMod                       Number
+"hi link vimOption                      Identifier
+"hi link vimEnvvar                      Identifier
+"
+"hi link vimBufnrWarn                   WarningMsg
+"hi link vimHiAttrib                    Number
+""vimCommentTitle
+"hi link vimHLMod                       Number
 
 "}}}
 
 "{{{ Doxygen Specific
 
-call s:hi("doxyKeyword",               s:palette.fg,                 s:none,                       [s:attrs.b])
-call s:hi("doxyLink",                  s:palette.unobtrusiveVariant, s:none,                       [s:attrs.b,s:attrs.i])
-
-hi link doxyParam                      doxyKeyword
-hi link doxyCommentB                   SpecialComment
-hi link doxyParamName                  SpecialComment
-hi link doxyString                     doxyParamName
-hi link doxyComment                    Comment
-hi link doxyError                      Error
-
-hi link doxygenBody                    doxyComment
-" The @ sign to start a keyword.
-hi link doxygenSpecial                 doxyParam
-
-hi link doxygenParamName               doxyString
-hi link doxygenParam                   doxyParam
-
-hi link doxygenSpecialOnelineDesc      doxyComment
-hi link doxygenSpecialTypeOnelineDesc  doxyComment
-hi link doxygenSpecialMultilineDesc    doxyComment
-
-hi link doxygenStart                   doxyComment
-hi link doxygenComment                 doxyComment
-
-hi link doxygenPrev                    doxyComment
-hi link doxygenBriefL                  doxyComment
-hi link doxygenBriefLine               doxyCommentB
-hi link doxygenBrief                   doxyCommentB
-hi link doxygenBriefWord               doxyKeyword
-
-hi link doxygenSpecialHeading          doxyComment
-hi link doxygenContinueComment         doxyComment
-hi link doxygenLinkWord                doxyLink
-hi link doxygenRefWord                 doxyLink
-hi link doxygenBOther                  doxyComment
-hi link doxygenPageIdent               doxyComment
-hi link doxygenOther                   doxyParam
-
-hi link doxygenErrorComment            doxyError
-hi link doxygenLinkError               doxyError
+"call s:hi("doxyKeyword",               s:palette.fg,                 s:none,                       [s:attrs.b])
+"call s:hi("doxyLink",                  s:palette.unobtrusiveVariant, s:none,                       [s:attrs.b,s:attrs.i])
+"
+"hi link doxyParam                      doxyKeyword
+"hi link doxyCommentB                   SpecialComment
+"hi link doxyParamName                  SpecialComment
+"hi link doxyString                     doxyParamName
+"hi link doxyComment                    Comment
+"hi link doxyError                      Error
+"
+"hi link doxygenBody                    doxyComment
+"" The @ sign to start a keyword.
+"hi link doxygenSpecial                 doxyParam
+"
+"hi link doxygenParamName               doxyString
+"hi link doxygenParam                   doxyParam
+"
+"hi link doxygenSpecialOnelineDesc      doxyComment
+"hi link doxygenSpecialTypeOnelineDesc  doxyComment
+"hi link doxygenSpecialMultilineDesc    doxyComment
+"
+"hi link doxygenStart                   doxyComment
+"hi link doxygenComment                 doxyComment
+"
+"hi link doxygenPrev                    doxyComment
+"hi link doxygenBriefL                  doxyComment
+"hi link doxygenBriefLine               doxyCommentB
+"hi link doxygenBrief                   doxyCommentB
+"hi link doxygenBriefWord               doxyKeyword
+"
+"hi link doxygenSpecialHeading          doxyComment
+"hi link doxygenContinueComment         doxyComment
+"hi link doxygenLinkWord                doxyLink
+"hi link doxygenRefWord                 doxyLink
+"hi link doxygenBOther                  doxyComment
+"hi link doxygenPageIdent               doxyComment
+"hi link doxygenOther                   doxyParam
+"
+"hi link doxygenErrorComment            doxyError
+"hi link doxygenLinkError               doxyError
 "}}}
 
 "}}}
@@ -495,6 +518,7 @@ hi link doxygenLinkError               doxyError
 "{{{ Plugins
 
 "{{{ COC
+
 call s:hi("FDCocDiagnosticError",      s:palette.error,              s:palette.errorBG,            [s:attrs.b])
 call s:hi("FDCocDiagnosticWarning",    s:palette.warn,               s:palette.warnBG,             [s:attrs.b])
 call s:hi("FDCocDiagnosticInfo",       s:palette.info,               s:palette.infoBG,             [s:attrs.b])
@@ -518,14 +542,6 @@ call s:hi("DiagnosticUnderlineHint",   s:none,                       s:none,    
 
 " Show unsued vars in that color.
 call s:hi("CocUnusedHighlight",        s:palette.fgD2)
-
-
-" Use Pemnu Style for all types of floats? This affects text FG color only.
-"hi! link CocErrorFloat                 PMenu
-"hi! link CocWarningFloat               PMenu
-"hi! link CocHintFloat                  PMenu
-"hi! link CocInfoFloat                  PMenu
-
 
 " Style of the suggest popup:
 hi! link CocSearch                     Keyword
@@ -591,16 +607,15 @@ hi! link CocSymbolObject                WTF
 hi! link CocSymbolArray                 WTF
 hi! link CocSymbolColor                 WTF
 hi! link CocSymbolNamespace             WTF
-
+"
 
 "}}}
 
 "{{{ Signify
 
-call s:hi("SignifySignAdd",            s:palette.secondary,          s:palette.sideBG,             [])
-call s:hi("SignifySignChange",         s:palette.unobtrusive,        s:palette.sideBG,             [])
-call s:hi("SignifySignDelete",         s:palette.critical,           s:palette.sideBG,             [])
-hi link SignifySignDeleteFirstLine     SignifySignDelete
+call s:hi("vcsSignAdd",            s:palette.secondary,          s:palette.sideBG,             [])
+call s:hi("vcsSignChange",         s:palette.unobtrusive,        s:palette.sideBG,             [])
+call s:hi("vcsSignDelete",         s:palette.critical,           s:palette.sideBG,             [])
 
 "}}}
 
@@ -611,3 +626,5 @@ call s:hi("ScopeLine",                 s:palette.bgL2,               s:none,    
 call s:hi("IndentLine",                s:palette.bgL1,               s:none,                       [])
 
 "}}}
+
+

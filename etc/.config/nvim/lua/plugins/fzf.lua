@@ -22,13 +22,6 @@ return {
             " Less than 70 cols are available
             let g:fzf_vim.preview_window = ['right,50%,<70(hidden)']
 
-            " Files via leader-e
-            nmap <leader>e :Files<CR>
-
-            " Grep via leader-/ and leader-#
-            nmap <leader>/ :RG<CR>
-            nnoremap <leader># :RG <C-R><C-W><CR>
-
             " Mapping of ui elements to Highlights
             " - ref https://github.com/junegunn/fzf/blob/master/README-VIM.md
             let g:fzf_colors =
@@ -51,5 +44,10 @@ return {
 
 
         ]])
+
+        local map = require("util.keymap")
+        map.n("<leader>e", ":Files<CR>", { desc = "Edit file", icon = "󱇧" })
+        map.n("<leader>/", ":RG<CR>", { desc = "Search in files", icon = "󰱼" })
+        map.n("<leader>#", ":RG <C-R><C-W><CR>", { desc = "Search word in files", icon = "󰱼" })
     end,
 }

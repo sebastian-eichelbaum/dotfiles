@@ -17,11 +17,12 @@ return {
 
     dependencies = { 'nvim-tree/nvim-web-devicons' },
 
+    lazy = true,
     event = "VeryLazy",
 
     opts = {
         -- Wait until the popup is shown:
-        delay = 1000,
+        delay = 500,
 
         -- en- or disable some plugins.
         plugins = {

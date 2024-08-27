@@ -8,8 +8,8 @@ vim.cmd([[
 hi! link NeoTreeGitConflict     Error
 
 hi! link NeoTreeGitUntracked    Warning
-hi! link NeoTreeGitStaged       SignifySignAdd
-hi! link NeoTreeGitUnstaged     SignifySIgnAdd
+hi! link NeoTreeGitStaged       vcsSignAdd
+hi! link NeoTreeGitUnstaged     vcsSignAdd
 
 " hi! link NeoTreeDotfile  SignifySignChange
 " hi! link NeoTreeGitIgnored      Comment

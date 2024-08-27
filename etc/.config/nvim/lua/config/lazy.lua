@@ -6,12 +6,6 @@
 
 require("lazy").setup({
 
-    -- Dangerous: YOU have to define for each plugin when to load. Tedious.
-    -- For saving 50ms startup time?
-    defaults = {
-        -- lazy = true,
-    },
-
     spec = {
         -- import your plugins
         { import = "plugins" },
