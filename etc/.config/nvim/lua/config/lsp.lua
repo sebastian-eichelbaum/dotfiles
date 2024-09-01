@@ -1,33 +1,66 @@
-
--- Handle init - use this to setup clients after init.
-local function onInit()
-    --
-end
-
--- Setup the key bindings after an LSP client has been attached
-local function onAttach()
-    --
-end
-
-local function globalInit()
-end
+local map = require("util.keymap")
 
 return {
-    setup = function()
-        -- Setup all LSP servers
-
-        local lspconfig = require('lspconfig')
-
-        local defaultConfig = {
-            on_attach = onAttach,
-            on_init = onInit,
-        }
-
+    -- Setup the LSPs using lsp-config.nvim
+    setupLSP = function(lspconfig)
         -- C++:
-        lspconfig.clangd.setup(defaultConfig)
-        lspconfig.cmake.setup(defaultConfig)
+        lspconfig.clangd.setup({})
+        lspconfig.cmake.setup({})
 
-        -- JS/TS
-        lspconfig.tsserver.setup(defaultConfig)
-    end
+        -- The JS/TS/... Webdev world
+        lspconfig.tsserver.setup({})
+    end,
+
+    -- Setup the code formatters using: conform.nvim
+    setupConform = function(conform)
+        map.n("<leader>f", conform.format, { desc = "Format buffer", icon = "󰉼" })
+
+        return {
+            -- Tell conform which formatters to use
+            formatters_by_ft = {
+                -- C++ and related
+                cpp = { "clang-format" },
+                c = { "clang-format" },
+                cmake = { "cmake_format" },
+
+                -- The JS/TS/... Webdev world
+                javascript = { "prettier" },
+                typesript = { "prettier" },
+                html = { "prettier" },
+                css = { "prettier" },
+                scss = { "prettier" },
+                vue = { "prettier" },
+                json = { "prettier" },
+                jsonc = { "prettier" },
+                yaml = { "prettier" },
+                toml = { "prettier" },
+
+                -- For neovim and awesome ;-)
+                lua = { "stylua" },
+
+                -- Shell scripting, system stuff, ...
+                sh = { "beautysh" },
+                bash = { "beautysh" },
+                nix = { "nixfmt" },
+
+                -- Text
+                markdown = { "prettier" },
+            },
+
+            -- Configure some formatters explicitly
+            formatters = {
+                beautysh = {
+                    prepend_args = { "--indent-size", "4", "--force-function-style", "fnpar" },
+                },
+                stylua = {
+                    -- Ensure sane defaults and make stylua search stylua.toml files recursively up
+                    -- NOTE: --search-parent-directories is given by conform already
+                    prepend_args = { "--indent-type", "Spaces" },
+                },
+            },
+        }
+    end,
+
+    -- Setup Mason. This tool ensures the required LSP/formatters/linters/... are installed automatically
+    setupMason = function(mason) end,
 }
