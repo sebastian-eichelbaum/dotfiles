@@ -134,7 +134,7 @@ vim.opt.whichwrap:append "["
 vim.g.mapleader = ","
 
 -- Timeout for key combinations
-vim.opt.timeoutlen=1000
+vim.opt.timeoutlen=500
 -- Timeout for terminal keycodes. This influences ESC for example.
 vim.opt.ttimeoutlen=10
 
