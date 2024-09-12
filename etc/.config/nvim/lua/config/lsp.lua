@@ -25,7 +25,7 @@ vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
 return {
 
     -- A list of LSP servers to start and configure.
-    servers = { "clangd", "cmake", "tsserver" },
+    servers = { "clangd", "cmake", "ts_ls", "bashls", "lua_ls" },
 
     -- Called, once a LSP server is attached to a buffer. Use this to setup key bindings. The bufnr is given.
     mappings = function(bufnr)
@@ -49,7 +49,7 @@ return {
         map.buf.n(bufnr, "<leader>ck", vim.lsp.buf.hover, { desc = "Show hover info", icon = "" })
         map.buf.n(bufnr, "<leader>cs", vim.lsp.buf.signature_help, { desc = "Signature help", icon = "󰊕" })
 
-        -- map.n("<leader>car", vim.lsp.buf.rename, { desc = "Rename symbol", icon = "" })
+        map.n("<leader>c<F2>", vim.lsp.buf.rename, { desc = "Rename symbol", icon = "" })
         map.buf.n(bufnr, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions", icon = "󰁨" })
     end,
 

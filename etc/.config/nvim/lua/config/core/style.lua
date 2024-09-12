@@ -6,33 +6,8 @@
 
 -- These settings modify how NeoVim looks and styles certain elements of its TUI
 
--- Should be on by default in NeoVim - use GUI colors in the terminal
+-- Mandatory for many modern themes and some plugins
 vim.opt.termguicolors = true
-
-local color = require("util/highlight")
-
-vim.g["fetzDark_Palette"] = {
-    -- Start with a decision on what will be your BG and FG.
-    -- This defines the "mood" of the theme.
-    bg = {"#1b1b1d", 0},
-    fg = {'#e4e4e4', 0},
-
-    -- Used to distinguish unknown highlights
-    wtf = {'#ff00ff', 0},
-
-    -- Primary color. It is used to distinguish things of structural meaning in your code. For example, statements,
-    -- keywords and operators.
-    primary = {'#4a88cc', 0},
-    primaryVariant = {'#005f87', 0},
-
-
-    -- Secondary color. It
-    secondary = {'#85b038', 0},
-
-}
-
--- Colorscheme
-vim.cmd [[colorscheme FetzDark]]
 
 -- {{{ Columns:
 

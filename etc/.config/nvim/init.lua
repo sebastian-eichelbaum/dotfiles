@@ -6,6 +6,7 @@
 require("config.core.behavior")
 -- Defines the looks of NeoVim
 require("config.core.style")
+require("config.core.colorscheme").apply()
 
 ------------------------------------------------------------------------------
 -- Plugins
@@ -24,5 +25,3 @@ require("config.core.mappings")
 -- Diagnostics and LSP setup and key mappings
 require("config.diagnostics")
 require("config.lsp")
-
-

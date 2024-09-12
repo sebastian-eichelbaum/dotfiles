@@ -1,21 +1,26 @@
 local stringUtils = require("util.string")
 local hl = require("util.highlight")
 local map = require("util.keymap")
+local palette = require("config.core.colorscheme").palette
 
 return {
 
-    -- {{{ Util: restore_view
-    -- Stores and restores settings/folds/... of files
+    --------------------------------------------------------------------------------------------------------------------
+    -- Core Plugins.
+
+    -- {{{ Core/Util: restore_view - Stores and restores settings/folds/... of files
     {
         -- Automagically save/restore views
         "vim-scripts/restore_view.vim",
     },
     -- }}}
 
-    -- {{{ Util: vim-rooter
-    -- Find the project root
+    -- {{{ Core/Util: vim-rooter - Find the project root
     {
         "notjedi/nvim-rooter.lua",
+
+        -- Required immediately. Must not be lazily loaded.
+        lazy = false,
 
         opts = {
             -- With git submodules, .git exists as file in a submodule. To
@@ -29,8 +34,7 @@ return {
     },
     -- }}}
 
-    -- {{{ Util: fzf
-    -- Allows fuzzy finding files and search in files
+    -- {{{ Core/Util: fzf - Fuzzy finding files and search in files
     {
         "junegunn/fzf.vim",
         dependencies = { "junegunn/fzf" },
@@ -70,6 +74,10 @@ return {
                   "\ 'gutter':  ['bg', 'CursorLine'],
                   "\ 'header':  ['bg', 'Error']
                 \ }
+
+                " Hide the statusline
+                autocmd! FileType fzf set laststatus=0 noshowmode noruler
+                    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
             ]])
 
             map.n("<leader>e", ":Files<CR>", { desc = "Edit file", icon = "󱇧" })
@@ -79,58 +87,280 @@ return {
     },
     -- }}}
 
-    -- {{{ UI: nvim-web-devicons
-    -- Nice icon set used by several UI plugins
+    -- {{{ core/util: vim-startify - start page showing mru, git changes, ...
     {
-        "nvim-tree/nvim-web-devicons",
+        "mhinz/vim-startify",
 
-        lazy = true,
+        -- required at startup
+        lazy = false,
 
-        opts = {
-            -- globally enable different highlight colors per icon (default to true)
-            -- if set to false all icons will have the default icon's color
-            color_icons = false,
+        init = function()
+            vim.cmd([[
+            " do not change dir on file selection. vim-rooter is doing it already
+            let g:startify_change_to_dir = 0
+            let g:startify_change_to_vcs_root = 0
 
-            -- globally enable default icons (default to false)
-            -- will get overwritten by `get_icons` option
-            default = true,
+            " returns all modified files of the current git repo
+            " `2>/dev/null` makes the command fail quietly, so that when we are not
+            " in a git repo, the list will be empty
+            function! s:gitmodified()
+                let files = systemlist('git ls-files -m 2>/dev/null')
+                return map(files, "{'line': v:val, 'path': v:val}")
+            endfunction
 
-            -- globally enable "strict" selection of icons - icon will be looked up in
-            -- different tables, first by filename, and if not found by extension; this
-            -- prevents cases when file doesn't have any extension but still gets some icon
-            -- because its name happened to match some extension (default to false)
-            strict = true,
-        },
+            " same as above, but show untracked files, honouring .gitignore
+            function! s:gituntracked()
+                let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+                return map(files, "{'line': v:val, 'path': v:val}")
+            endfunction
+
+            function! s:gitlistcommits()
+                let commits = systemlist('git log --oneline 2>/dev/null | head -n10')
+                return map(commits, '{"line": v:val}')
+            endfunction
+
+            let g:startify_lists = [
+                    "\ { 'type': 'files',                        'header': ['   mru'] },
+                    \ { 'type': 'dir',                          'header': ['   mru '. getcwd()] },
+                    \ { 'type': 'sessions',                     'header': ['   sessions'] },
+                    \ { 'type': function('s:gitmodified'),      'header': ['   modified'] },
+                    \ { 'type': function('s:gituntracked'),     'header': ['   untracked'] },
+                    \ { 'type': function('s:gitlistcommits'),   'header': ['   commits'] },
+                    \ { 'type': 'commands',                     'header': ['   commands'] },
+                    \ ]
+
+            let g:startify_custom_header =[
+             \ '    _   _         __     ___           ',
+             \ '   | \ | | ___  __\ \   / (_)_ __ ___  ',
+             \ '   |  \| |/ _ \/ _ \ \ / /| | `_ ` _ \ ',
+             \ '   | |\  |  __/ (_) \ v / | | | | | | |',
+             \ '   |_| \_|\___|\___/ \_/  |_|_| |_| |_|',
+             \ '',
+             \]
+        ]])
+        end,
     },
-
     -- }}}
 
-    -- {{{ UI: lualine.nvim
-    -- Configurable status-line
+    -- {{{ Core/Util: which-key.nvim - Unobtrusively show key bindings while typing
+    {
+        "folke/which-key.nvim",
+
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+
+        lazy = true,
+        event = "VeryLazy",
+
+        opts = function()
+            -- Map the color groups of WhichKey. The defaults do not match my color-scheme nicely
+            vim.api.nvim_set_hl(0, "WhichKey", { link = "Operator" })
+            vim.api.nvim_set_hl(0, "WhichKeySeperator", { link = "Normal" })
+            vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "IncSearch" })
+            vim.api.nvim_set_hl(0, "WhichKeyDesc", { link = "Function" })
+            vim.api.nvim_set_hl(0, "WhichKeyIcon", { link = "Normal" })
+
+            return {
+                -- Wait until the popup is shown:
+                delay = 500,
+
+                -- en- or disable some plugins.
+                plugins = {
+                    -- shows a list of your marks on ' and `
+                    marks = true,
+                    -- shows your registers on " in NORMAL or <C-r> in INSERT mode
+                    registers = true,
+
+                    -- show spelling hints when pressing z=
+                    spelling = {
+                        enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
+                        suggestions = 20, -- how many suggestions should be shown in the list?
+                    },
+
+                    -- the presets plugin, adds help for a bunch of default keybindings in Neovim
+                    -- No actual key bindings are created
+                    presets = {
+                        operators = true, -- adds help for operators like d, y, ...
+                        motions = true, -- adds help for motions
+                        text_objects = true, -- help for text objects triggered after entering an operator
+                        windows = true, -- default bindings on <c-w>
+                        nav = true, -- misc bindings to work with windows
+                        z = true, -- bindings for folds, spelling and others prefixed with z
+                        g = true, -- bindings for prefixed with g
+                    },
+                },
+
+                win = {
+                    no_overlap = false,
+                    wo = {
+                        winblend = 10, -- value between 0-100 0 for fully opaque and 100 for fully transparent
+                    },
+                },
+
+                icons = {
+                    colors = false,
+                },
+
+                -- Override what triggers whichkey.
+                --triggers = {
+                --    { "<leader>", mode = { "n" } },
+                --}
+            }
+        end,
+    },
+    -- }}}
+
+    -- {{{ Core/Util: nvim-neo-tree - A file/buffer/git tree
+    {
+        "nvim-neo-tree/neo-tree.nvim",
+        branch = "v3.x",
+
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-tree/nvim-web-devicons",
+            "MunifTanjim/nui.nvim",
+        },
+
+        lazy = true,
+        event = { "VeryLazy" },
+
+        opts = function()
+            map.n("\\", ":Neotree toggle<CR>", { desc = "File Browser", icon = "" })
+
+            vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "Error" })
+            vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "Added" })
+            vim.api.nvim_set_hl(0, "NeoTreeGitStaged", { link = "Changed" })
+            vim.api.nvim_set_hl(0, "NeoTreeGitUnstaged", { link = "Changed" })
+            -- vim.api.nvim_set_hl(0, "NeoTreeDotfile", { link = "SignifySignChange" })
+            -- vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { link = "Comment" })
+
+            return {
+                -- Enables source (file/buffer/git) selection
+                source_selector = {
+                    winbar = true,
+                    statusline = false,
+                },
+
+                sources = {
+                    "filesystem",
+                    "buffers",
+                    "git_status",
+                    -- Experimental feature to show all LSP symbols as a tree.
+                    -- "document_symbols",
+                },
+
+                close_if_last_window = true,
+
+                -- They are quite annoying and clutter the tree.
+                enable_diagnostics = false,
+
+                -- Refer to the git page of the project. Nearly all styles and highlight groups can be modified.
+                default_component_configs = {
+                    container = {
+                        enable_character_fade = true,
+                    },
+                    indent = {
+                        with_expanders = true,
+                    },
+                    modified = {
+                        symbol = "",
+                        highlight = "Search",
+                    },
+                    name = {
+                        use_git_status_colors = false,
+                    },
+
+                    git_status = {
+                        symbols = {
+                            -- Change type
+                            added = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
+                            modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
+                            deleted = "", -- this can only be used in the git_status source
+                            renamed = "", -- this can only be used in the git_status source
+                            -- Status type - see nerd fonts box types
+                            untracked = "",
+                            ignored = "",
+                            unstaged = "",
+                            staged = "",
+                            conflict = "",
+                        },
+                    },
+                },
+
+                filesystem = {
+                    -- Make the netrw replacement full size
+                    hijack_netrw_behavior = "open_current",
+
+                    filtered_items = {
+                        visible = true, -- when true, they will just be displayed differently than normal items
+                        hide_dotfiles = true,
+                        hide_gitignored = true,
+                        hide_hidden = true, -- only works on Windows for hidden files/directories
+                        hide_by_name = {
+                            --"node_modules"
+                        },
+                        hide_by_pattern = { -- uses glob style patterns
+                            --"*.meta",
+                            --"*/src/*/tsconfig.json",
+                        },
+                        always_show = { -- remains visible even if other settings would normally hide it
+                            --".gitignored",
+                        },
+                        always_show_by_pattern = { -- uses glob style patterns
+                            --".env*",
+                        },
+                        never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
+                            --".DS_Store",
+                            --"thumbs.db"
+                        },
+                        never_show_by_pattern = { -- uses glob style patterns
+                            --".null-ls_*",
+                        },
+                    },
+
+                    follow_current_file = {
+                        enabled = true, -- Focus the file of the current buffer
+                        leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+                    },
+
+                    group_empty_dirs = true,
+                },
+            }
+        end,
+    },
+    -- }}}
+
+    -- {{{ Core/UI: lualine.nvim - Configurable status-line
     {
         "nvim-lualine/lualine.nvim",
+
+        lazy = true,
+        event = "VeryLazy",
+
         dependencies = { "nvim-tree/nvim-web-devicons" },
 
         opts = {
             options = {
+                -- Disable in some file-types
+                disabled_filetypes = { "neo-tree", "NVimTree", "qf", "fzf" },
+
                 icons_enabled = true,
                 theme = {
                     normal = {
-                        a = { fg = "#ffffff", bg = hl.bg("FetzDarkPrimary"), gui = "bold" },
+                        a = { fg = "#ffffff", bg = palette.structuralAlt, gui = "bold" },
                         b = { fg = hl.fg("StatusLine"), bg = hl.bg("StatusLine") },
                         c = { fg = hl.fg("StatusLineNC"), bg = hl.bg("StatusLineNC") },
                     },
 
                     insert = {
-                        a = { fg = hl.fg("Visual"), bg = hl.bg("Visual"), gui = "bold" },
+                        a = { fg = hl.fg("Visual"), bg = palette.bg.L5, gui = "bold" },
                     },
 
                     replace = {
-                        a = { fg = hl.fg("Visual"), bg = hl.bg("Visual"), gui = "bold" },
+                        a = { fg = hl.fg("Visual"), bg = palette.bg.L5, gui = "bold" },
                     },
 
                     visual = {
-                        a = { fg = hl.fg("Visual"), bg = hl.bg("Visual"), gui = "bold" },
+                        a = { fg = hl.fg("Visual"), bg = palette.bg.L5, gui = "bold" },
                     },
 
                     command = {
@@ -291,233 +521,7 @@ return {
     },
     -- }}}
 
-    -- {{{ UI: which-key.nvim
-    -- Handy tool to list key bindings as float above the statusbar
-    {
-        "folke/which-key.nvim",
-
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-
-        lazy = true,
-        event = "VeryLazy",
-
-        opts = function()
-            -- Map the color groups of WhichKey. The defaults do not match my color-scheme nicely
-            vim.api.nvim_set_hl(0, "WhichKey", { link = "Operator" })
-            vim.api.nvim_set_hl(0, "WhichKeySeperator", { link = "Normal" })
-            vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "IncSearch" })
-            vim.api.nvim_set_hl(0, "WhichKeyDesc", { link = "Function" })
-            vim.api.nvim_set_hl(0, "WhichKeyIcon", { link = "Normal" })
-
-            return {
-                -- Wait until the popup is shown:
-                delay = 500,
-
-                -- en- or disable some plugins.
-                plugins = {
-                    -- shows a list of your marks on ' and `
-                    marks = true,
-                    -- shows your registers on " in NORMAL or <C-r> in INSERT mode
-                    registers = true,
-
-                    -- show spelling hints when pressing z=
-                    spelling = {
-                        enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
-                        suggestions = 20, -- how many suggestions should be shown in the list?
-                    },
-
-                    -- the presets plugin, adds help for a bunch of default keybindings in Neovim
-                    -- No actual key bindings are created
-                    presets = {
-                        operators = true, -- adds help for operators like d, y, ...
-                        motions = true, -- adds help for motions
-                        text_objects = true, -- help for text objects triggered after entering an operator
-                        windows = true, -- default bindings on <c-w>
-                        nav = true, -- misc bindings to work with windows
-                        z = true, -- bindings for folds, spelling and others prefixed with z
-                        g = true, -- bindings for prefixed with g
-                    },
-                },
-
-                win = {
-                    no_overlap = false,
-                    wo = {
-                        winblend = 20, -- value between 0-100 0 for fully opaque and 100 for fully transparent
-                    },
-                },
-
-                icons = {
-                    colors = false,
-                },
-
-                -- Override what triggers whichkey.
-                --triggers = {
-                --    { "<leader>", mode = { "n" } },
-                --}
-            }
-        end,
-    },
-    -- }}}
-
-    -- {{{ UI: vim-startify
-    -- Start page for vim. Lists MRU, git changes, ...
-    {
-        "mhinz/vim-startify",
-
-        -- Required at startup
-        lazy = false,
-
-        init = function()
-            vim.cmd([[
-            " Do not change dir on file selection. vim-rooter is doing it already
-            let g:startify_change_to_dir = 0
-            let g:startify_change_to_vcs_root = 0
-
-            " returns all modified files of the current git repo
-            " `2>/dev/null` makes the command fail quietly, so that when we are not
-            " in a git repo, the list will be empty
-            function! s:gitModified()
-                let files = systemlist('git ls-files -m 2>/dev/null')
-                return map(files, "{'line': v:val, 'path': v:val}")
-            endfunction
-
-            " same as above, but show untracked files, honouring .gitignore
-            function! s:gitUntracked()
-                let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
-                return map(files, "{'line': v:val, 'path': v:val}")
-            endfunction
-
-            function! s:gitListCommits()
-                let commits = systemlist('git log --oneline 2>/dev/null | head -n10')
-                return map(commits, '{"line": v:val}')
-            endfunction
-
-            let g:startify_lists = [
-                    "\ { 'type': 'files',                        'header': ['   MRU'] },
-                    \ { 'type': 'dir',                          'header': ['   MRU '. getcwd()] },
-                    \ { 'type': 'sessions',                     'header': ['   Sessions'] },
-                    \ { 'type': function('s:gitModified'),      'header': ['   Modified'] },
-                    \ { 'type': function('s:gitUntracked'),     'header': ['   Untracked'] },
-                    \ { 'type': function('s:gitListCommits'),   'header': ['   Commits'] },
-                    \ { 'type': 'commands',                     'header': ['   Commands'] },
-                    \ ]
-
-            let g:startify_custom_header =[
-             \ '    _   _         __     ___           ',
-             \ '   | \ | | ___  __\ \   / (_)_ __ ___  ',
-             \ '   |  \| |/ _ \/ _ \ \ / /| | `_ ` _ \ ',
-             \ '   | |\  |  __/ (_) \ V / | | | | | | |',
-             \ '   |_| \_|\___|\___/ \_/  |_|_| |_| |_|',
-             \ '',
-             \]
-        ]])
-        end,
-    },
-    -- }}}
-
-    -- {{{ UI: nvim-neo-tree
-    -- Nice file tree
-    {
-        "nvim-neo-tree/neo-tree.nvim",
-        branch = "v3.x",
-
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvim-tree/nvim-web-devicons",
-            "MunifTanjim/nui.nvim",
-        },
-
-        lazy = true,
-        event = { "VeryLazy" },
-
-        opts = function()
-            map.n("\\", ":Neotree toggle<CR>", { desc = "File Browser", icon = "" })
-
-            vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "Error" })
-            vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "Warning" })
-            vim.api.nvim_set_hl(0, "NeoTreeGitStaged", { link = "vcsSignAdd" })
-            vim.api.nvim_set_hl(0, "NeoTreeGitUnstaged", { link = "vcsSignAdd" })
-            -- vim.api.nvim_set_hl(0, "NeoTreeDotfile", { link = "SignifySignChange" })
-            -- vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { link = "Comment" })
-
-            return {
-                close_if_last_window = true,
-
-                -- Refer to the git page of the project. Nearly all styles and highlight groups can be modified.
-                default_component_configs = {
-                    container = {
-                        enable_character_fade = true,
-                    },
-                    indent = {
-                        with_expanders = true,
-                    },
-                    modified = {
-                        symbol = "",
-                        highlight = "Search",
-                    },
-                    name = {
-                        use_git_status_colors = false,
-                    },
-
-                    git_status = {
-                        symbols = {
-                            -- Change type
-                            added = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
-                            modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
-                            deleted = "", -- this can only be used in the git_status source
-                            renamed = "", -- this can only be used in the git_status source
-                            -- Status type - see nerd fonts box types
-                            untracked = "",
-                            ignored = "",
-                            unstaged = "",
-                            staged = "",
-                            conflict = "",
-                        },
-                    },
-                },
-
-                filesystem = {
-                    -- Make the netrw replacement full size
-                    hijack_netrw_behavior = "open_current",
-
-                    filtered_items = {
-                        visible = true, -- when true, they will just be displayed differently than normal items
-                        hide_dotfiles = true,
-                        hide_gitignored = true,
-                        hide_hidden = true, -- only works on Windows for hidden files/directories
-                        hide_by_name = {
-                            --"node_modules"
-                        },
-                        hide_by_pattern = { -- uses glob style patterns
-                            --"*.meta",
-                            --"*/src/*/tsconfig.json",
-                        },
-                        always_show = { -- remains visible even if other settings would normally hide it
-                            --".gitignored",
-                        },
-                        never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
-                            --".DS_Store",
-                            --"thumbs.db"
-                        },
-                        never_show_by_pattern = { -- uses glob style patterns
-                            --".null-ls_*",
-                        },
-                    },
-
-                    follow_current_file = {
-                        enabled = true, -- Focus the file of the current buffer
-                        leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
-                    },
-
-                    group_empty_dirs = true,
-                },
-            }
-        end,
-    },
-    -- }}}
-
-    -- {{{ UI: gitsigns.nvim
-    -- Show changes and provides basic staging/diff features
+    -- {{{ Core/UI: gitsigns.nvim - Show changes and provides basic staging/diff features
     {
         "lewis6991/gitsigns.nvim",
 
@@ -527,7 +531,8 @@ return {
         opts = function()
             local function makeSigns()
                 -- ┆ ┋ ┇ ╎ ╏  ░  ▒  ▓ ▍ │ ▏
-                local icon = "┆"
+                --                    ┃
+                local icon = "┃"
                 return {
                     add = { text = icon },
                     change = { text = icon },
@@ -538,10 +543,10 @@ return {
                 }
             end
 
-            vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "vcsSignAdd" })
-            vim.api.nvim_set_hl(0, "GitSignsChange", { link = "vcsSignChange" })
-            vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "vcsSignDelete" })
-            vim.api.nvim_set_hl(0, "GitSignsUntracked", { link = "vcsSignAdd" })
+            vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "Added" })
+            vim.api.nvim_set_hl(0, "GitSignsChange", { link = "Changed" })
+            vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "Removed" })
+            vim.api.nvim_set_hl(0, "GitSignsUntracked", { link = "Added" })
             -- Also allows to modify staged versions, virtual lines, ...
             -- Staged versions seem to be derived automatically from the non-staged versions.
 
@@ -615,101 +620,36 @@ return {
     },
     -- }}}
 
-    -- {{{ Snippets: luasnip
-    -- Snipped engine with support for several snipped types.
+    -- {{{ Core/UI (dependency): nvim-web-devicons
+    -- Nice icon set used by several UI plugins
     {
-        "L3MON4D3/LuaSnip",
-        version = "v2.*",
-        -- install jsregexp (optional!).
-        build = "make install_jsregexp",
+        "nvim-tree/nvim-web-devicons",
 
-        dependencies = { "rafamadriz/friendly-snippets" },
-
-        opts = { history = true, updateevents = "TextChanged,TextChangedI" },
-        config = function(_, opts)
-            require("luasnip").config.set_config(opts)
-
-            -- vscode format
-            require("luasnip.loaders.from_vscode").lazy_load({ exclude = vim.g.vscode_snippets_exclude or {} })
-            require("luasnip.loaders.from_vscode").lazy_load({ paths = vim.g.vscode_snippets_path or "" })
-
-            -- snipmate format
-            require("luasnip.loaders.from_snipmate").load()
-            require("luasnip.loaders.from_snipmate").lazy_load({ paths = vim.g.snipmate_snippets_path or "" })
-
-            -- lua format
-            require("luasnip.loaders.from_lua").load()
-            require("luasnip.loaders.from_lua").lazy_load({ paths = vim.g.lua_snippets_path or "" })
-
-            vim.api.nvim_create_autocmd("InsertLeave", {
-                callback = function()
-                    if
-                        require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-                        and not require("luasnip").session.jump_active
-                    then
-                        require("luasnip").unlink_current()
-                    end
-                end,
-            })
-
-            -- Key mappings
-        end,
-    },
-    -- }}}
-
-    -- {{{ Formatting: conform.nvim
-    -- Wraps all those formatters and allow some config tweaks
-    {
-        "stevearc/conform.nvim",
         lazy = true,
-        event = { "BufReadPost", "BufNewFile" },
 
-        opts = function()
-            local conform = require("conform")
+        opts = {
+            -- globally enable different highlight colors per icon (default to true)
+            -- if set to false all icons will have the default icon's color
+            color_icons = false,
 
-            map.n("<leader>f", conform.format, { desc = "Format buffer", icon = "󰉼" })
+            -- globally enable default icons (default to false)
+            -- will get overwritten by `get_icons` option
+            default = true,
 
-            return {
-                -- Refer to https://github.com/stevearc/conform.nvim
-
-                -- You gave to tell conform which formatter to use per filetype :-(
-                formatters_by_ft = {
-                    -- C++ and related
-                    cpp = { "clang-format" },
-                    c = { "clang-format" },
-                    cmake = { "cmake_format" },
-
-                    -- The JS/TS/... Webdev world
-                    javascript = { "prettier" },
-                    typesript = { "prettier" },
-                    html = { "prettier" },
-                    css = { "prettier" },
-                    scss = { "prettier" },
-                    vue = { "prettier" },
-                    json = { "prettier" },
-                    jsonc = { "prettier" },
-                    yaml = { "prettier" },
-                    toml = { "prettier" },
-
-                    -- For neovim and awesome ;-)
-                    lua = { "stylua" },
-
-                    -- Shell scripting, system stuff, ...
-                    sh = { "shfmt" },
-                    bash = { "shfmt" },
-                    nix = { "nixfmt" },
-                    python = { "isort", "black" },
-
-                    -- Text
-                    markdown = { "prettier" },
-                },
-            }
-        end,
+            -- globally enable "strict" selection of icons - icon will be looked up in
+            -- different tables, first by filename, and if not found by extension; this
+            -- prevents cases when file doesn't have any extension but still gets some icon
+            -- because its name happened to match some extension (default to false)
+            strict = true,
+        },
     },
     -- }}}
 
-    -- {{{ Language support: Treesitter
-    -- Provides AST for a lot of languages. By itself, it does not have any useful functionality. It is a
+    --------------------------------------------------------------------------------------------------------------------
+    -- Coding Base Plugins.
+
+    -- {{{ Language support (important dependency): Treesitter - Provides AST for a lot of languages.
+    -- By itself, it does not have any useful functionality. It is a
     -- requirement for a lot of tools and enhanced syntax highlighting.
     {
         "nvim-treesitter/nvim-treesitter",
@@ -732,7 +672,9 @@ return {
                 -- List of parsers to ignore installing (or "all")
                 -- ignore_install = { },
 
-                -- Use for highlighting additional syntax elements
+                -- Use for highlighting additional syntax elements.
+                -- Be warned: this sometimes works nicely, sometimes it messes up things. Example: doxygen tags are
+                -- highlighted nicely. But not for constructors...
                 highlight = {
                     enable = true,
                 },
@@ -816,6 +758,205 @@ return {
     },
     -- }}}
 
+    -- {{{ UI: indent-blankline.nvim - Provides indent level lines.
+    {
+        "lukas-reineke/indent-blankline.nvim",
+
+        main = "ibl",
+
+        lazy = true,
+        event = { "BufReadPost", "BufNewFile" },
+
+        opts = {
+            -- Indent lines
+            indent = {
+                -- To disable indentlines, set some BG highlight group
+                -- The line char
+                char = "🭲",
+                -- The highlight group to use
+                highlight = "IndentLine",
+            },
+
+            -- Highlight the current scope? (requires teeesitter)
+            scope = {
+                enabled = true,
+                char = "│",
+                highlight = "ScopeLine",
+
+                -- Underline the beginning/end of the scope?
+                show_start = false,
+                show_end = false,
+            },
+
+            -- Alternating highlight of the indent-level background
+            -- whitespace = {
+            --      -- Alternate these highlights
+            --      highlight = { "Normal", "CursorLine" },
+            --      -- Required.
+            --      remove_blankline_trail = true,
+            -- },
+        },
+
+        init = function()
+            -- Disable the line on level 0
+            local hooks = require("ibl.hooks")
+            hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
+            hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
+        end,
+    },
+    -- }}}
+
+    -- {{{ Util/Auto-close: nvim-autopairs - Automatically close braces, strings, ...
+    {
+        "windwp/nvim-autopairs",
+
+        lazy = true,
+        event = "InsertEnter",
+
+        opts = {},
+    },
+    -- }}}
+
+    -- {{{ Util/Auto-close: nvim-ts-autotag - Automatically close tags in html/xml/...
+    {
+        "windwp/nvim-ts-autotag",
+
+        lazy = true,
+        event = { "InsertEnter" },
+
+        opts = {
+            opts = {
+                -- Defaults
+                enable_close = true, -- Auto close tags
+                enable_rename = true, -- Auto rename pairs of tags
+                enable_close_on_slash = false, -- Auto close on trailing </
+            },
+
+            -- Override settings:
+            per_filetype = {
+                --["html"] = { enable_close = false },
+            },
+        },
+    },
+    -- }}}
+
+    --{{{ Util/Auto-close: nvim-treesitter-endwise - Automatically add end/endif/... statements in Lua, Bash, ...
+    {
+        "RRethy/nvim-treesitter-endwise",
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
+
+        lazy = true,
+        event = { "InsertEnter" },
+
+        config = function()
+            require("nvim-treesitter.configs").setup({
+                endwise = {
+                    enable = true,
+                },
+            })
+        end,
+    },
+
+    -- }}}
+
+    --------------------------------------------------------------------------------------------------------------------
+    -- Coding Plugins: LSP and IDE-like things.
+
+    -- {{{ Snippets: luasnip - Snippet engine with support for several snipped types.
+    -- Also used for nvim-cmp LSP snippets
+    {
+        "L3MON4D3/LuaSnip",
+        version = "v2.*",
+        -- install jsregexp (optional!).
+        build = "make install_jsregexp",
+
+        lazy = true,
+        event = "VeryLazy",
+
+        dependencies = { "rafamadriz/friendly-snippets" },
+
+        opts = { history = true, updateevents = "TextChanged,TextChangedI" },
+        config = function(_, opts)
+            require("luasnip").config.set_config(opts)
+
+            -- vscode format
+            require("luasnip.loaders.from_vscode").lazy_load({ exclude = vim.g.vscode_snippets_exclude or {} })
+            require("luasnip.loaders.from_vscode").lazy_load({ paths = vim.g.vscode_snippets_path or "" })
+
+            -- snipmate format
+            require("luasnip.loaders.from_snipmate").load()
+            require("luasnip.loaders.from_snipmate").lazy_load({ paths = vim.g.snipmate_snippets_path or "" })
+
+            -- lua format
+            require("luasnip.loaders.from_lua").load()
+            require("luasnip.loaders.from_lua").lazy_load({ paths = vim.g.lua_snippets_path or "" })
+
+            vim.api.nvim_create_autocmd("InsertLeave", {
+                callback = function()
+                    if
+                        require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
+                        and not require("luasnip").session.jump_active
+                    then
+                        require("luasnip").unlink_current()
+                    end
+                end,
+            })
+
+            -- Key mappings
+        end,
+    },
+    -- }}}
+
+    -- {{{ Formatting: conform.nvim - Add formatters support
+    {
+        "stevearc/conform.nvim",
+        lazy = true,
+        event = { "BufReadPost", "BufNewFile" },
+
+        opts = function()
+            local conform = require("conform")
+
+            map.n("<leader>f", conform.format, { desc = "Format buffer", icon = "󰉼" })
+
+            return {
+                -- Refer to https://github.com/stevearc/conform.nvim
+
+                -- You gave to tell conform which formatter to use per filetype :-(
+                formatters_by_ft = {
+                    -- C++ and related
+                    cpp = { "clang-format" },
+                    c = { "clang-format" },
+                    cmake = { "cmake_format" },
+
+                    -- The JS/TS/... Webdev world
+                    javascript = { "prettier" },
+                    typesript = { "prettier" },
+                    html = { "prettier" },
+                    css = { "prettier" },
+                    scss = { "prettier" },
+                    vue = { "prettier" },
+                    json = { "prettier" },
+                    jsonc = { "prettier" },
+                    yaml = { "prettier" },
+                    toml = { "prettier" },
+
+                    -- For neovim and awesome ;-)
+                    lua = { "stylua" },
+
+                    -- Shell scripting, system stuff, ...
+                    sh = { "shfmt" },
+                    bash = { "shfmt" },
+                    nix = { "nixfmt" },
+                    python = { "isort", "black" },
+
+                    -- Text
+                    markdown = { "prettier" },
+                },
+            }
+        end,
+    },
+    -- }}}
+
     -- {{{ Code-completion: nvim-cmp
     -- Implements completion using the neovim LSP
     {
@@ -843,24 +984,25 @@ return {
 
             -- Map Pmenu
 
-            vim.api.nvim_set_hl(0, "CmpItemKind", { link = "PmenuKind" })
-            vim.api.nvim_set_hl(0, "CmpItemAbbr", { link = "Pmenu" })
-            vim.api.nvim_set_hl(0, "CmpItemMenu", { link = "PmenuExtra" })
+            --           vim.api.nvim_set_hl(0, "CmpItemKind", { link = "PmenuKind" })
+            --         vim.api.nvim_set_hl(0, "CmpItemAbbr", { link = "Pmenu" })
+            --        vim.api.nvim_set_hl(0, "CmpItemMenu", { link = "PmenuExtra" })
 
-            vim.api.nvim_set_hl(
-                0,
-                "CmpItemAbbrDeprecated",
-                hl.extended("Pmenu", {
-                    strikethrough = true,
-                    fg = hl.darken(hl.fg("Pmenu"), 1.5),
-                })
-            )
-            vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { link = "Visual" })
-            vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { link = "Visual" })
-
-            -- -- Kinds - ordered into "meaningful" groups.
             --
-            -- -- Callable things:
+            -- vim.api.nvim_set_hl(
+            --     0,
+            --     "CmpItemAbbrDeprecated",
+            --     hl.extended("Pmenu", {
+            --         strikethrough = true,
+            --         fg = hl.darken(hl.fg("Pmenu"), 1.5),
+            --     })
+            -- )
+            -- vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { link = "Visual" })
+            -- vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { link = "Visual" })
+            --
+            -- -- -- Kinds - ordered into "meaningful" groups.
+            -- --
+            -- -- -- Callable things:
             -- vim.api.nvim_set_hl(0, "CmpItemKindMethod", { link = "FDCocSymbolCallable" })
             -- vim.api.nvim_set_hl(0, "CmpItemKindFunction", { link = "FDCocSymbolCallable" })
             -- vim.api.nvim_set_hl(0, "CmpItemKindConstructor", { link = "FDCocSymbolCallable" })
@@ -1031,8 +1173,7 @@ return {
     },
     --- }}}
 
-    -- {{{ Code-completion: nvim-lspconfig
-    -- Configures the LSP servers for neovim.
+    -- {{{ LSP: nvim-lspconfig - Configures the LSP servers for neovim.
     {
         "neovim/nvim-lspconfig",
         lazy = true,
@@ -1054,95 +1195,6 @@ return {
         end,
     },
     --- }}}
-
-    -- {{{ Code-helper: nvim-autopairs
-    -- Some magic to close braces and strings automatically
-    {
-        "windwp/nvim-autopairs",
-
-        lazy = true,
-        event = "InsertEnter",
-
-        opts = {
-            -- disable_filetype = { "TelescopePrompt" , "vim" },
-        },
-    },
-    -- }}}
-
-    -- {{{ Code-helper: nvim-ts-autotag
-    -- Automatic tag pairs for xml, html, ...
-    {
-        "windwp/nvim-ts-autotag",
-
-        lazy = true,
-        event = { "BufReadPost", "BufNewFile" },
-
-        opts = {
-            opts = {
-                -- Defaults
-                enable_close = true, -- Auto close tags
-                enable_rename = true, -- Auto rename pairs of tags
-                enable_close_on_slash = false, -- Auto close on trailing </
-            },
-
-            -- Override settings:
-            per_filetype = {
-                --["html"] = { enable_close = false },
-            },
-        },
-    },
-    -- }}}
-
-    -- {{{ Syntax and Style: indent-blankline.nvim
-    -- Have indent level lines. Requires treesitter.
-    {
-        "lukas-reineke/indent-blankline.nvim",
-
-        main = "ibl",
-
-        lazy = true,
-        event = { "BufReadPost", "BufNewFile" },
-
-        opts = {
-            -- Indent lines
-            indent = {
-                -- To disable indentlines, set some BG highlight group
-                -- The line char
-                char = "▏",
-                -- The highlight group to use
-                highlight = "IndentLine",
-            },
-
-            -- Highlight the current scope?
-            -- ATTENTION: this more often does not work than work. In lua, scopes of structs/array are not highlighted
-            -- for example.
-            scope = {
-                enabled = true,
-                char = "▎",
-                highlight = "ScopeLine",
-
-                -- Underline the beginning/end of the scope?
-                show_start = false,
-                show_end = false,
-            },
-
-            -- Alternating highlight of the indent-level background
-            -- whitespace = {
-            --      -- Alternate these highlights
-            --      highlight = { "Normal", "CursorLine" },
-            --      -- Required.
-            --      remove_blankline_trail = true,
-            -- },
-        },
-
-        init = function()
-            -- Disable the line on level 0
-            local hooks = require("ibl.hooks")
-            hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
-            hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
-        end,
-    },
-    -- }}}
 
     -- {{{ UI: trouble.nvim - nicely show lsp and diagnostic info
     -- {
@@ -1184,6 +1236,58 @@ return {
     -- },
     -- }}}
 
+    -- {{{ LSP UI: lspsaga.nvim
+    -- {
+    --     "nvimdev/lspsaga.nvim",
+    --
+    --     lazy = true,
+    --     event = "VeryLazy",
+    --
+    --     opts = {
+    --         -- Breadcrumps (symbol trace in winbar)
+    --         symbol_in_winbar = {
+    --             enable = true,
+    --         },
+    --     },
+    -- },
+    -- }}}
+
+    -- {
+    --     "ray-x/lsp_signature.nvim",
+    --     event = "VeryLazy",
+    --     opts = {},
+    --
+    --     config = function(_, opts)
+    --         require("lsp_signature").setup(opts)
+    --
+    --         vim.api.nvim_create_autocmd("LspAttach", {
+    --             callback = function(args)
+    --                 local bufnr = args.buf
+    --                 local client = vim.lsp.get_client_by_id(args.data.client_id)
+    --                 if vim.tbl_contains({ "null-ls" }, client.name) then -- blacklist lsp
+    --                     return
+    --                 end
+    --                 require("lsp_signature").on_attach({
+    --                     -- ... setup options here ...
+    --                 }, bufnr)
+    --             end,
+    --         })
+    --     end,
+    -- },
+
+    -- {{{ Code-helper: vim-doge
+    {
+        "sebastian-eichelbaum/vim-doge",
+
+        build = ":call doge#install()",
+
+        init = function() end,
+    },
+    -- }}}
+
+    --------------------------------------------------------------------------------------------------------------------
+    -- Nice-to-have Plugins.
+
     -- {{{ Syntax and Style: nvim-colorizer
     -- Provides coloring of hex/css colors.
     {
@@ -1219,16 +1323,6 @@ return {
                 }
             )
         end,
-    },
-    -- }}}
-
-    -- {{{ Code-helper: vim-doge
-    {
-        "sebastian-eichelbaum/vim-doge",
-
-        build = ":call doge#install()",
-
-        init = function() end,
     },
     -- }}}
 }

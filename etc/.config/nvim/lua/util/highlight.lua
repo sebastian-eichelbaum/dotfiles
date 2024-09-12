@@ -17,7 +17,7 @@ local function toHexColor(r, g, b)
         return math.floor(math.min(math.max(val, 0), 255))
     end
 
-    local result = string.format("%#x", clamp(r) * 0x10000 + clamp(g) * 0x100 + clamp(b)):gsub("0x", "#")
+    local result = "#" .. string.format("%06x", clamp(r) * 0x10000 + clamp(g) * 0x100 + clamp(b)):gsub("0x", "")
     -- print(r, ", ", g, ", ", b, " == ", result)
     return result
 end
@@ -64,27 +64,56 @@ M.extended = function(hlName, opts)
     return tableUtils.merge(def or {}, opts or {})
 end
 
+M.toRGB = function(hexColor)
+    local num = tonumber(hexColor:gsub("#", ""), 16)
+
+    return {
+        r = math.floor(num / 0x10000),
+        g = (math.floor(num / 0x100) % 0x100),
+        b = (num % 0x100),
+    }
+end
+
 -- Lighten the given hex color by a given relative scale. This scales the color and returns the darker, hue-preserving
 -- color.
 M.lighten = function(hexColor, s)
-
     if hexColor == nil or hexColor == "" then
         return hexColor
     end
 
-    local num = tonumber(hexColor:gsub("#",""), 16)
+    local color = M.toRGB(hexColor)
 
-    local r = math.floor(num / 0x10000)
-    local g = (math.floor(num / 0x100) % 0x100)
-    local b = (num % 0x100)
-
-    return toHexColor_huePreserving(r * s, g * s, b * s)
+    return toHexColor_huePreserving(color.r * s, color.g * s, color.b * s)
 end
 
 -- Darken the given hex color by a given relative scale. This scales the color and returns the darker, hue-preserving
 -- color.
 M.darken = function(hexColor, s)
-    return M.lighten(hexColor, 1/s)
+    return M.lighten(hexColor, 1 / s)
+end
+
+-- Blend between two given colors
+M.blend = function(hexColor1, hexColor2, s)
+    local color1 = M.toRGB(hexColor1)
+    local color2 = M.toRGB(hexColor2)
+
+    return toHexColor((color1.r + color2.r) * s, (color1.g + color2.g) * s, (color1.b + color2.b) * s)
+end
+
+M.lightnessRamp = function(hexColor)
+    return {
+        L5 = M.lighten(hexColor, 1 + 13 * 0.22),
+        L4 = M.lighten(hexColor, 1 + 9 * 0.22),
+        L3 = M.lighten(hexColor, 1 + 5 * 0.22),
+        L2 = M.lighten(hexColor, 1 + 3 * 0.22),
+        L1 = M.lighten(hexColor, 1 + 1.33 * 0.22),
+        O = hexColor,
+        D1 = M.darken(hexColor, 1 + 0.66 * 0.22),
+        D2 = M.darken(hexColor, 1 + 3 * 0.22),
+        D3 = M.darken(hexColor, 1 + 5 * 0.22),
+        D4 = M.darken(hexColor, 1 + 9 * 0.22),
+        D5 = M.darken(hexColor, 1 + 13 * 0.22),
+    }
 end
 
 return M
