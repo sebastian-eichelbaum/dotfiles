@@ -13,7 +13,7 @@ vim.diagnostic.config({
     -- Underline the affected part of the line?
     underline = true,
     -- If true, diagnostics are shown and updated in insert mode
-    update_in_insert = true,
+    update_in_insert = false,
     -- Sort by severity. If false, a warning might be shown although there is an error on the same line.
     severity_sort = true,
 
@@ -38,5 +38,6 @@ end
 map.n("[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic", icon = "󰀪" })
 map.n("]d", vim.diagnostic.goto_next, { desc = "Next diagnostic", icon = "󰀪" })
 
--- map.n("<leader>cd", function() vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" }) end, { desc = "Diagnostic details", icon = "" })
--- map.n("<leader>cD", vim.diagnostic.setloclist, { desc = "Diagnostic quickfix", icon = "" })
+-- NOTE: refer to the plugins config. There are probably plugins that provide nicer lists.
+-- map.n("<leader>xd", function() vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" }) end, { desc = "Diagnostic details", icon = "" })
+-- map.n("<leader>xD", vim.diagnostic.setloclist, { desc = "Diagnostic quickfix", icon = "" })

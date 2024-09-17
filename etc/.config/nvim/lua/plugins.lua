@@ -192,7 +192,7 @@ return {
                 win = {
                     no_overlap = false,
                     wo = {
-                        winblend = 10, -- value between 0-100 0 for fully opaque and 100 for fully transparent
+                        winblend = 5, -- value between 0-100 0 for fully opaque and 100 for fully transparent
                     },
                 },
 
@@ -232,6 +232,13 @@ return {
             vim.api.nvim_set_hl(0, "NeoTreeGitUnstaged", { link = "Changed" })
             -- vim.api.nvim_set_hl(0, "NeoTreeDotfile", { link = "SignifySignChange" })
             -- vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { link = "Comment" })
+
+            -- See :help neo-tree-highlights
+
+            hl.link("NeoTreeNormal", "SidebarNormal")
+            hl.link("NeoTreeNormalNC", "SidebarNormal")
+            hl.link("NeoTreeVertSplit", "SidebarVertSplit")
+            hl.link("NeoTreeWinSeparator", "SidebarVertSplit")
 
             return {
                 -- Enables source (file/buffer/git) selection
@@ -341,7 +348,7 @@ return {
         opts = {
             options = {
                 -- Disable in some file-types
-                disabled_filetypes = { "neo-tree", "NVimTree", "qf", "fzf" },
+                disabled_filetypes = { "neo-tree", "NVimTree", "qf", "fzf", "trouble" },
 
                 icons_enabled = true,
                 theme = {
@@ -532,7 +539,7 @@ return {
             local function makeSigns()
                 -- ┆ ┋ ┇ ╎ ╏  ░  ▒  ▓ ▍ │ ▏
                 --                    ┃
-                local icon = "┃"
+                local icon = "│" -- "┃"
                 return {
                     add = { text = icon },
                     change = { text = icon },
@@ -543,10 +550,10 @@ return {
                 }
             end
 
-            vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "Added" })
-            vim.api.nvim_set_hl(0, "GitSignsChange", { link = "Changed" })
-            vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "Removed" })
-            vim.api.nvim_set_hl(0, "GitSignsUntracked", { link = "Added" })
+            vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "AddedSign" })
+            vim.api.nvim_set_hl(0, "GitSignsChange", { link = "ChangedSign" })
+            vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "RemovedSign" })
+            vim.api.nvim_set_hl(0, "GitSignsUntracked", { link = "AddedSign" })
             -- Also allows to modify staged versions, virtual lines, ...
             -- Staged versions seem to be derived automatically from the non-staged versions.
 
@@ -984,65 +991,48 @@ return {
 
             -- Map Pmenu
 
-            --           vim.api.nvim_set_hl(0, "CmpItemKind", { link = "PmenuKind" })
-            --         vim.api.nvim_set_hl(0, "CmpItemAbbr", { link = "Pmenu" })
-            --        vim.api.nvim_set_hl(0, "CmpItemMenu", { link = "PmenuExtra" })
+            hl.link("CmpItemKind", "PmenuKind")
+            -- Attention: setting these will cause issues with highlighting the selected item if PMenu has a bg set!
+            -- Use winhighlight instead to set those
+            --vim.api.nvim_set_hl(0, "CmpItemAbbr", { link = "Pmenu" })
+            --vim.api.nvim_set_hl(0, "CmpItemMenu", { link = "PmenuExtra" })
 
-            --
-            -- vim.api.nvim_set_hl(
-            --     0,
-            --     "CmpItemAbbrDeprecated",
-            --     hl.extended("Pmenu", {
-            --         strikethrough = true,
-            --         fg = hl.darken(hl.fg("Pmenu"), 1.5),
-            --     })
-            -- )
-            -- vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { link = "Visual" })
-            -- vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { link = "Visual" })
-            --
-            -- -- -- Kinds - ordered into "meaningful" groups.
-            -- --
-            -- -- -- Callable things:
-            -- vim.api.nvim_set_hl(0, "CmpItemKindMethod", { link = "FDCocSymbolCallable" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindFunction", { link = "FDCocSymbolCallable" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindConstructor", { link = "FDCocSymbolCallable" })
-            -- -- does this fit? In C++, these are namespaces
-            -- vim.api.nvim_set_hl(0, "CmpItemKindModule", { link = "FDCocSymbolCallable" })
-            --
-            -- -- Type-like things, classes, collections, modules
-            -- vim.api.nvim_set_hl(0, "CmpItemKindStruct", { link = "FDCocSymbolType" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindClass", { link = "FDCocSymbolType" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindInterface", { link = "FDCocSymbolType" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindEnum", { link = "FDCocSymbolType" })
-            -- -- What is this?
-            -- vim.api.nvim_set_hl(0, "CmpItemKindReference", { link = "FDCocSymbolType" })
-            --
-            -- -- Value-like things
-            -- vim.api.nvim_set_hl(0, "CmpItemKindText", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindEnumMember", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindTypeParameter", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindValue", { link = "FDCocSymbolValue" })
-            --
-            -- -- Variable-like things
-            -- vim.api.nvim_set_hl(0, "CmpItemKindVariable", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindConstant", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindField", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindProperty", { link = "FDCocSymbolValue" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindEvent", { link = "FDCocSymbolValue" })
-            --
-            -- -- File stuff
-            -- vim.api.nvim_set_hl(0, "CmpItemKindFile", { link = "FDCocSymbolFiles" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindFolder", { link = "FDCocSymbolFiles" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindSnippet", { link = "FDCocSymbolFiles" })
-            --
-            -- -- Keywords, statements, ops
-            -- vim.api.nvim_set_hl(0, "CmpItemKindKeyword", { link = "FDCocSymbolKeyword" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindOperator", { link = "FDCocSymbolKeyword" })
-            --
-            -- --
-            -- vim.api.nvim_set_hl(0, "CmpItemKindUnit", { link = "WTF" })
-            -- vim.api.nvim_set_hl(0, "CmpItemKindColor", { link = "WTF" })
-            --
+            hl.link("CmpItemAbbrMatch", "PmenuMatch")
+            hl.link("CmpItemAbbrMatchFuzzy", "PmenuMatch")
+
+            -- Kind symbols
+
+            hl.link("CmpItemKindMethod", "LspItemKindFunction")
+            hl.link("CmpItemKindFunction", "LspItemKindFunction")
+            hl.link("CmpItemKindConstructor", "LspItemKindFunction")
+            hl.link("CmpItemKindModule", "LspItemKindFunction")
+
+            hl.link("CmpItemKindStruct", "LspItemKindType")
+            hl.link("CmpItemKindClass", "LspItemKindType")
+            hl.link("CmpItemKindInterface", "LspItemKindType")
+            hl.link("CmpItemKindEnum", "LspItemKindType")
+            hl.link("CmpItemKindReference", "LspItemKindType")
+            hl.link("CmpItemKindUnit", "LspItemKindType")
+
+            hl.link("CmpItemKindText", "LspItemKindString")
+            hl.link("CmpItemKindEnumMember", "LspItemKindValue")
+            hl.link("CmpItemKindTypeParameter", "LspItemKindValue")
+            hl.link("CmpItemKindValue", "LspItemKindValue")
+            hl.link("CmpItemKindColor", "LspItemKindValue")
+
+            hl.link("CmpItemKindVariable", "LspItemKindValue")
+            hl.link("CmpItemKindConstant", "LspItemKindValue")
+            hl.link("CmpItemKindField", "LspItemKindValue")
+            hl.link("CmpItemKindProperty", "LspItemKindValue")
+            hl.link("CmpItemKindEvent", "LspItemKindValue")
+
+            hl.link("CmpItemKindFile", "LspItemKindFiles")
+            hl.link("CmpItemKindFolder", "LspItemKindFiles")
+            hl.link("CmpItemKindSnippet", "LspItemKindFiles")
+
+            hl.link("CmpItemKindKeyword", "LspItemKindKeyword")
+            hl.link("CmpItemKindOperator", "LspItemKindKeyword")
+
             -- }}}
 
             -- {{{ Configure the completion windows and menus
@@ -1075,6 +1065,7 @@ return {
 
                 window = {
                     completion = makeBorder(),
+                    -- completion = cmp.config.window.bordered(),
                     documentation = cmp.config.window.bordered(),
                 },
 
@@ -1178,7 +1169,6 @@ return {
         "neovim/nvim-lspconfig",
         lazy = true,
         event = { "BufReadPost", "BufNewFile" },
-
         config = function()
             -- All the LSP/CMP/Mason magic is in this one config
             local config = require("config.lsp")
@@ -1197,43 +1187,83 @@ return {
     --- }}}
 
     -- {{{ UI: trouble.nvim - nicely show lsp and diagnostic info
-    -- {
-    --     "folke/trouble.nvim",
-    --     opts = {}, -- for default options, refer to the configuration section for custom setup.
-    --     cmd = "Trouble",
-    --     keys = {
-    --         {
-    --             "<leader>xx",
-    --             "<cmd>Trouble diagnostics toggle<cr>",
-    --             desc = "Diagnostics (Trouble)",
-    --         },
-    --         {
-    --             "<leader>xX",
-    --             "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-    --             desc = "Buffer Diagnostics (Trouble)",
-    --         },
-    --         {
-    --             "<leader>cs",
-    --             "<cmd>Trouble symbols toggle focus=false<cr>",
-    --             desc = "Symbols (Trouble)",
-    --         },
-    --         {
-    --             "<leader>cl",
-    --             "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-    --             desc = "LSP Definitions / references / ... (Trouble)",
-    --         },
-    --         {
-    --             "<leader>xL",
-    --             "<cmd>Trouble loclist toggle<cr>",
-    --             desc = "Location List (Trouble)",
-    --         },
-    --         {
-    --             "<leader>xQ",
-    --             "<cmd>Trouble qflist toggle<cr>",
-    --             desc = "Quickfix List (Trouble)",
-    --         },
-    --     },
-    -- },
+    {
+        "folke/trouble.nvim",
+        lazy = true,
+        event = { "VeryLazy" },
+
+        opts = function()
+            hl.link("TroubleNormal", "SidebarNormal")
+            hl.link("TroubleNormalNC", "SidebarNormal")
+            hl.set("TroubleIndent", hl.extended("FoldColumn", { bg = "NONE" }))
+
+            -- Open trouble automatically after commands like :grep or :make
+            vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+                callback = function()
+                    vim.cmd([[Trouble qflist open]])
+                end,
+            })
+
+            -- Open Trouble whenever a quickfix/loclist should open
+            vim.api.nvim_create_autocmd("BufRead", {
+                callback = function(ev)
+                    if vim.bo[ev.buf].buftype == "quickfix" then
+                        vim.schedule(function()
+                            vim.cmd([[cclose]])
+                            vim.cmd([[Trouble qflist open]])
+                        end)
+                    end
+                end,
+            })
+
+            -- map.group("<leader>x", "Exploration", "󱣱")
+
+            map.n("<leader>cb", function()
+                require("trouble").toggle("lsp")
+            end, { desc = "Code Browser", icon = "" })
+
+            map.n("<leader>cx", function()
+                require("trouble").toggle("diagnostics")
+            end, { desc = "Diagnostics", icon = "" })
+
+            map.n("<leader>cs", function()
+                require("trouble").toggle("symbols")
+            end, { desc = "Symbol Browser", icon = "" })
+
+            map.n("<leader>cr", function()
+                require("trouble").open({
+                    mode = "lsp_references",
+                    auto_refresh = false,
+                    follow = false,
+                    pinned = true,
+                })
+            end, { desc = "References", icon = "" })
+
+            map.n("|", function()
+                require("trouble").close({})
+            end, {})
+
+            return {
+                warn_no_results = false,
+                open_no_results = true,
+
+                win = { size = 0.33 },
+
+                modes = {
+                    symbols = {
+                        focus = false,
+                        win = { type = "split", position = "right" },
+                        filter = { buf = 0 }, -- show buffer local info only
+                    },
+                    diagnostics = {
+                        focus = false,
+                        win = { size = 0.20 },
+                        filter = { buf = 0 }, -- show buffer local info only
+                    },
+                },
+            }
+        end,
+    },
     -- }}}
 
     -- {{{ LSP UI: lspsaga.nvim

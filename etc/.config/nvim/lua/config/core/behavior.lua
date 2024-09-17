@@ -34,6 +34,9 @@ vim.opt.keymodel = "startsel"
 -- Always enable folds by marker
 vim.opt.foldmethod = "marker"
 
+-- Also match <> pairs
+vim.opt.matchpairs:append "<:>"
+
 -- {{{ Shortmessages: avoid some noisy messages
 
 -- No completion menu messages

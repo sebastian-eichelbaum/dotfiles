@@ -64,6 +64,17 @@ M.extended = function(hlName, opts)
     return tableUtils.merge(def or {}, opts or {})
 end
 
+-- Link the given target group to the source
+M.link = function(target, source)
+    vim.api.nvim_set_hl(0, target, { link = source })
+end
+
+-- Set a given highlight to a group. The highlight is flattened before applying it. This allows merging multiple
+-- highlights.
+M.set = function(group, highlight)
+    vim.api.nvim_set_hl(0, group, tableUtils.flatten(highlight))
+end
+
 M.toRGB = function(hexColor)
     local num = tonumber(hexColor:gsub("#", ""), 16)
 

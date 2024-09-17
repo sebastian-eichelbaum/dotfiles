@@ -39,18 +39,26 @@ return {
             })
         end, { desc = "Code fix", icon = "󰁨" })
 
-        map.buf.n(bufnr, "<leader>cr", vim.lsp.buf.references, { desc = "References", icon = "󰈇" })
         map.buf.n(bufnr, "<leader>cD", vim.lsp.buf.declaration, { desc = "Go to declaration", icon = "" })
         map.buf.n(bufnr, "<leader>cd", vim.lsp.buf.definition, { desc = "Go to definition", icon = "󰅲" })
         map.buf.n(bufnr, "<leader>ci", vim.lsp.buf.implementation, { desc = "Go to implementation", icon = "󰅩" })
         map.buf.n(bufnr, "<leader>ct", vim.lsp.buf.type_definition, { desc = "Go to type-definition", icon = "" })
-        map.buf.n(bufnr, "<leader>ch", vim.lsp.buf.typehierarchy, { desc = "Show type hierarchy", icon = "" })
-
-        map.buf.n(bufnr, "<leader>ck", vim.lsp.buf.hover, { desc = "Show hover info", icon = "" })
-        map.buf.n(bufnr, "<leader>cs", vim.lsp.buf.signature_help, { desc = "Signature help", icon = "󰊕" })
 
         map.n("<leader>c<F2>", vim.lsp.buf.rename, { desc = "Rename symbol", icon = "" })
         map.buf.n(bufnr, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions", icon = "󰁨" })
+
+        map.buf.n(bufnr, "<leader>cI", vim.lsp.buf.hover, { desc = "Hover info", icon = "" })
+        map.buf.n(bufnr, "<leader>cS", vim.lsp.buf.signature_help, { desc = "Signature help", icon = "󰊕" })
+
+        map.buf.n(bufnr, "<leader>cS", vim.lsp.buf.signature_help, { desc = "Signature help", icon = "󰊕" })
+
+        map.buf.n(bufnr, "<leader>ch", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+        end, { desc = "Inlay Hint", icon = "󰷻" })
+
+        -- NOTE: refer to the plugins config. There are probably plugins that provide nicer lists.
+        -- map.buf.n(bufnr, "<leader>cr", vim.lsp.buf.references, { desc = "References", icon = "󰈇" })
+        -- map.buf.n(bufnr, "<leader>ch", vim.lsp.buf.typehierarchy, { desc = "Type hierarchy", icon = "" })
     end,
 
     -- The icons used for each symbol kind in completion menus

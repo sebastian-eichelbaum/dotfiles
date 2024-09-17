@@ -11,14 +11,15 @@ vim.opt.termguicolors = true
 
 local color = require("util/highlight")
 local merge = require("util/table").merge
-local flatten = require("util/table").flatten
+
+local colors2 = {}
 
 -- Base palette. This defines the fundamental colors of your color scheme.
 local colors = {
     -- Start with a decision on what will be your BG and FG.
     -- This defines the "mood" of the theme.
-    bg = color.lightnessRamp("#1b1b1c"),
-    fg = color.lightnessRamp("#e4e4ef"),
+    bg = color.lightnessRamp("#1a1a1c"),
+    fg = color.lightnessRamp("#c9c9cd"),
 
     -- Used to distinguish unknown highlights. Very useful for debugging themes.
     wtf = "#ff00ff",
@@ -40,7 +41,6 @@ local colors = {
     -- Informational color: it is used for things that provide additional information, but are not necessarily required.
     -- Typically used for comments or unobtrusive UI elements.
     informational = "#626262",
-    informationalAlt = "#8a8a8a",
 
     -- Different highlight colors for different severity levels.
     highlight = {
@@ -50,7 +50,7 @@ local colors = {
         neutral = { fg = "#929295", bg = "#363638" },
 
         -- ??
-        -- informational = {fg= "#4a88cc", bg="#27323e"},
+        informational = { fg = "#4a88cc", bg = "#27323e" },
 
         -- Highlight good things. Added text, modification markers, ...
         good = { fg = "#85b038", bg = "#303329" },
@@ -79,7 +79,7 @@ local palette = merge(colors, {
         current = { bg = colors.bg.L2 },
 
         -- Folded text representation
-        folded = { fg = colors.fg.D1, bg = colors.bg.L3, bold = true },
+        folded = { fg = colors.fg.D1, bg = colors.bg.L2, bold = true },
 
         -- Active highlight: Selected text. Should set a background for selected text. Also used as base style for selected menu items.
         selected = { bg = colors.bg.L4 },
@@ -92,7 +92,7 @@ local palette = merge(colors, {
             structural = { fg = colors.structural, bold = true },
             values = { fg = colors.contentual, bold = true },
             strings = { fg = colors.contentualAlt, bold = false },
-            functions = { fg = colors.functional, bold = true },
+            functions = { fg = colors.fg.O, bold = false },
             types = { fg = colors.structural, bold = true },
             preprocs = { fg = colors.fg.O, bold = true },
             comments = { fg = colors.informational, bold = true },
@@ -111,20 +111,40 @@ local palette = merge(colors, {
             },
         },
         commandLine = {
-            base = { bold = true },
+            base = { -- bg = colors.bg.D1,
+                bold = true,
+            },
         },
         gutter = {
-            base = { fg = colors.fg.D3, bg = colors.bg.D1 },
+            base = { bg = colors.bg.D1 },
             ruler = {
                 base = { fg = colors.fg.D4 },
                 selected = { fg = colors.fg.O, bold = true },
             },
             folds = {
+                fg = colors.fg.D3,
                 bold = true,
             },
         },
-        windows = {
+        window = {
+            border = { fg = colors.bg.L4, bg = colors.bg.O },
+            normal = { fg = colors.fg.O, bg = colors.bg.D2 },
+        },
+        menu = {
             border = { fg = colors.fg.D4 },
+            normal = { fg = colors.fg.D1, bg = colors.bg.L2 },
+            selected = { bg = colors.bg.L4 },
+            matched = {
+                bold = true,
+                -- fg = colors.highlight.attention.fg,
+                fg = colors.fg.O,
+                --bg = colors.bg.L3
+            },
+            kind = { fg = colors.fg.O, bg = colors.bg.D1, bold = true },
+        },
+        sidebar = {
+            normal = { fg = colors.fg.O, bg = colors.bg.D1 },
+            border = { fg = colors.bg.L2, bg = colors.bg.D1 },
         },
     },
 })
@@ -194,192 +214,12 @@ local highlights = {
     Changed = { fg = palette.highlight.neutral.fg },
     Added = { fg = palette.highlight.good.fg },
     Removed = { fg = palette.highlight.bad.fg },
+
+    -- Used in the gutter to indicate changes. This is a slightly less bright version of changed/added/removed
+    ChangedSign = { fg = color.darken(palette.highlight.neutral.fg, 1.43), bg = palette.ui.gutter.base.bg },
+    AddedSign = { fg = color.darken(palette.highlight.good.fg, 1.33), bg = palette.ui.gutter.base.bg },
+    RemovedSign = { fg = color.darken(palette.highlight.bad.fg, 1.33), bg = palette.ui.gutter.base.bg },
     -- }}}
-
-    -- }}}
-
-    -- }}}
-
-    -- {{{ ???
-    Error = { link = "wtf" },
-    Warning = { link = "wtf" },
-    Hint = { link = "wtf" },
-    Info = { link = "wtf" },
-    -- }}}
-
-    -- {{{ UI
-
-    -- {{{ Gutter
-    -- The current line number in the sidebar
-    CursorLineNR = { palette.ui.gutter.base, palette.ui.gutter.ruler.base, palette.ui.gutter.ruler.selected },
-    -- The LineNr-column for other, not-current lines
-    LineNr = { palette.ui.gutter.base, palette.ui.gutter.ruler.base },
-    -- The text-width column.
-    ColorColumn = { palette.ui.gutter.base },
-
-    -- Column used to show fold UI
-    FoldColumn = { palette.ui.gutter.base, palette.ui.gutter.folds },
-    -- Used for signs like git-changes/lsp icons/...
-    SignColumn = { palette.ui.gutter.base },
-    -- }}}
-
-    -- {{{ Status-line
-    StatusLine = { palette.ui.statusLine.active },
-    -- Status-line for non-current windows
-    StatusLineNC = { palette.ui.statusLine.inactive },
-    -- }}}
-
-    -- {{{ Command-line
-    -- All the message types that appear on the command line
-    ErrorMsg = { palette.ui.commandLine.base, fg = palette.highlight.bad.fg },
-    WarningMsg = { palette.ui.commandLine.base, fg = palette.highlight.attention.fg },
-    MoreMsg = { palette.ui.commandLine.base, fg = palette.highlight.neutral.fg },
-    ModeMsg = {},
-
-    -- Whenever a question or prompt is shown on the command line (i.e. "Press enter to continue")
-    Question = { palette.ui.commandLine.base },
-    -- }}}
-
-    -- {{{ Windows and Menus
-    -- The bar when splitting vertically (:vsplit).
-    VertSplit = { palette.ui.windows.border },
-    -- Separators between window splits.
-    WinSeparator = { link = "VertSplit" },
-    -- Floating window border
-    FloatBorder = { link = "VertSplit" },
-    -- The background and foreground of floats. I.e. the whichkey float, lazy, mason, ...
-    -- hi! link NormalFloat PMenu
-    NormalFloat = {  bg = palette.bg.D2 },
-    -- FloatTitle
-    -- FloatFooter
-
-    -- {{{ PMenu - Styles used several menus (including completion men)
-
-    -- }}}
-
-    --}}}
-
-    -- {{{ TODO
-    -- " NOTE: depending on the completion menu, this might be used automatically, or not. If not, you might want to
-    -- " link the highlights of the plugin to these
-    --
-    -- " Background and foreground
-    -- call s:hi("Pmenu",                     s:palette.popupFG,            s:palette.popupBG)
-    -- " Selected line
-    -- call s:hi("PmenuSel",                  s:palette.selectionFG,        s:palette.selectionBG,        [s:attrs.b])
-    --
-    -- " The kind text/icon in common complete menus
-    -- call s:hi("PmenuKind",                 s:palette.secondary,          s:palette.popupBGD1,          [s:attrs.b])
-    -- call s:hi("PmenuKindSel",              s:palette.secondary,          s:palette.selectionBG,        [s:attrs.b])
-    --
-    -- " The kind text/icon in common complete menus
-    -- call s:hi("PmenuDeprecated",           s:palette.fgD2,            s:palette.popupBG,            [s:attrs.s])
-    --
-    -- " The extra text usually showing "[LSP]", .. in common complete menus
-    -- call s:hi("PmenuExtra",                s:palette.fgD3,               s:none,                       [])
-    -- call s:hi("PmenuExtraSel",             s:palette.fgD3,               s:palette.selectionBG,        [])
-    --
-    -- " Scrollbar Thumb
-    -- call s:hi("PmenuThumb",                s:none,                       s:palette.popupBGL2)
-    -- " Scrollbar BG
-    -- call s:hi("PmenuSbar",                 s:none,                       s:palette.popupBGD2)
-    --
-    --
-    --
-    -- " Still used?
-    -- call s:hi("WildMenu",                  s:palette.wtf,                s:palette.wtf,                [s:attrs.b])
-    -- }}}
-
-    -- {{{ LSP Diagnostics
-    DiagnosticError = { palette.highlight.bad },
-    DiagnosticWarn = { palette.highlight.attention },
-    DiagnosticInfo = { palette.highlight.good },
-    DiagnosticHint = { palette.highlight.neutral }, -- things like unused vars
-
-    DiagnosticUnnecessary = { link = "Comment" },
-
-    DiagnosticUnderlineError = { underline = true, special = palette.highlight.bad.fg },
-    DiagnosticUnderlineWarn = { underline = true, special = palette.highlight.attention.fg },
-    DiagnosticUnderlineInfo = { underline = true, special = palette.highlight.good.fg },
-    DiagnosticUnderlineHint = { underline = true, special = palette.highlight.neutral.fg },
-    -- }}}
-
-    -- {{{ LSP Kind styles }}}
-
-    -- " Style of the suggest popup:
-    -- hi! link CocSearch                     Keyword
-    -- hi! link CocMenuSel                    PMenuSel
-    --
-    -- call s:hi("FDCocFloatBorder",          s:palette.popupBGL1)
-    -- call s:hi("FDCocFloatSplitter",        s:palette.fgD4)
-    --
-    -- " Style of thise floating windows (diagnostic error/warnings and so on)
-    -- hi! link CocFloatDividingLine          FDCocFloatSplitter
-    -- hi! link CocFloating                   PMenu
-    --
-    -- " This is that [LS] thing in the suggest menu
-    -- call s:hi("FDCocPumShortcut",          s:palette.fgD4,               s:palette.popupBGD2,          [])
-    -- hi! link CocPumShortcut FDCocPumShortcut
-    --
-    --
-    -- call s:hi("FDCocSymbolCallable",       s:palette.tertiary,           s:palette.popupBGD2,          [s:attrs.b])
-    -- hi! link CocSymbolMethod               FDCocSymbolCallable
-    -- hi! link CocSymbolFunction             FDCocSymbolCallable
-    -- hi! link CocSymbolConstructor          FDCocSymbolCallable
-    -- hi! link CocSymbolModule               FDCocSymbolCallable
-    --
-    -- call s:hi("FDCocSymbolType",           s:palette.highlight,          s:palette.popupBGD2,          [s:attrs.b])
-    -- hi! link CocSymbolClass                FDCocSymbolType
-    -- hi! link CocSymbolStruct               FDCocSymbolType
-    -- hi! link CocSymbolInterface            FDCocSymbolType
-    -- hi! link CocSymbolEnum                 FDCocSymbolType
-    -- hi! link CocSymbolReference            FDCocSymbolType
-    --
-    -- call s:hi("FDCocSymbolValue",          s:palette.secondary,          s:palette.popupBGD2,          [s:attrs.b])
-    -- hi! link CocSymbolEnumMember           FDCocSymbolValue
-    -- hi! link CocSymbolTypeParameter        FDCocSymbolValue
-    -- hi! link CocSymbolText                 FDCocSymbolValue
-    -- hi! link CocSymbolValue                FDCocSymbolValue
-    -- hi! link CocSymbolNumber               FDCocSymbolValue
-    -- hi! link CocSymbolBoolean              FDCocSymbolValue
-    -- hi! link CocSymbolString               FDCocSymbolValue
-    --
-    -- call s:hi("FDCocSymbolVariable",       s:palette.fg,                 s:palette.popupBGD2,          [s:attrs.b])
-    -- hi! link CocSymbolConstant             FDCocSymbolVariable
-    -- hi! link CocSymbolVariable             FDCocSymbolVariable
-    -- hi! link CocSymbolField                FDCocSymbolVariable
-    -- hi! link CocSymbolProperty             FDCocSymbolVariable
-    -- hi! link CocSymbolEvent                FDCocSymbolVariable
-    --
-    -- call s:hi("FDCocSymbolKeyword",        s:palette.primary,            s:palette.popupBGD2,          [s:attrs.b])
-    -- hi! link CocSymbolKeyword              FDCocSymbolKeyword
-    -- hi! link CocSymbolOperator             FDCocSymbolKeyword
-    --
-    --
-    -- call s:hi("FDCocSymbolFiles",          s:palette.fg,                 s:palette.popupBGD2,          [s:attrs.b])
-    -- hi! link CocSymbolSnippet              FDCocSymbolFiles
-    -- hi! link CocSymbolFile                 FDCocSymbolFiles
-    -- hi! link CocSymbolFolder               FDCocSymbolFiles
-    --
-    -- hi! link CocSymbolKey                   WTF
-    -- hi! link CocSymbolUnit                  WTF
-    -- hi! link CocSymbolNull                  WTF
-    -- hi! link CocSymbolPackage               WTF
-    -- hi! link CocSymbolObject                WTF
-    --
-    -- hi! link CocSymbolArray                 WTF
-    -- hi! link CocSymbolColor                 WTF
-    -- hi! link CocSymbolNamespace             WTF
-    -- "
-    --
-
-    -- }}}
-
-    -- {{{ Others:
-
-    -- Plugins that show lines for indent levels use these:
-    IndentLine = { fg = palette.bg.L1 },
-    ScopeLine = { fg = palette.bg.L3 },
 
     -- }}}
 
@@ -398,7 +238,7 @@ local highlights = {
     Tag = { link = "Keyword" },
 
     -- Things that transform things
-    Function = { palette.text.normal },
+    Function = { palette.text.code.functions },
     Operator = { link = "Keyword" },
 
     -- Type names like int and such things.
@@ -444,6 +284,141 @@ local highlights = {
     -- Titles. Used in markdown, help, ... or in the command-line when printing long lists (like :set all)
     Title = { palette.text.code.structural },
     -- }}}
+
+    -- }}}
+
+    -- {{{ ???
+    Error = { link = "wtf" },
+    Warning = { link = "wtf" },
+    Hint = { link = "wtf" },
+    Info = { link = "wtf" },
+    -- }}}
+
+    -- {{{ UI
+
+    -- {{{ Gutter
+
+    -- The current line number in the sidebar
+    CursorLineNR = { palette.ui.gutter.base, palette.ui.gutter.ruler.base, palette.ui.gutter.ruler.selected },
+    -- The LineNr-column for other, not-current lines
+    LineNr = { palette.ui.gutter.base, palette.ui.gutter.ruler.base },
+    -- The text-width column.
+    ColorColumn = { palette.ui.gutter.base },
+
+    -- Column used to show fold UI
+    FoldColumn = { palette.ui.gutter.base, palette.ui.gutter.folds },
+    -- Used for signs like git-changes/lsp icons/...
+    SignColumn = { palette.ui.gutter.base },
+    -- }}}
+
+    -- {{{ Status-line
+    StatusLine = { palette.ui.statusLine.active },
+    -- Status-line for non-current windows
+    StatusLineNC = { palette.ui.statusLine.inactive },
+    -- }}}
+
+    -- {{{ Command-line
+    -- All the message types that appear on the command line
+    ErrorMsg = { palette.ui.commandLine.base, fg = palette.highlight.bad.fg },
+    WarningMsg = { palette.ui.commandLine.base, fg = palette.highlight.attention.fg },
+    MoreMsg = { palette.ui.commandLine.base, fg = palette.highlight.neutral.fg },
+    ModeMsg = {},
+
+    MsgArea = { palette.ui.commandLine.base },
+
+    -- Whenever a question or prompt is shown on the command line (i.e. "Press enter to continue")
+    Question = { palette.ui.commandLine.base },
+    -- }}}
+
+    -- {{{ Windows and Menus
+    -- The bar when splitting vertically (:vsplit).
+    VertSplit = { palette.ui.window.border },
+    -- Separators between window splits.
+    WinSeparator = { link = "VertSplit" },
+
+    -- {{{ Floats
+    -- Floating window border
+    FloatBorder = { link = "VertSplit" },
+    FloatTitle = { link = "Title" },
+    FloatFooter = { link = "FloatTitle" },
+    NormalFloat = { palette.ui.window.normal },
+    -- }}}
+
+    -- {{{ PMenu - Styles used several menus (including completion men)
+    Pmenu = { palette.ui.menu.normal },
+    PmenuSel = { palette.ui.menu.selected },
+
+    PmenuMatch = { palette.ui.menu.matched },
+    PmenuMatchSel = { link = "PmenuMatch" },
+
+    PmenuKind = { palette.ui.menu.kind },
+    PmenuKindSel = { fg = palette.wtf },
+    -- PmenuExtra = { fg = "red" },
+    -- PmenuExtraSel = { fg = "red" },
+
+    PmenuSbar = { link = "Pmenu" },
+    PmenuThumb = { bg = palette.ui.window.border.fg },
+    -- }}}
+
+    -- {{{ Quickfix
+
+    QuickFixLine = { link = "Visual" },
+
+    -- }}}
+
+    -- {{{ Base definition for side-bars/windows. Filebrowser, Code sumbols and others
+
+    SidebarNormal = { palette.ui.sidebar.normal },
+    SidebarVertSplit = { palette.ui.sidebar.border },
+
+    -- }}}
+
+    --}}}
+
+    -- {{{ TODO
+    --
+    --WinBar
+    --WinBarNC
+
+    WinBar = { fg = palette.wtf },
+    WinBarNC = { fg = palette.wtf },
+    SnippetTabstop = { fg = palette.wtf },
+    -- }}}
+
+    -- {{{ LSP Diagnostics
+    DiagnosticError = { palette.highlight.bad },
+    DiagnosticWarn = { palette.highlight.attention },
+    DiagnosticInfo = { palette.highlight.good },
+    DiagnosticHint = { palette.highlight.neutral }, -- things like unused vars
+
+    DiagnosticUnnecessary = { link = "Comment" },
+
+    DiagnosticUnderlineError = { underline = true, special = palette.highlight.bad.fg },
+    DiagnosticUnderlineWarn = { underline = true, special = palette.highlight.attention.fg },
+    DiagnosticUnderlineInfo = { underline = true, special = palette.highlight.good.fg },
+    DiagnosticUnderlineHint = { underline = true, special = palette.highlight.neutral.fg },
+    -- }}}
+
+    -- {{{ LSP Kind styles }}}
+
+    LspItemKind = { link = "PmenuKind" },
+
+    LspItemKindFunction = { palette.ui.menu.kind, palette.text.code.functions },
+    LspItemKindType = { palette.ui.menu.kind, palette.text.code.types },
+    LspItemKindValue = { palette.ui.menu.kind, palette.text.code.values },
+    LspItemKindString = { palette.ui.menu.kind, palette.text.code.strings },
+    LspItemKindKeyword = { palette.ui.menu.kind, palette.text.code.structural },
+    LspItemKindFiles = { palette.ui.menu.kind, palette.text.code.identifiers },
+
+    -- }}}
+
+    -- {{{ Others:
+
+    -- Plugins that show lines for indent levels use these:
+    IndentLine = { fg = palette.bg.L1 },
+    ScopeLine = { fg = palette.bg.L3 },
+
+    -- }}}
 }
 
 return {
@@ -451,7 +426,7 @@ return {
 
     apply = function()
         for group, hi in pairs(highlights) do
-            vim.api.nvim_set_hl(0, group, flatten(hi))
+            color.set(group, hi)
         end
     end,
 }
