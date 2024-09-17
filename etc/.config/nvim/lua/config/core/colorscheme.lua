@@ -126,12 +126,14 @@ local palette = merge(colors, {
                 bold = true,
             },
         },
+
         window = {
             border = { fg = colors.bg.L4, bg = colors.bg.O },
-            normal = { fg = colors.fg.O, bg = colors.bg.D2 },
+            normal = { fg = colors.fg.O, bg = colors.bg.O },
         },
         menu = {
-            border = { fg = colors.fg.D4 },
+            border = { fg = colors.bg.L4 },
+            scrollbar = { fg = colors.fg.D2 },
             normal = { fg = colors.fg.D1, bg = colors.bg.L2 },
             selected = { bg = colors.bg.L4 },
             matched = {
@@ -144,6 +146,9 @@ local palette = merge(colors, {
         },
         sidebar = {
             normal = { fg = colors.fg.O, bg = colors.bg.D1 },
+            border = { fg = colors.bg.L2, bg = colors.bg.D1 },
+        },
+        split = {
             border = { fg = colors.bg.L2, bg = colors.bg.D1 },
         },
     },
@@ -332,13 +337,13 @@ local highlights = {
 
     -- {{{ Windows and Menus
     -- The bar when splitting vertically (:vsplit).
-    VertSplit = { palette.ui.window.border },
+    VertSplit = { palette.ui.split.border },
     -- Separators between window splits.
     WinSeparator = { link = "VertSplit" },
 
     -- {{{ Floats
     -- Floating window border
-    FloatBorder = { link = "VertSplit" },
+    FloatBorder = { palette.ui.window.border },
     FloatTitle = { link = "Title" },
     FloatFooter = { link = "FloatTitle" },
     NormalFloat = { palette.ui.window.normal },
@@ -352,12 +357,13 @@ local highlights = {
     PmenuMatchSel = { link = "PmenuMatch" },
 
     PmenuKind = { palette.ui.menu.kind },
-    PmenuKindSel = { fg = palette.wtf },
-    -- PmenuExtra = { fg = "red" },
-    -- PmenuExtraSel = { fg = "red" },
+    -- PmenuKindSel = { fg = palette.wtf },
+    -- PmenuExtra = { fg = palette.wtf },
+    -- PmenuExtraSel = { fg = palette.wtf },
 
     PmenuSbar = { link = "Pmenu" },
-    PmenuThumb = { bg = palette.ui.window.border.fg },
+    PmenuThumb = { bg = palette.ui.menu.scrollbar.fg },
+    PmenuBorder = { palette.ui.menu.border },
     -- }}}
 
     -- {{{ Quickfix
@@ -399,8 +405,7 @@ local highlights = {
     DiagnosticUnderlineHint = { underline = true, special = palette.highlight.neutral.fg },
     -- }}}
 
-    -- {{{ LSP Kind styles }}}
-
+    -- {{{ LSP Kind styles
     LspItemKind = { link = "PmenuKind" },
 
     LspItemKindFunction = { palette.ui.menu.kind, palette.text.code.functions },
@@ -409,6 +414,7 @@ local highlights = {
     LspItemKindString = { palette.ui.menu.kind, palette.text.code.strings },
     LspItemKindKeyword = { palette.ui.menu.kind, palette.text.code.structural },
     LspItemKindFiles = { palette.ui.menu.kind, palette.text.code.identifiers },
+    -- }}}
 
     -- }}}
 

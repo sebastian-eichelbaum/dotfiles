@@ -1,6 +1,7 @@
 local stringUtils = require("util.string")
 local hl = require("util.highlight")
 local map = require("util.keymap")
+local table = require("util.table")
 local palette = require("config.core.colorscheme").palette
 
 return {
@@ -1036,24 +1037,6 @@ return {
             -- }}}
 
             -- {{{ Configure the completion windows and menus
-            local makeBorder = function()
-                return cmp.config.window.bordered({
-                    winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:Search",
-                    col_offset = 1,
-                    side_padding = 0,
-                    border = {
-                        " ",
-                        "▁",
-                        " ",
-                        "▏",
-                        " ",
-                        "▔",
-                        " ",
-                        "▕",
-                    },
-                })
-            end
-
             local options = {
                 sources = cmp.config.sources({
                     { name = "nvim_lsp" },
@@ -1064,9 +1047,18 @@ return {
                 }),
 
                 window = {
-                    completion = makeBorder(),
+                    completion = cmp.config.window.bordered({
+                        winhighlight = "Normal:Pmenu,FloatBorder:PmenuBorder,CursorLine:PmenuSel,Search:None",
+                        col_offset = 1,
+                        side_padding = 0,
+                        border = config.menuBorder,
+                        scrolloff = 5,
+                    }),
                     -- completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered({
+                        border = config.infoBorder,
+                        --winhighlight = "Normal:NormalFloat",
+                    }),
                 },
 
                 -- Format each entry in the completion menu
@@ -1090,18 +1082,22 @@ return {
 
                         -- Completion source mapping to a sexy name
 
-                        local abbr = stringUtils.crop(
+                        local abbr = stringUtils.ensureLengthInRange(
                             vim_item.abbr,
+                            40,
+                            60,
                             -- Max width as a fraction of available columns
-                            math.max(
-                                20, -- at least 20
-                                math.min(
-                                    60, -- at most 60
-                                    math.floor(0.40 * vim.o.columns)
-                                )
-                            ),
+                            -- math.max(
+                            --     20, -- at least 20
+                            --     math.min(
+                            --         60, -- at most 60
+                            --         math.floor(0.40 * vim.o.columns)
+                            --     )
+                            -- ),
                             -- Ellipsis
-                            " "
+                            " ",
+                            -- Extender
+                            " "
                         )
 
                         -- Construct the output:
@@ -1173,14 +1169,19 @@ return {
             -- All the LSP/CMP/Mason magic is in this one config
             local config = require("config.lsp")
 
-            for _, lsp in pairs(config.servers) do
-                require("lspconfig")[lsp].setup({
-                    on_attach = function(client, bufnr)
-                        config.mappings(bufnr)
-                    end,
+            for lsp, lspCfg in pairs(config.servers) do
+                require("lspconfig")[lsp].setup(table.merge(
+                    -- Default settings for all
+                    {
+                        on_attach = function(client, bufnr)
+                            config.mappings(bufnr)
+                        end,
 
-                    capabilities = require("cmp_nvim_lsp").default_capabilities(),
-                })
+                        capabilities = require("cmp_nvim_lsp").default_capabilities(),
+                    },
+                    -- Additional per-server settings
+                    lspCfg
+                ))
             end
         end,
     },
