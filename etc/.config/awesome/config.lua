@@ -274,7 +274,7 @@ local commands = {
 
     -- User/Power management
     sys = {
-        logout = 'echo "awesome.quit()" | /usr/bin/awesome-client',
+        logout = 'echo "awesome.quit()" | /run/current-system/sw/bin/awesome-client',
         restart = "systemctl reboot",
         hibernate = "systemctl hibernate",
         suspend = "systemctl suspend",

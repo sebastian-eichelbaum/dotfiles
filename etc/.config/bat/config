@@ -10,9 +10,14 @@
 --theme="FetzDark"
 
 # Show line numbers, Git modifications and file header (but no grid)
-# --style="numbers,changes,header"
+# full, auto, plain, changes, header, header-filename, header-filesize, grid, rule, numbers, snip
+#  * snip - a splitter between line ranges: bat --line-range 1:10 --line-range 100: CMakeLists.txt
+#  * grid - print the lines to split header, ruler and so on. Quite ugly.
+#  * rule - show a line between files. Recommended.
+--style="numbers,changes,header,rule,snip"
+#--style="numbers,changes,header,snip"
 # OK so the numbers and changes look nice but make it impossible to copy parts of the output. This is more like classic cat + syntax
---style="header"
+#--style="header"
 
 # Use C++ syntax for Arduino .ino files
 --map-syntax "*.ino:C++"

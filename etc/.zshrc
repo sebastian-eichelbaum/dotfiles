@@ -45,6 +45,9 @@ alias gitgui=gittyup
 # I want to include dot files in search by default
 alias fd='fd --hidden --exclude ".git"'
 
+# Nice colored cat
+alias cat='bat --paging=never'
+
 # }}}
 
 #############################################################################################################

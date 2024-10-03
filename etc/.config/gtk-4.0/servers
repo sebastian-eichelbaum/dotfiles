@@ -23,12 +23,12 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="smb://10.70.0.111/effigos/" added="2023-11-23T11:22:09.159883Z" modified="2023-11-23T20:39:34.039563Z" visited="2023-11-23T20:39:34.039557Z">
+  <bookmark href="smb://10.70.0.111/effigos/" added="2023-11-23T11:22:09.159883Z" modified="2024-09-17T14:56:28.689259Z" visited="2024-09-17T14:56:28.689251Z">
     <title>effigos on 10.70.0.111</title>
     <info>
       <metadata owner="http://freedesktop.org">
         <bookmark:applications>
-          <bookmark:application name="org.gnome.Nautilus" exec="&apos;org.gnome.Nautilus %u&apos;" modified="2023-11-23T20:39:34.039560Z" count="2"/>
+          <bookmark:application name="org.gnome.Nautilus" exec="&apos;org.gnome.Nautilus %u&apos;" modified="2024-09-17T14:56:28.689255Z" count="3"/>
         </bookmark:applications>
       </metadata>
     </info>

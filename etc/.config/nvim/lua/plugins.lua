@@ -256,6 +256,7 @@ return {
                     -- "document_symbols",
                 },
 
+                -- ? Causes issues when closing a buf.
                 close_if_last_window = true,
 
                 -- They are quite annoying and clutter the tree.

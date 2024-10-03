@@ -19,7 +19,7 @@ local colors = {
     -- Start with a decision on what will be your BG and FG.
     -- This defines the "mood" of the theme.
     bg = color.lightnessRamp("#1a1a1c"),
-    fg = color.lightnessRamp("#c9c9cd"),
+    fg = color.lightnessRamp("#d4d4de"),
 
     -- Used to distinguish unknown highlights. Very useful for debugging themes.
     wtf = "#ff00ff",
