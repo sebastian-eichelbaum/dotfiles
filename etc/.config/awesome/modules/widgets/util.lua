@@ -82,7 +82,7 @@ return {
                 }
 
                 -- Embedd in some margins
-                local marginedImg = wibox.layout.margin(
+                local marginedImg = wibox.container.margin(
                     img,
                     override.img_leftMargin or lib.dpi(1),
                     override.img_rightMargin or lib.dpi(1),
@@ -93,7 +93,7 @@ return {
 
                 -- Use a named margin widget for text as it might be hidden if the value is nil. If
                 -- only the text widget is hidden, there would still be a margin which looks off.
-                local marginedText = wibox.layout.margin(nil, lib.dpi(3), lib.dpi(1), lib.dpi(1), lib.dpi(2))
+                local marginedText = wibox.container.margin(nil, lib.dpi(3), lib.dpi(1), lib.dpi(1), lib.dpi(2))
 
                 -- The actual watch widget
                 local text, watch = awful.widget.watch(
@@ -142,9 +142,9 @@ return {
                     image = nil,
                     resize = true,
                 }
-                
+
                 -- Embedd in some margins
-                local marginedImg = wibox.layout.margin(
+                local marginedImg = wibox.container.margin(
                     img,
                     override.img_leftMargin or lib.dpi(1),
                     override.img_rightMargin or lib.dpi(1),
@@ -152,10 +152,10 @@ return {
                     override.img_bottomMargin or lib.dpi(1)
                 )
                 marginedImg:set_visible(not overrides.hideIcon)
- 
+
                 -- Use a named margin widget for text as it might be hidden if the value is nil. If
                 -- only the text widget is hidden, there would still be a margin which looks off.
-                local marginedText = wibox.layout.margin(nil, lib.dpi(3), lib.dpi(1), lib.dpi(1), lib.dpi(2))
+                local marginedText = wibox.container.margin(nil, lib.dpi(3), lib.dpi(1), lib.dpi(1), lib.dpi(2))
 
                 -- The actual watch widget
                 local text = lain.widget[lainWidget]({

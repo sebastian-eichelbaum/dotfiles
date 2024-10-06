@@ -9,7 +9,7 @@ if [ "$HOSTNAME" = worky ]; then
   razer balance &
 fi
 
-# Ich will meinen Brauser immer haben
+# Always start the browser
 firefox &
 
 # If picom is not a systemd service, start as daemon
@@ -20,4 +20,4 @@ else
 fi
 
 # Wird nach dem booten manchmal nicht automatisch erkannt. Also erneut setzen.
-(sleep 3 && autorandr --change) &
+# (sleep 3 && autorandr --change) &

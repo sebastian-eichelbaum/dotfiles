@@ -47,6 +47,7 @@ alias fd='fd --hidden --exclude ".git"'
 
 # Nice colored cat
 alias cat='bat --paging=never'
+alias autorandr='autorandr --match-edid'
 
 # }}}
 

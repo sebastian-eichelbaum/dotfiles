@@ -49,14 +49,14 @@ local widgetContainer = function(widget, bg)
     -- borderdBox-style?
     --[[return
         containers.borderedBox(
-            wibox.layout.margin(widget, lib.dpi(8), lib.dpi(8), lib.dpi(6), lib.dpi(6)),
+            wibox.container.margin(widget, lib.dpi(8), lib.dpi(8), lib.dpi(6), lib.dpi(6)),
             beautiful.palette.bg,
             bg,
             lib.dpi(0), lib.dpi(0), lib.dpi(0), lib.dpi(4)
         )--]]
 
     -- Pill-style?
-    --[[return wibox.layout.margin(
+    --[[return wibox.container.margin(
         containers.roundedBox(
             widget,
             bg
@@ -180,14 +180,14 @@ return {
                 { -- Left widgets
                     layout = wibox.layout.fixed.horizontal,
 
-                    wibox.layout.margin(taglist, lib.dpi(0), lib.dpi(0), lib.dpi(0), lib.dpi(0)),
-                    wibox.layout.margin(layoutBox, lib.dpi(10), lib.dpi(10), lib.dpi(3), lib.dpi(5)),
+                    wibox.container.margin(taglist, lib.dpi(0), lib.dpi(0), lib.dpi(0), lib.dpi(0)),
+                    wibox.container.margin(layoutBox, lib.dpi(10), lib.dpi(10), lib.dpi(3), lib.dpi(5)),
 
                     tasklistMinimized,
                 },
 
                 -- Middle widget
-                wibox.layout.margin(tasklist, lib.dpi(15), lib.dpi(15), lib.dpi(0), lib.dpi(0)),
+                wibox.container.margin(tasklist, lib.dpi(15), lib.dpi(15), lib.dpi(0), lib.dpi(0)),
 
                 { -- Right widgets
 

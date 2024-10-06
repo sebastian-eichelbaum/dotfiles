@@ -10,7 +10,7 @@
 local awful = require("awful")
 
 local home = os.getenv("HOME")
-local bin = home .. '/.dotfiles/bin/'
+local bin = home .. "/.dotfiles/bin/"
 
 -- The modkey to use. Mod4 is the "windows" key
 local modkey = "Mod4"
@@ -19,9 +19,9 @@ local modkey = "Mod4"
 local clients = {
     -- Client default properties. Used if not explicitly overwritten.
     properties = {
-        focus     = awful.client.focus.filter,
-        raise     = true,
-        screen    = awful.screen.preferred,
+        focus = awful.client.focus.filter,
+        raise = true,
+        screen = awful.screen.preferred,
 
         -- Default placement, especially for floating windows
         placement = awful.placement.no_overlap + awful.placement.no_offscreen + awful.placement.centered,
@@ -34,7 +34,7 @@ local clients = {
         titlebars_enabled = false,
 
         -- Transient clients can be centered in its parent. This en-/disables it globally.
-        disallow_autocenter = false
+        disallow_autocenter = false,
     },
 
     -- Floating client specific rules
@@ -42,7 +42,7 @@ local clients = {
         -- Use the titlebar ONLY for floating clients? If false and the above client property "titlebars_enabled" is true,
         -- titlebars are added to all windows.
         titlebar = false,
-    }
+    },
 }
 -- }}}
 
@@ -56,7 +56,7 @@ local style = {
     tagFont = "Font Awesome 6 Free Solid 11",
 
     -- Wallpaper. either a path or a function
-    wallpaper = os.getenv( "HOME" ) .. "/.background-image",
+    wallpaper = os.getenv("HOME") .. "/.background-image",
 
     -- More options
     gap = 0,
@@ -65,6 +65,21 @@ local style = {
     -- Focus/Unfocus transparency
     focusOpacity = 1.0,
     unfocusOpacity = 1.0,
+
+    -- Use some advanced border magic for single/maximized windows.
+    -- Set nil if you do not need that.
+    singleOrMaxWindow = {
+        -- The border width of windows that are either single/maximized or focused or unfocused.
+        -- In the unfocussed case, the normal borderWidth is used.
+        singleBorderWidth = 1,
+        focusBorderWidth = 1,
+
+        -- The color used for single/maximized windows. Must be a function as the theme might not yet be loaded.
+        -- Unfocussed and focussed windows use beautiful.border_normal and  beautiful.border_focus colors
+        singleBorderColor = function(theme)
+            return theme.border_normal
+        end,
+    },
 }
 -- }}}
 
@@ -73,70 +88,78 @@ local tagging = {
     -- Hide empty tags?
     hideEmpty = true,
     -- Unspecified screens use this default style. ID and name are ignored.
-    default = {layout = awful.layout.suit.tile.bottom, master_count = 2, master_width_factor = 0.75},
+    default = { layout = awful.layout.suit.tile.bottom, master_count = 2, master_width_factor = 0.75 },
     screens = {
         -- Screen 0
         {
             -- Options supported: see https://awesomewm.org/doc/api/classes/tag.html#Object_properties
-            { ids = { "primary" },
+            {
+                ids = { "primary" },
                 name = " ",
                 -- icon = "/usr/local/share/awesome/icons/awesome32.png",
                 layout = awful.layout.suit.tile.bottom,
                 master_count = 2,
-                master_width_factor = 0.75
+                master_width_factor = 0.75,
             },
-            { ids = { "secondary" },
+            {
+                ids = { "secondary" },
                 name = " ",
                 layout = awful.layout.suit.tile.bottom,
                 master_count = 2,
                 master_width_factor = 0.75,
             },
-            { ids = {},
+            {
+                ids = {},
                 name = " ",
                 layout = awful.layout.suit.tile.bottom,
                 master_count = 2,
-                master_width_factor = 0.75
+                master_width_factor = 0.75,
             },
-            { ids = {},
+            {
+                ids = {},
                 name = " ",
                 layout = awful.layout.suit.tile.bottom,
                 master_count = 2,
-                master_width_factor = 0.75
+                master_width_factor = 0.75,
             },
-            { ids = { "draw" },
+            {
+                ids = { "draw" },
                 name = " ",
                 layout = awful.layout.suit.tile.bottom,
                 master_count = 2,
-                master_width_factor = 0.75
+                master_width_factor = 0.75,
             },
-            { ids = { "mail" },
+            {
+                ids = { "mail" },
                 name = " ",
                 layout = "cascadetile",
                 master_count = 1,
                 master_width_factor = 0.60,
             },
-            { ids = { "www" },
+            {
+                ids = { "www" },
                 -- name = " ",
                 -- name = " ",
                 -- name = " ",
                 name = " ",
-                layout = awful.layout.suit.max
+                layout = awful.layout.suit.max,
             },
-            { ids = { "games", "guests" },
+            {
+                ids = { "games", "guests" },
                 name = " ",
-                layout = awful.layout.suit.max.fullscreen
+                layout = awful.layout.suit.max.fullscreen,
             },
-            { ids = { "media" },
+            {
+                ids = { "media" },
                 name = " ",
                 layout = awful.layout.suit.tile,
                 master_count = 1,
-                master_width_factor = 0.60
+                master_width_factor = 0.60,
             },
-
-        }
+        },
         -- Define more screens as needed in the same style as above.
         -- Other screens use the awesome default
-    }
+    },
 }
 -- }}}
 
@@ -147,61 +170,55 @@ local rules = {
     {
         -- Without any tag id - some apps need some properties to be set or tehy will misbehave.
         rules = {
-            { rule = { class = "Gitg" },                             properties = { floating = true, size_hints_honor = true, width = 1850, height = 1000 } },
-
-            { rule = { class = "Nm-connection-editor" },             properties = { floating = true, size_hints_honor = true } },
-            { rule = { class = "Nitrogen" },                         properties = { floating = true, size_hints_honor = true } },
-
-            { rule = { class = "SpeedCrunch" },                      properties = { floating = true, size_hints_honor = true, width = 800, height = 600 } },
-            { rule = { class = "Arandr" },                           properties = { floating = true } },
-
-            { rule = { class = "Pavucontrol" },                      properties = { floating = true } },
-        }
+            {
+                rule = { class = "Nm-connection-editor" },
+                properties = { floating = true, size_hints_honor = true, ontop = true },
+            },
+            {
+                rule = { class = "SpeedCrunch" },
+                properties = { floating = true, size_hints_honor = true, width = 800, height = 600, ontop = true },
+            },
+        },
     },
 
     -- Primary work tools
     {
         tagId = "primary",
         rules = {
-            { rule = { class = "Unity", type = "normal" },           properties = { floating = false } },
-        }
+            {
+                rule = { class = "Unity", type = "normal" },
+                -- Unity has some own "magic" on how it closes its tool windows. Disable the focus follows mouse
+                -- function as it makes working with unity a bit fiddly.
+                properties = { floating = false, focusFollowsMouse = false },
+            },
+        },
     },
 
     -- Secondary work tools
     {
         tagId = "secondary",
         rules = {
-            { rule = { class = "Walnut" },                           properties = { floating = true } },
-            { rule = { class = "openwalnut" },                       properties = { floating = true } },
-            { rule = { class = "Openwalnut" },                       properties = { floating = true } },
-
-            { rule = { class = "UnityHub" },                         properties = { floating = false } },
-            { rule = { class = "unityhub" },                         properties = { floating = false } },
-        }
+            { rule = { class = "unityhub" }, properties = {} },
+        },
     },
 
     -- Multimedia stuff
     {
         tagId = "media",
         rules = {
-            { rule = { class = "Totem" },                            properties = {  } },
-            { rule = { class = "vlc" },                              properties = {  } },
-            { rule = { class = "MPlayer" },                          properties = { floating = true } },
-            { rule = { class = "[Ss]potify" },                       properties = { floating = false } },
-            { rule = { class = "Deadbeef" },                         properties = { floating = true } },
-            { rule = { class = "Audacious" },                        properties = {  } },
-        }
+            { rule = { class = "Totem" }, properties = {} },
+            { rule = { class = "vlc" }, properties = {} },
+            { rule = { class = "[Ss]potify" }, properties = { floating = false } },
+        },
     },
 
     -- Browsing
     {
         tagId = "www",
         rules = {
-            { rule = { class = "firefox" },                          properties = { } },
-            { rule = { class = "Firefox" },                          properties = { } },
-            { rule = { class = "firefox", name = "Download" },       properties = { floating = true } },
-            { rule_any = { class = { "google-chrome", "Google-chrome" } }, properties = { tagId = "www" } },
-        }
+            { rule_any = { class = { "Firefox", "firefox" } }, properties = {} },
+            { rule_any = { class = { "google-chrome", "Google-chrome" } }, properties = {} },
+        },
     },
 
     -- PIM, Chat, Mail
@@ -209,61 +226,73 @@ local rules = {
         tagId = "mail",
         rules = {
             -- EMail
-            { rule = { class = "UXTerm", name = "Mutt" },            properties = { } },
-            { rule = { class = "thunderbird" },                      properties = { } },
-            { rule = { class = "UXTerm", name = ".*ommunicator.*" }, properties = { } },
+            { rule = { class = "thunderbird" }, properties = {} },
 
             -- Chatting
-            { rule = { class = "TelegramDesktop" },                  properties = { size_hints_honor = true }, callback = awful.client.setslave },
-            { rule = { class = "Signal" },                           properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
-            { rule = { class = "Slack" },                            properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
-            { rule = { class = "discord" },                          properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
-            { rule = { class = "Rocket.Chat" },                      properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
-            { rule = { class = "Ferdium" },                          properties = { size_hints_honor = true, floating = false, },  callback = awful.client.setslave },
-        }
+            {
+                rule = { class = "TelegramDesktop" },
+                properties = { size_hints_honor = true },
+                callback = awful.client.setslave,
+            },
+            {
+                rule = { class = "Signal" },
+                properties = { size_hints_honor = true, floating = false },
+                callback = awful.client.setslave,
+            },
+            {
+                rule = { class = "Slack" },
+                properties = { size_hints_honor = true, floating = false },
+                callback = awful.client.setslave,
+            },
+            {
+                rule = { class = "discord" },
+                properties = { size_hints_honor = true, floating = false },
+                callback = awful.client.setslave,
+            },
+            {
+                rule = { class = "Rocket.Chat" },
+                properties = { size_hints_honor = true, floating = false },
+                callback = awful.client.setslave,
+            },
+            {
+                rule = { class = "Ferdium" },
+                properties = { size_hints_honor = true, floating = false },
+                callback = awful.client.setslave,
+            },
+        },
     },
 
     -- Drawing, artsy stuff
     {
         tagId = "draw",
         rules = {
-            { rule = { class = "Blender" },                          properties = { floating = false } },
-            { rule = { class = "Gimp" },                             properties = { floating = true } },
-            { rule = { class = "Inkscape" },                         properties = { } },
-        }
+            { rule = { class = "Gimp" }, properties = { floating = true } },
+            -- This dialog is so annoying. Force it to be on top.
+            { rule = { role = "gimp-toolbox-color-dialog" }, properties = { floating = true, ontop = true } },
+            { rule = { class = "Inkscape" }, properties = {} },
+            { rule = { class = "Blender" }, properties = {} },
+        },
     },
 
     -- Guest systems, ...
     {
         tagId = "guests",
         rules = {
-            { rule = { class = "VirtualBox" },                       properties = { floating = true } },
-            { rule = { class = "VirtualBox Machine" },               properties = { floating = false } },
-            { rule = { name = "Oracle VM VirtualBox Manager" },      properties = { floating = true, size_hints_honor = true } },
-            { rule = { class = "Virt-manager" },                     properties = { } },
-            { rule = { class = "Virt-viewer" },                      properties = { } },
-            { rule = { class = ".qemu-system-x86_64-wrapped" },      properties = { } },
-            { rule = { class = "Spicy" },                            properties = { } },
-        }
+            -- The tools regarding kvm/qemu virtual machines
+            { rule_any = { class = { "Virt-manager", "Virt-viewer", "Spicy" } }, properties = {} },
+            { rule = { class = ".qemu-system-x86_64-wrapped" }, properties = {} },
+        },
     },
 
     -- Gaming
     {
         tagId = "games",
         rules = {
-            { rule = { class = "Steam" },                            properties = { floating = true } },
-            { rule = { class = "steam" },                            properties = { floating = true } },
-            { rule = { class = "steamwebhelper" },                   properties = { floating = true } },
-            { rule = { name = "Steam" },                             properties = { floating = true } },
-            { rule = { class = "Lutris" },                           properties = { floating = true } },
-            { rule = { class = "heroic" },                           properties = { floating = true } },
-            { rule = { class = "SideQuest" },                        properties = { floating = true } },
-            { rule = { class = "Wine" },                             properties = { floating = true } },
-            { rule = { name = "PlayOnLinux" },                       properties = { floating = true } },
-            { rule = { class = "yuzu" },                             properties = { floating = true } },
-        }
+            { rule_any = { class = { "steam", "Steam", "steamwebhelper" } }, properties = { floating = true } },
+            { rule = { class = "Lutris" }, properties = { floating = true } },
+            { rule = { class = "heroic" }, properties = { floating = true } },
+        },
     },
-
 }
 -- }}}
 
@@ -279,7 +308,7 @@ local commands = {
         hibernate = "systemctl hibernate",
         suspend = "systemctl suspend",
         shutdown = "systemctl poweroff",
-        lock = bin .. "lockoff"
+        lock = bin .. "lockoff",
     },
 
     -- Laptop light control
@@ -291,11 +320,11 @@ local commands = {
 
     -- Volume special keys
     volume = {
-        up =  bin .. "audio-volume incr",
-        down =  bin .. "audio-volume decr",
+        up = bin .. "audio-volume incr",
+        down = bin .. "audio-volume decr",
         mute = bin .. "audio-volume mute",
         mixer = "pavucontrol",
-        get = bin .. "audio-volume get"
+        get = bin .. "audio-volume get",
     },
 
     -- Music special keys
@@ -303,27 +332,27 @@ local commands = {
         play = "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause",
         stop = "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop",
         prev = "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous",
-        next = "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
+        next = "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next",
     },
 
     -- System monitors
     monitors = {
         cpu = "kitty htop -t",
         mem = "kitty htop -s PERCENT_MEM",
-        bat = "kitty sudo powertop" -- NOTE: use uxterm as other terms do not find sudo/powertop ?!
+        bat = "kitty sudo powertop", -- NOTE: use uxterm as other terms do not find sudo/powertop ?!
     },
 
     -- Runners
     prompts = {
-        run = 'rofi -modi drun,window -show combi',
-        places = bin ..'dmenu_places',
-        pass = 'rofi-pass',
-        clipboard = 'rofi -modi "clipboard:greenclip print" -show clipboard -run-command "{cmd}"'
+        run = "rofi -modi drun,window -show combi",
+        places = bin .. "dmenu_places",
+        pass = "rofi-pass",
+        clipboard = 'rofi -modi "clipboard:greenclip print" -show clipboard -run-command "{cmd}"',
     },
 
     -- Apps
     apps = {
-        calc = 'speedcrunch'
+        calc = "speedcrunch",
     },
 }
 -- }}}
@@ -331,35 +360,43 @@ local commands = {
 -- {{{ Spawn keybindings - they spawn the user commands.
 local spawnBindings = {
     -- Terminal spawn
-    {{modkey}, "Return", commands.terminal},
+    { { modkey }, "Return", commands.terminal },
 
     -- Lock screen
-    {{"Mod1", "Control"}, "Delete", commands.sys.lock},
+    { { "Mod1", "Control" }, "Delete", commands.sys.lock },
 
     -- Prompts
-    {{modkey}, "a", commands.prompts.run},
-    {{modkey}, "s", commands.prompts.places},
-    {{modkey}, "p", commands.prompts.pass},
-    {{modkey}, "v", commands.prompts.clipboard},
+    { { modkey }, "a", commands.prompts.run },
+    { { modkey }, "s", commands.prompts.places },
+    { { modkey }, "p", commands.prompts.pass },
+    { { modkey }, "v", commands.prompts.clipboard },
 
     -- Monitor backlight
-    {{}, "XF86MonBrightnessUp", commands.light.monUp},
-    {{}, "XF86MonBrightnessDown", commands.light.monDown},
+    { {}, "XF86MonBrightnessUp", commands.light.monUp },
+    { {}, "XF86MonBrightnessDown", commands.light.monDown },
 
     -- Volume
-    {{modkey}, "x", commands.volume.up},
-    {{modkey}, "z", commands.volume.down},
-    {{}, "XF86AudioRaiseVolume", commands.volume.up},
-    {{}, "XF86AudioLowerVolume", commands.volume.down},
-    {{}, "XF86AudioMute", commands.volume.mute},
+    { { modkey }, "x", commands.volume.up },
+    { { modkey }, "z", commands.volume.down },
+    { {}, "XF86AudioRaiseVolume", commands.volume.up },
+    { {}, "XF86AudioLowerVolume", commands.volume.down },
+    { {}, "XF86AudioMute", commands.volume.mute },
 
     -- Music
-    {{}, "XF86AudioPlay", commands.music.play},
-    {{}, "XF86AudioPrev", commands.music.prev},
-    {{}, "XF86AudioNext", commands.music.next},
+    { {}, "XF86AudioPlay", commands.music.play },
+    { {}, "XF86AudioPrev", commands.music.prev },
+    { {}, "XF86AudioNext", commands.music.next },
 
     -- Apps
-    {{modkey}, "c", function () awful.spawn.raise_or_spawn(commands.apps.calc, {}, function (c) return c.class == "SpeedCrunch" end) end},
+    {
+        { modkey },
+        "c",
+        function()
+            awful.spawn.raise_or_spawn(commands.apps.calc, {}, function(c)
+                return c.class == "SpeedCrunch"
+            end)
+        end,
+    },
 }
 -- }}}
 
@@ -368,7 +405,7 @@ return {
     style = style,
     commands = commands,
     keybindings = {
-        spawn = spawnBindings
+        spawn = spawnBindings,
     },
     tagging = tagging,
     rules = rules,

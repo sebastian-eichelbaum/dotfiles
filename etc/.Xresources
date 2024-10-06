@@ -1,6 +1,4 @@
-! XResources/XDefaults is not really used anymore. This file is here to make
-! the emergency fallback terminals XTerm and UXTerm a bit more legible.
-
+! Set by some scripts to have useful DPI per screen
 ! Xft.dpi: 120
 
 ! Font
