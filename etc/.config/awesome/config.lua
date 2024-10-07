@@ -85,7 +85,23 @@ local style = {
             byTag = { "draw", "guests", "games" },
             byLayout = { "max", "fullscreen" },
             -- NOTE: xprop WM_CLASS to get the class. The second string is the class
-            byClass = { "Eog", "Totem", "vlc", "Gimp", "Inkscape", "Blender", "Evince", "firefox", "Google-chrome" },
+            byClass = {
+                -- Content viewers
+                "Eog",
+                "Totem",
+                "vlc",
+                "Evince",
+
+                -- Content editors
+                "Gimp",
+                "Inkscape",
+                "Blender",
+                "Unity",
+
+                -- Browsers
+                "firefox",
+                "Google-chrome",
+            },
 
             -- Should be true. Making a youtube video go fullscreen should disable transparency
             maximized = true,
