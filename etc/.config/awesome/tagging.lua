@@ -17,7 +17,7 @@ local config = require("config")
 -- {{{ Library code. Tag handling
 
 -- Generate Tags for a given screen
-function getLayout(layout)
+local function getLayout(layout)
 
     if not layout then
         return awful.layout.suit.tile
@@ -42,7 +42,7 @@ function getLayout(layout)
 end
 
 -- Generate a tag using a given config
-function makeTag(screen, tagCfg)
+local function makeTag(screen, tagCfg)
     local tag = awful.tag.add(
         -- Name
         tagCfg.name,
@@ -61,7 +61,7 @@ function makeTag(screen, tagCfg)
 end
 
 -- Generate Tags for a given screen
-function createTags(s)
+local function createTags(s)
 
     local si = s.index
     local cfg = {}

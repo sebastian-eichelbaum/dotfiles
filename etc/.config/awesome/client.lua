@@ -11,6 +11,7 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 
 local style = require("config").style
+local modkey = require("config").modkey
 
 -- {{{ Mouse bindings
 local buttons = {
@@ -88,11 +89,8 @@ return {
             end
         end)
 
-        -- Add a titlebar if titlebars_enabled is set to true in the rules.
-        client.connect_signal("request::titlebars", function(c)
-            -- Removed. Refer to the original RC on how to setup a titlebar.
-            -- Done as a separate config module
-        end)
+        -- Add a titlebar? Refer to the titlebar module.
+        -- client.connect_signal("request::titlebars", function(c) end)
 
         -- Enable sloppy focus, so that focus follows mouse.
         client.connect_signal("mouse::enter", function(c)

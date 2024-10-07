@@ -10,11 +10,11 @@
 
    fgwhite:          #cfcfcf;
    fgwhitebold:      #cfcfcf;
-   blackdarkest:     #1b1b1c;
-   blackwidget:      #1b1b1c;
-   blackentry:       #1e1e20;
+   blackdarkest:     #1b1b1f;
+   blackwidget:      #1b1b1f;
+   blackentry:       #1e1e22;
    /*blackselect:      #585858;*/
-   blackselect:      #313234;
+   blackselect:      #313236;
    /*blackselect:      #53595e;*/
    darkgray:         #848484;
    scrollbarcolor:   #505050;

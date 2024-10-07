@@ -7,27 +7,51 @@
 -- Library functions that will be handy in the config code
 ---------------------------------------------------------------------------------------------------
 
-local awful = require("awful")
-local naughty = require("naughty")
-
 local xresources = require("beautiful.xresources")
 local dpi = xresources.apply_dpi
 
+local array = {}
+
+-- Test if a given thing is an array
+array.isArray = function(candidate)
+    return candidate ~= nil and type(candidate) == "table"
+end
+
+-- Check if an array contains a value
+array.contains = function(arr, val)
+    if not array.isArray(arr) then
+        return false
+    end
+
+    for i = 1, #arr do
+        if arr[i] == val then
+            return true
+        end
+    end
+    return false
+end
+
 return {
     -- Provide cond ? T : F like syntax
-    ternary = function( cond , T , F )
-        if cond then return T else return F end
+    ternary = function(cond, T, F)
+        if cond then
+            return T
+        else
+            return F
+        end
     end,
 
     -- Ellipsize strings
     ellipsize = function(text, length)
-        return (text:len() > length and length > 0)
-            and text:sub(0, length - 3) .. '...'
-            or text
+        return (text:len() > length and length > 0) and text:sub(0, length - 3) .. "..." or text
     end,
 
     -- Show some message using naughty
     msg = function(msg, title)
+        local naughty = require("naughty")
+        -- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
+        package.loaded["naughty.dbus"] = {}
+
         naughty.notify({ title = tostring(title), text = tostring(msg) })
     end,
 
@@ -37,21 +61,7 @@ return {
     end,
 
     -- Array tools
-    array = {
-        -- Check if an array contains a value
-        contains = function(array, val)
-            if not array then
-                return false
-            end
-
-            for i=1,#array do
-                if array[i] == val then
-                    return true
-                end
-            end
-            return false
-        end
-    },
+    array = array,
 
     -- Markup similar to lain.markup - https://github.com/lcpz/lain/blob/master/util/markup.lua
     markup = {
@@ -69,5 +79,23 @@ return {
         monospace = function(text)
             return string.format("<tt>%s</tt>", text)
         end,
-    }
+    },
+
+    tags = {
+        -- Get the tag associated with the ID given
+        getTagByID = function(id)
+            if id == nil then
+                return nil
+            end
+
+            local tags = root.tags()
+            for i = 1, #tags do
+                if array.contains(tags[i].ids, id) then
+                    return tags[i]
+                end
+            end
+
+            return nil
+        end,
+    },
 }

@@ -77,8 +77,15 @@ M.servers = {
                 diagnostics = {
                     -- Get the language server to recognize the `vim` global
                     globals = {
+                        -- VIM
                         "vim",
                         "require",
+                        -- AwesomeWM
+                        "awesome",
+                        "client",
+                        "tag",
+                        "screen",
+                        "root",
                     },
                 },
                 workspace = {

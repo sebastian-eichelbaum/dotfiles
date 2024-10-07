@@ -14,7 +14,7 @@ local style = require("config").style
 
 -- Remove border when only one window
 local function setBorder(c)
-    if style.singleOrMaxWindow == nil then
+    if style.autoBorder == nil then
         return
     end
 
@@ -34,10 +34,10 @@ local function setBorder(c)
 
     -- Floats ALWAYS have a border
     if noBorder and not c.floating and (not c.forceBorder == true) then
-        c.border_width = style.singleOrMaxWindow.singleBorderWidth
-        c.border_color = style.singleOrMaxWindow.singleBorderColor(beautiful)
+        c.border_width = style.autoBorder.singleBorderWidth
+        c.border_color = style.autoBorder.singleBorderColor(beautiful)
     elseif isFocussed then
-        c.border_width = style.singleOrMaxWindow.focusBorderWidth
+        c.border_width = style.autoBorder.focusBorderWidth
         c.border_color = beautiful.border_focus
     else
         c.border_width = beautiful.border_width

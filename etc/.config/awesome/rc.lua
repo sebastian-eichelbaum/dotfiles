@@ -15,40 +15,38 @@
 pcall(require, "luarocks.loader")
 
 -- Standard awesome library
-local gears = require("gears")
-local awful = require("awful")
 require("awful.autofocus")
-
--- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
-local _dbus = dbus; dbus = nil
-local naughty = require("naughty")
-dbus = _dbus
 
 -- {{{ Error handling
 -- Startup error handling is provided by the fallback config an cannot be overwritten here.
 do
     local in_error = false
-    awesome.connect_signal("debug::error", function (err)
+    awesome.connect_signal("debug::error", function(err)
         -- Make sure we don't go into an endless error loop
-        if in_error then return end
+        if in_error then
+            return
+        end
         in_error = true
 
-        naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Error!",
-                         text = tostring(err) })
+        local naughty = require("naughty")
+        -- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
+        package.loaded["naughty.dbus"] = {}
+
+        naughty.notify({
+            preset = naughty.config.presets.critical,
+            title = "Error!",
+            text = tostring(err),
+        })
         in_error = false
     end)
 end
 -- }}}
-
 
 -- ░█▀▄░█▀█░█▀▀░█▀▀
 -- ░█▀▄░█▀█░▀▀█░█▀▀
 -- ░▀▀░░▀░▀░▀▀▀░▀▀▀
 
 local config = require("config")
--- THE modkey for all key/mouse operations in Awesome.
-modkey = config.modkey
 
 -- Theme
 require("theme").setup()
@@ -68,7 +66,6 @@ require("global").setup()
 -- Screen setup
 require("screen").setup()
 
-
 -- ░█▄█░█▀█░█▀▄░█░█░█░░░█▀▀░█▀▀
 -- ░█░█░█░█░█░█░█░█░█░░░█▀▀░▀▀█
 -- ░▀░▀░▀▀▀░▀▀░░▀▀▀░▀▀▀░▀▀▀░▀▀▀
@@ -83,11 +80,9 @@ require("modules.wibar").setup()
 require("modules.powermenu").setup()
 require("modules.behaviors.centerInParent").setup()
 require("modules.behaviors.clientOnParentTag").setup()
-require("modules.behaviors.noBorderOnSingleWindows").setup()
-require("modules.behaviors.unfocusOpacity").setup()
+require("modules.behaviors.AutoBorder").setup()
+require("modules.behaviors.AutoOpacity").setup()
 
 -- Qirks - Check regularly if they are still needed?
 -- require("modules.quirks.lateRules").setup()
 require("modules.quirks.unityRefresh").setup()
-
-

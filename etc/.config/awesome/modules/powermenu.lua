@@ -11,12 +11,13 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 
 local commands = require("config").commands
+local modkey = require("config").modkey
 
 -- {{{ Library: create power menu
 local function createMenu()
     local base = beautiful.iconPath .. "buttons/"
 
-    menuitems = {}
+    local menuitems = {}
 
     table.insert(menuitems, {
         "Sign Out",

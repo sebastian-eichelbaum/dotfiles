@@ -58,17 +58,13 @@ local style = {
     -- Wallpaper. either a path or a function
     wallpaper = os.getenv("HOME") .. "/.background-image",
 
-    -- More options
+    -- The common border width and gap config. Also used by the AutoBorder module.
     gap = 0,
     borderWidth = 1,
 
-    -- Focus/Unfocus transparency
-    focusOpacity = 1.0,
-    unfocusOpacity = 1.0,
-
     -- Use some advanced border magic for single/maximized windows.
     -- Set nil if you do not need that.
-    singleOrMaxWindow = {
+    autoBorder = {
         -- The border width of windows that are either single/maximized or focused or unfocused.
         -- In the unfocussed case, the normal borderWidth is used.
         singleBorderWidth = 1,
@@ -79,6 +75,42 @@ local style = {
         singleBorderColor = function(theme)
             return theme.border_normal
         end,
+    },
+
+    -- Provides some advanced automatic transparency for clients. It includes some rules to smartly exclude clients. Set
+    -- this to nil if you do not need that.
+    autoOpacity = {
+        -- Exclude some clients by some rules.
+        exclude = {
+            byTag = { "draw", "guests", "games" },
+            byLayout = { "max", "fullscreen" },
+            -- NOTE: xprop WM_CLASS to get the class. The second string is the class
+            byClass = { "Eog", "Totem", "vlc", "Gimp", "Inkscape", "Blender", "Evince", "firefox", "Google-chrome" },
+
+            -- Should be true. Making a youtube video go fullscreen should disable transparency
+            maximized = true,
+            fullscreen = true,
+        },
+
+        -- Allows to match clients against a similar matching scheme as in exclude. If they match, override
+        -- opacity/unfocusOpacity for this client.
+        --
+        -- Stop checking after the first match happens.
+        override = {
+            -- Some apps should be less transparent for better readability
+            {
+                opacity = 0.95,
+                unfocusOpacity = 0.95,
+                match = {
+                    byClass = { "kitty" },
+                },
+            },
+        },
+
+        -- Focus/Unfocus transparency - if nil, this feature is not used. You should set them NIL to be able to use the
+        -- client opacity as defined in the rules.
+        opacity = 0.9,
+        unfocusOpacity = 0.90,
     },
 }
 -- }}}
@@ -170,6 +202,7 @@ local rules = {
     {
         -- Without any tag id - some apps need some properties to be set or tehy will misbehave.
         rules = {
+            -- Specific rules for some apps that can appear on all tags:
             {
                 rule = { class = "Nm-connection-editor" },
                 properties = { floating = true, size_hints_honor = true, ontop = true },
