@@ -1,29 +1,28 @@
 #!/usr/bin/env bash
 
+# getProgressString() {
+#     ITEMS="16"             # The total number of items(the width of the bar)
+#     FILLED_ITEM="<b>▅</b>" # The look of a filled item
+#     NOT_FILLED_ITEM="▁"    # The look of a not filled item
+#
+#     STATUS="$1" # The current progress status in percent
+#
+#     # calculate how many items need to be filled and not filled
+#     FILLED_ITEMS=$(echo "((${ITEMS} * ${STATUS})/100 + 0.5) / 1" | bc)
+#     NOT_FILLED_ITEMS=$(echo "$ITEMS - $FILLED_ITEMS" | bc)
+#
+#     # Assemble the bar string
+#     msg=$(printf "%${FILLED_ITEMS}s" | sed "s| |${FILLED_ITEM}|g")
+#     msg=${msg}$(printf "%${NOT_FILLED_ITEMS}s" | sed "s| |${NOT_FILLED_ITEM}|g")
+#     echo "$msg"
+# }
+
 # Report current volume given in $1
-report()
-{
+report() {
     # Play the volume changed sound
     # canberra-gtk-play -i audio-volume-change -d "changeVolume" &
 
     apptitle="audio-volume"
-
-    getProgressString () {
-        ITEMS="18" # The total number of items(the width of the bar)
-        FILLED_ITEM="<b>▅</b>" # The look of a filled item
-        NOT_FILLED_ITEM="▁" # The look of a not filled item
-
-        STATUS="$1" # The current progress status in percent
-
-        # calculate how many items need to be filled and not filled
-        FILLED_ITEMS=$(echo "((${ITEMS} * ${STATUS})/100 + 0.5) / 1" | bc)
-        NOT_FILLED_ITEMS=$(echo "$ITEMS - $FILLED_ITEMS" | bc)
-
-        # Assemble the bar string
-        msg=$(printf "%${FILLED_ITEMS}s" | sed "s| |${FILLED_ITEM}|g")
-        msg=${msg}$(printf "%${NOT_FILLED_ITEMS}s" | sed "s| |${NOT_FILLED_ITEM}|g")
-        echo "$msg"
-    }
 
     # Arbitrary but unique message id
     msgId="991049"
@@ -32,9 +31,9 @@ report()
     volume=$1
 
     icon=audio-volume-low
-    if (( volume > 75 )); then
+    if ((volume > 75)); then
         icon=audio-volume-high
-    elif (( volume > 35 )); then
+    elif ((volume > 35)); then
         icon=audio-volume-medium
     fi
 
@@ -44,13 +43,14 @@ report()
     else
         # Show the volume notification
         dunstify -a $apptitle -u low -i $icon -r "$msgId" \
-        "Volume: ${volume}%" "$(getProgressString $volume)"
+            -h "int:value:$volume" \
+            "Volume: ${volume}%"
+        # "$(getProgressString $volume)"
     fi
 }
 
 # Get the channel volumes as average and the best fitting 5-multiple. Mute is 0
-getVolumes()
-{
+getVolumes() {
     local -n result=$2 # take array in $2 as reference
 
     # Get the channel volumes and mute state from the last call of amixer
@@ -70,12 +70,12 @@ getVolumes()
         max=${vols[0]}
         min=${vols[0]}
         for i in "${vols[@]}"; do
-            (( i > max )) && max=$i
-            (( i < min )) && min=$i
+            ((i > max)) && max=$i
+            ((i < min)) && min=$i
         done
 
-        avg=$(( ($min+$max)/2 ))
-        best=$(( 5 *( ($avg + 2) / 5) ))
+        avg=$((($min + $max) / 2))
+        best=$((5 * (($avg + 2) / 5)))
 
         # This rounds to the next 5-multiple.
         #echo $avg
@@ -85,27 +85,25 @@ getVolumes()
 }
 
 # Prints the current real volume (average of all channels)
-getCurrentVolume()
-{
+getCurrentVolume() {
     local currentVolumes
     getVolumes "$(amixer sget Master)" currentVolumes
     echo ${currentVolumes[0]}
 }
 
 # Takes an array in $1 and fixes volume if both values mismatch
-fix(){
+fix() {
     local -n fixVols=$1 # take array in $2 as reference
 
     real=${fixVols[0]}
     wanted=${fixVols[1]}
-    if (( $real != $wanted )); then
+    if (($real != $wanted)); then
         amixer sset Master "$wanted%"
     fi
 }
 
 # Locked amixer operation and reporting
-mixerOp()
-{
+mixerOp() {
     (
         flock -n 9 || exit 1
 
@@ -119,22 +117,20 @@ mixerOp()
 
 # ... commands executed under lock ...
 case "$1" in
-    incr)
-        mixerOp "on 5%+"
+incr)
+    mixerOp "on 5%+"
     ;;
-    decr)
-        mixerOp "on 5%-"
+decr)
+    mixerOp "on 5%-"
     ;;
-    mute)
-        mixerOp "toggle"
+mute)
+    mixerOp "toggle"
     ;;
-    get)
-        getCurrentVolume
+get)
+    getCurrentVolume
     ;;
-    *)
-        echo "Use get, incr, decr or mute as parameter"
-        exit 0
+*)
+    echo "Use get, incr, decr or mute as parameter"
+    exit 0
     ;;
 esac
-
-

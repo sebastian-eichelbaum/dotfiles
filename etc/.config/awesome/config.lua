@@ -118,7 +118,7 @@ local style = {
                 opacity = 0.95,
                 unfocusOpacity = 0.95,
                 match = {
-                    byClass = { "kitty" },
+                    byClass = { "kitty", "Code" },
                 },
             },
         },
@@ -234,11 +234,15 @@ local rules = {
     {
         tagId = "primary",
         rules = {
+            -- {
+            --     rule = { class = "Unity", type = "normal" },
+            --     properties = { floating = false  },
+            -- },
             {
-                rule = { class = "Unity", type = "normal" },
+                rule = { class = "Unity" },
                 -- Unity has some own "magic" on how it closes its tool windows. Disable the focus follows mouse
                 -- function as it makes working with unity a bit fiddly.
-                properties = { floating = false, focusFollowsMouse = false },
+                properties = { focusFollowsMouse = false },
             },
         },
     },
@@ -315,9 +319,12 @@ local rules = {
     {
         tagId = "draw",
         rules = {
-            { rule = { class = "Gimp" }, properties = { floating = true } },
-            -- This dialog is so annoying. Force it to be on top.
-            { rule = { role = "gimp-toolbox-color-dialog" }, properties = { floating = true, ontop = true } },
+            { rule = { class = "Gimp" }, properties = { floating = true, focusFollowsMouseNoRaise = true } },
+            -- Keep those utility windows on top.
+            {
+                rule = { class = "Gimp", type = "dialog" },
+                properties = { floating = true, ontop = true, focusFollowsMouseNoRaise = true },
+            },
             { rule = { class = "Inkscape" }, properties = {} },
             { rule = { class = "Blender" }, properties = {} },
         },

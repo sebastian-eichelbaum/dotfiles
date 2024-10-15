@@ -49,9 +49,6 @@ return {
     -- Show some message using naughty
     msg = function(msg, title)
         local naughty = require("naughty")
-        -- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
-        package.loaded["naughty.dbus"] = {}
-
         naughty.notify({ title = tostring(title), text = tostring(msg) })
     end,
 

@@ -94,10 +94,15 @@ return {
 
         -- Enable sloppy focus, so that focus follows mouse.
         client.connect_signal("mouse::enter", function(c)
+            local raise = true
             if c.focusFollowsMouse == false then
                 return
             end
-            c:emit_signal("request::activate", "mouse_enter", { raise = true })
+            if c.focusFollowsMouseNoRaise == true then
+                raise = false
+            end
+
+            c:emit_signal("request::activate", "mouse_enter", { raise = raise })
         end)
 
         -- Focus

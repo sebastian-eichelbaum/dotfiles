@@ -78,7 +78,10 @@
     origin = top-right
 
     # Offset from the origin
-    offset = 10x40
+    offset = 10x45
+
+    # Rounded corners?
+    corner_radius = 10
 
     # Shrink window if it's smaller than the width.  Will be ignored if
     # width is 0.
@@ -162,6 +165,11 @@
     frame_width = 1
     frame_color = "#666666"
 
+    # Progress bar
+    progress_bar_height=15
+    progress_bar_corner_radius = 5
+    progress_bar_frame_width = 2
+
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
@@ -171,6 +179,7 @@
     #background = "#36393e"
     #background = "#2B313C"
     background = "#101011"
+    highlight = "#ffffff"
     timeout = 5
 
 [urgency_normal]
@@ -180,6 +189,7 @@
     #background = "#36393e"
     #background = "#2B313C"
     background = "#101011"
+    highlight = "#ffffff"
     timeout = 5
 
 [urgency_critical]
@@ -188,6 +198,7 @@
     #background = "#36393e"
     #background = "#2B313C"
     background = "#331011"
+    highlight = "#ffffff"
     timeout = 0
 
 

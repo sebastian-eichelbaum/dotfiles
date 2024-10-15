@@ -17,6 +17,11 @@ pcall(require, "luarocks.loader")
 -- Standard awesome library
 require("awful.autofocus")
 
+local origDBUS = dbus
+dbus = nil
+local naughty = require("naughty")
+dbus = origDBUS
+
 -- {{{ Error handling
 -- Startup error handling is provided by the fallback config an cannot be overwritten here.
 do
@@ -27,10 +32,6 @@ do
             return
         end
         in_error = true
-
-        local naughty = require("naughty")
-        -- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
-        package.loaded["naughty.dbus"] = {}
 
         naughty.notify({
             preset = naughty.config.presets.critical,
@@ -86,3 +87,7 @@ require("modules.behaviors.AutoOpacity").setup()
 -- Qirks - Check regularly if they are still needed?
 -- require("modules.quirks.lateRules").setup()
 require("modules.quirks.unityRefresh").setup()
+
+-- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
+-- package.loaded["naughty.dbus"] = {}
+
