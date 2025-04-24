@@ -27,7 +27,7 @@ return {
             -- With git submodules, .git exists as file in a submodule. To
             -- make the top-level project the project root, use ".git/"
             -- with slash to match only git dirs.
-            rooter_patterns = { ".repo/", ".git/", "_darcs/", ".hg/", ".bzr/", ".svn/" },
+            rooter_patterns = { ".root", ".repo/", ".git/", "_darcs/", ".hg/", ".bzr/", ".svn/" },
 
             -- If no root is found, go to the files own dir
             fallback_to_parent = true,
@@ -159,6 +159,7 @@ return {
             vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "IncSearch" })
             vim.api.nvim_set_hl(0, "WhichKeyDesc", { link = "Function" })
             vim.api.nvim_set_hl(0, "WhichKeyIcon", { link = "Normal" })
+            vim.api.nvim_set_hl(0, "WhichKeyNormal", { link = "SidebarNormal" })
 
             return {
                 -- Wait until the popup is shown:
@@ -240,6 +241,8 @@ return {
             hl.link("NeoTreeNormalNC", "SidebarNormal")
             hl.link("NeoTreeVertSplit", "SidebarVertSplit")
             hl.link("NeoTreeWinSeparator", "SidebarVertSplit")
+
+            hl.link("NeoTreeIndentMarker", "IndentLine")
 
             return {
                 -- Enables source (file/buffer/git) selection
@@ -683,7 +686,7 @@ return {
 
                 -- Use for highlighting additional syntax elements.
                 -- Be warned: this sometimes works nicely, sometimes it messes up things. Example: doxygen tags are
-                -- highlighted nicely. But not for constructors...
+                -- highlighted nicely. This interferes with language server highlights too.
                 highlight = {
                     enable = true,
                 },
@@ -727,7 +730,7 @@ return {
                     "javascript",
                     "typescript",
                     "jsdoc",
-                    -- "vue"
+                    "vue",
 
                     -- Writing
                     "markdown",
@@ -1176,6 +1179,8 @@ return {
                     {
                         on_attach = function(client, bufnr)
                             config.mappings(bufnr)
+                            -- Disable semantic highlights/tokens? Also refer to treesitter highlighting.
+                            -- client.server_capabilities.semanticTokensProvider = false
                         end,
 
                         capabilities = require("cmp_nvim_lsp").default_capabilities(),

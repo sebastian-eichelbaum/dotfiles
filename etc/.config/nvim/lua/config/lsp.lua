@@ -32,6 +32,12 @@ M.mappings = function(bufnr)
         })
     end, { desc = "Code fix", icon = "󰁨" })
 
+    map.buf.n(bufnr, "<leader>ff", function()
+        vim.lsp.buf.code_action({
+            apply = true,
+        })
+    end, { desc = "Fast code fix", icon = "󰁨" })
+
     map.buf.n(bufnr, "<leader>cD", vim.lsp.buf.declaration, { desc = "Go to declaration", icon = "" })
     map.buf.n(bufnr, "<leader>cd", vim.lsp.buf.definition, { desc = "Go to definition", icon = "󰅲" })
     map.buf.n(bufnr, "<leader>ci", vim.lsp.buf.implementation, { desc = "Go to implementation", icon = "󰅩" })

@@ -18,7 +18,10 @@ local colors2 = {}
 local colors = {
     -- Start with a decision on what will be your BG and FG.
     -- This defines the "mood" of the theme.
-    bg = color.lightnessRamp("#1a1a1c"),
+    --bg = color.lightnessRamp("#1a1a1c"),
+    --bg = color.lightnessRamp("#202227"),
+    --bg = color.lightnessRamp("#1b1d23"),
+    bg = color.lightnessRamp("#1a1b1f"),
     fg = color.lightnessRamp("#d4d4de"),
 
     -- Used to distinguish unknown highlights. Very useful for debugging themes.
@@ -29,6 +32,11 @@ local colors = {
     structural = "#4a88cc",
     structuralAlt = color.darken("#4a88cc", 1.4), --"#3a6ba1"),
 
+    -- Named types
+    types = color.darken("#abb2bf", 1.2),
+    --types = color.lighten("#6482a2", 1.3),
+    --types = color.lighten("#727b84", 1.2),
+
     -- Contentual color: It is used to show things with a content-related meaning. For example: strings and values. They
     -- convey meaning not by context they are used in, but by their value/content.
     contentual = "#85b038",
@@ -36,7 +44,9 @@ local colors = {
 
     -- Functional color: It is used to distinguish things that modify a value for example. Typically, this is used for
     -- operators, functions, and the like.
-    functional = "#bf68ed",
+    -- functional = "#bf68ed",
+    -- functional = "#e5c07b",
+    functional = "#d4d4de",
 
     -- Informational color: it is used for things that provide additional information, but are not necessarily required.
     -- Typically used for comments or unobtrusive UI elements.
@@ -53,7 +63,7 @@ local colors = {
         informational = { fg = "#4a88cc", bg = "#27323e" },
 
         -- Highlight good things. Added text, modification markers, ...
-        good = { fg = "#85b038", bg = "#303329" },
+        good = { fg = "#85b038", bg = "#303629" },
 
         -- Used to highlight elements of the text or UI that need your attention. This should be well distinguishable
         -- from the other colors used to ensure it sticks out in a bunch of colorful text. Usually used for search
@@ -68,6 +78,7 @@ local colors = {
 
 local palette = merge(colors, {
 
+    -- Baseline for text itself.
     text = {
         -- The text itself.
         normal = { fg = colors.fg.O, bg = colors.bg.O },
@@ -78,26 +89,43 @@ local palette = merge(colors, {
         -- Passive highlight: the current line (cursor line)
         current = { bg = colors.bg.L2 },
 
-        -- Folded text representation
-        folded = { fg = colors.fg.D1, bg = colors.bg.L2, bold = true },
-
-        -- Active highlight: Selected text. Should set a background for selected text. Also used as base style for selected menu items.
+        -- Active highlight: Selected text. Should set a background for selected text. Also used as base style for
+        -- selected menu items.
         selected = { bg = colors.bg.L4 },
 
         -- Active highlight: Intensionally highlighted text like search matches or marking matching braces and similar.
         highlight = { colors.highlight.attention, bold = true },
 
-        code = {
-            identifiers = { fg = colors.fg.O },
-            structural = { fg = colors.structural, bold = true },
-            values = { fg = colors.contentual, bold = true },
-            strings = { fg = colors.contentualAlt, bold = false },
-            functions = { fg = colors.fg.O, bold = false },
-            types = { fg = colors.structural, bold = true },
-            preprocs = { fg = colors.fg.O, bold = true },
-            comments = { fg = colors.informational, bold = true },
+        -- Folded text representation
+        folded = { fg = colors.fg.D1, bg = colors.bg.L2, bold = true },
+
+        -- Lines that are deleted. Only really used by diff.
+        deleted = { bg = colors.highlight.bad.bg },
+
+        -- Badly spelled text:
+        spell = {
+            -- Things that are not really misspelled but are problematic. Mostly relevant for wrong capitalization.
+            warn = { special = colors.highlight.attention.fg, undercurl = true },
+            -- Bad spelling
+            bad = { special = colors.highlight.bad.fg, undercurl = true },
         },
     },
+
+    -- Code is text with semantics. These colors define the baseline for the most common semantic items. Treesitter
+    -- highlights are mapped to these and some variations.
+    code = {
+        identifiers = { fg = colors.fg.O },
+        structural = { fg = colors.structural, bold = true },
+        values = { fg = colors.contentual, bold = true },
+        strings = { fg = colors.contentualAlt, bold = false },
+        functions = { fg = colors.functional, bold = false },
+        types = { fg = colors.types, bold = true },
+        preprocs = { fg = colors.fg.O, bold = true },
+        comments = { fg = colors.informational, bold = true },
+    },
+
+    -- All the different highlights
+    highlight = colors.highlight,
 
     ui = {
         statusLine = {
@@ -170,7 +198,6 @@ local highlights = {
     -- NOTE: Some plugins use whitespace (i.e. indent line plugins) to color the indent areas.
     Whitespace = { link = "NonText" },
     SpecialKey = { link = "NonText" },
-    Special = { link = "NonText" },
     -- }}}
 
     -- {{{ Search and matches
@@ -182,10 +209,10 @@ local highlights = {
     -- }}}
 
     -- {{{ Spelling
-    SpellCap = { special = palette.highlight.attention.fg, undercurl = true },
-    SpellRare = { special = palette.highlight.neutral.fg, undercurl = true },
-    SpellLocal = { special = palette.highlight.attention.fg, undercurl = true },
-    SpellBad = { special = palette.highlight.bad.fg, undercurl = true },
+    SpellBad = { palette.text.spell.bad },
+    SpellCap = { palette.text.spell.warn },
+    SpellRare = { link = "SpellCap" },
+    SpellLocal = { link = "SpellLocal" },
     -- }}}
 
     -- {{{ In-text UI
@@ -194,8 +221,6 @@ local highlights = {
     Folded = { palette.text.folded },
 
     -- {{{ Cursor
-    -- Cursor itself is not required to be set explicitly. It is a flipped fg/bg by default.
-    -- Cursor = {},
     -- The line the cursor is right now.
     CursorLine = { palette.text.current },
     -- Activate via 'set cursorcolumn'
@@ -209,29 +234,33 @@ local highlights = {
     -- }}}
 
     -- {{{ Diff
-    -- Used in Diff mode
-    DiffChange = { bg = palette.highlight.neutral.bg },
-    DiffAdd = { bg = palette.highlight.good.bg },
-    DiffDelete = { palette.highlight.bad },
-    DiffText = { bg = palette.highlight.neutral.fg, bold = true },
+    -- Used in Diff mode (side-by-side)
+    -- In a side-by-side diff, ADD and CHANGE is implicitly given by not being "deleted" + its DiffText
+    DiffAdd = {},
+    DiffChange = {},
+    -- Highlight deleted line backgrounds
+    DiffDelete = { palette.text.deleted },
+    -- The text that has changed in a line
+    DiffText = { palette.text.selected },
+    -- }}}
 
-    -- Used inline for diff/patch content
-    Changed = { fg = palette.highlight.neutral.fg },
-    Added = { fg = palette.highlight.good.fg },
-    Removed = { fg = palette.highlight.bad.fg },
-
-    -- Used in the gutter to indicate changes. This is a slightly less bright version of changed/added/removed
-    ChangedSign = { fg = color.darken(palette.highlight.neutral.fg, 1.43), bg = palette.ui.gutter.base.bg },
-    AddedSign = { fg = color.darken(palette.highlight.good.fg, 1.33), bg = palette.ui.gutter.base.bg },
-    RemovedSign = { fg = color.darken(palette.highlight.bad.fg, 1.33), bg = palette.ui.gutter.base.bg },
     -- }}}
 
     -- }}}
 
     -- {{{ Syntax
 
+    -- Special things - all those lsp and treesitter groups link to this if they are not linked to something else
+    -- explicitly.
+    Special = { link = "Keyword" },
+
+    -- Used inline for diff/patch content. I.e. call 'git diff File.cpp | vim'
+    Changed = { fg = palette.highlight.neutral.fg },
+    Added = { fg = palette.highlight.good.fg },
+    Removed = { fg = palette.highlight.bad.fg },
+
     -- Structural langauge elements like keywords, statements, conditionals, ...
-    Keyword = { palette.text.code.structural },
+    Keyword = { palette.code.structural },
     Statement = { link = "Keyword" },
     Exception = { link = "Keyword" },
     Conditional = { link = "Keyword" },
@@ -243,34 +272,34 @@ local highlights = {
     Tag = { link = "Keyword" },
 
     -- Things that transform things
-    Function = { palette.text.code.functions },
+    Function = { palette.code.functions },
     Operator = { link = "Keyword" },
 
     -- Type names like int and such things.
-    Type = { palette.text.code.types },
+    Type = { palette.code.types },
 
     -- Values
-    String = { palette.text.code.strings },
-    Number = { palette.text.code.values },
+    String = { palette.code.strings },
+    Number = { palette.code.values },
     Float = { link = "Number" },
     Boolean = { link = "Number" },
     Character = { link = "Number" },
 
     -- Identifiers and named things
-    Identifier = { palette.text.code.identifiers },
-    Constant = { palette.text.code.identifiers, bold = true }, -- Constants are assumed to be identifiers. They can be values, functions, preproc defines, ....
+    Identifier = { palette.code.identifiers },
+    Constant = { palette.code.identifiers, bold = true }, -- Constants are assumed to be identifiers. They can be values, functions, preproc defines, ....
 
     -- Comments
-    Comment = { palette.text.code.comments },
+    Comment = { palette.code.comments },
     SpecialComment = { link = "Keyword" }, -- Things like documentation keywords (@param and the like)
     Todo = { palette.text.highlight }, -- todo/fixme in comments mostly
 
     -- Preprocessor
-    PreProc = { palette.text.code.preprocs },
+    PreProc = { palette.code.preprocs },
     Include = { link = "PreProc" },
     Define = { link = "PreProc" },
     Macro = { link = "PreProc" },
-    PreCondit = { palette.text.code.preprocs, bg = palette.bg.L3 }, -- conditions like #if, #ifdef, ...
+    PreCondit = { palette.code.preprocs, bg = palette.bg.L3 }, -- conditions like #if, #ifdef, ...
 
     -- Others
 
@@ -287,16 +316,10 @@ local highlights = {
     Directory = { link = "Keyword" },
 
     -- Titles. Used in markdown, help, ... or in the command-line when printing long lists (like :set all)
-    Title = { palette.text.code.structural },
-    -- }}}
+    Title = { palette.code.structural },
 
-    -- }}}
+    -- Treesitter and lsp groups: see below. They are linked to these syntax groups.
 
-    -- {{{ ???
-    Error = { link = "wtf" },
-    Warning = { link = "wtf" },
-    Hint = { link = "wtf" },
-    Info = { link = "wtf" },
     -- }}}
 
     -- {{{ UI
@@ -315,6 +338,11 @@ local highlights = {
     -- Used for signs like git-changes/lsp icons/...
     SignColumn = { palette.ui.gutter.base },
     -- }}}
+
+    -- Used in the gutter to indicate changes. This is a slightly less bright version of changed/added/removed
+    ChangedSign = { fg = color.darken(palette.highlight.neutral.fg, 1.43), bg = palette.ui.gutter.base.bg },
+    AddedSign = { fg = color.darken(palette.highlight.good.fg, 1.33), bg = palette.ui.gutter.base.bg },
+    RemovedSign = { fg = color.darken(palette.highlight.bad.fg, 1.33), bg = palette.ui.gutter.base.bg },
 
     -- {{{ Status-line
     StatusLine = { palette.ui.statusLine.active },
@@ -408,17 +436,17 @@ local highlights = {
     -- {{{ LSP Kind styles
     LspItemKind = { link = "PmenuKind" },
 
-    LspItemKindFunction = { palette.ui.menu.kind, palette.text.code.functions },
-    LspItemKindType = { palette.ui.menu.kind, palette.text.code.types },
-    LspItemKindValue = { palette.ui.menu.kind, palette.text.code.values },
-    LspItemKindString = { palette.ui.menu.kind, palette.text.code.strings },
-    LspItemKindKeyword = { palette.ui.menu.kind, palette.text.code.structural },
-    LspItemKindFiles = { palette.ui.menu.kind, palette.text.code.identifiers },
+    LspItemKindFunction = { palette.ui.menu.kind, palette.code.functions },
+    LspItemKindType = { palette.ui.menu.kind, palette.code.types },
+    LspItemKindValue = { palette.ui.menu.kind, palette.code.values },
+    LspItemKindString = { palette.ui.menu.kind, palette.code.strings },
+    LspItemKindKeyword = { palette.ui.menu.kind, palette.code.structural },
+    LspItemKindFiles = { palette.ui.menu.kind, palette.code.identifiers },
     -- }}}
 
     -- }}}
 
-    -- {{{ Others:
+    -- {{{ Plugins and additional custom highlights:
 
     -- Plugins that show lines for indent levels use these:
     IndentLine = { fg = palette.bg.L1 },
@@ -431,6 +459,14 @@ return {
     palette = palette,
 
     apply = function()
+        local map = require("util.keymap")
+
+        vim.cmd([[
+            hi link @lsp.mod.deduced keyword
+            hi link @lsp.mod.defaultLibrary keyword
+            hi link @lsp.type.enumMember number
+        ]])
+
         for group, hi in pairs(highlights) do
             color.set(group, hi)
         end

@@ -150,3 +150,17 @@ neovim
 Impl
 cfg
 param
+variadic
+constexpr
+enum
+constexprs
+CTAD
+structs
+monostate
+tparam
+emscripten
+stdout
+stderr
+nullopt
+NOLINT
+copydoc

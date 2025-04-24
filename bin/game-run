@@ -4,7 +4,7 @@
 
 echo Starting "$@"
 
-# If tyhe GL vendor is NVIDIA, the system runs on the NVIDIA already. No offloading needed.
+# If the GL vendor is NVIDIA, the system runs on the NVIDIA already. No offloading needed.
 if glxinfo -B | grep -q NVIDIA; then
     export __NV_PRIME_RENDER_OFFLOAD=0
     echo game-run: NVIDIA Mode. No offloading.
@@ -33,6 +33,13 @@ export PROTON_ENABLE_NVAPI=1
 echo game-run: razer game mode
 razer gaming
 
+jsw_pid=''
+if [ -x "$(command -v joystickwake)" ]; then
+    echo game-run: joystickwake starting
+    joystickwake &
+    jsw_pid=$!
+fi
+
 # Use gamemode
 echo game-run: gamemode on
 gamemoderun "$@"
@@ -42,3 +49,8 @@ gamemoderun "$@"
 # Power modes
 echo game-run: razer balance mode
 razer balance
+
+if [ ! -z "$jsw_pid" ]; then
+    echo game-run: stopping joystickwake
+    kill $jsw_pid || true
+fi

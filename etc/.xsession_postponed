@@ -19,5 +19,8 @@ else
     picom --daemon &
 fi
 
+# Sound fix for razer
+sudo quirk_snd-sof-speakerfix.sh &
+
 # Wird nach dem booten manchmal nicht automatisch erkannt. Also erneut setzen.
 # (sleep 3 && autorandr --change) &

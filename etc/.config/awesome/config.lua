@@ -326,7 +326,7 @@ local rules = {
                 properties = { floating = true, ontop = true, focusFollowsMouseNoRaise = true },
             },
             { rule = { class = "Inkscape" }, properties = {} },
-            { rule = { class = "Blender" }, properties = {} },
+            { rule = { class = "Blender" }, properties = { floating = false } },
         },
     },
 

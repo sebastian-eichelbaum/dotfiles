@@ -1,0 +1,7 @@
+[global]
+log_filter = "^$"
+log_format = "-"
+warn_timeout = "3m"
+
+[whitelist]
+prefix = ["~/Projekte", "~/Projects"]

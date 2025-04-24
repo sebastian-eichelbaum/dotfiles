@@ -75,6 +75,13 @@ M.set = function(group, highlight)
     vim.api.nvim_set_hl(0, group, tableUtils.flatten(highlight))
 end
 
+-- Clear all defined highlights.
+M.clear = function()
+    vim.cmd([[
+        highlight! clear
+    ]])
+end
+
 M.toRGB = function(hexColor)
     local num = tonumber(hexColor:gsub("#", ""), 16)
 

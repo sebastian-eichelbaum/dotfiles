@@ -1,4 +1,5 @@
 local map = require("util.keymap")
+local helper = require("util.helpers")
 
 -------------------------------------------------------------------------------
 -- Annoyances
@@ -28,7 +29,7 @@ map.n("<leader><tab>", "<ESC>:bnext!<CR>", { desc = "Next buffer", icon = "󰓩"
 
 -- Fast write and close
 map.n("<leader>w", ":update<CR>", { desc = "Write file", icon = "󰆓" })
-map.n("<leader>q", ":call QuitIfLastBuffer()<CR>", { desc = "Quit", icon = "󰈆" })
+map.n("<leader>q", helper.closeBuffer, { desc = "Quit", icon = "󰈆" })
 map.n("<leader>Q", ":qa<CR>", { desc = "Quit all", icon ="󰈆" })
 
 
@@ -56,32 +57,6 @@ map.n("<leader>s", ":call ToggleSpell()<CR>", { desc = "Switch spell lang", icon
 
 
 -- {{{ Utility functions used in these mappings
-
--------------------------------------------------------------------------------
--- Close the current buffer and quit VIM if the last buffer is closed.
-vim.cmd([[
-    function QuitIfLastBuffer()
-        let cnt = 0
-        for nr in range(1,bufnr("$"))
-             if buflisted(nr) " && ! empty(bufname(nr))
-                 let cnt += 1
-             endif
-        endfor
-        if &mod
-            echohl ErrorMsg
-            echo 'Unsaved Changes.'
-            echohl NONE
-            return
-        endif
-
-        if cnt == 1
-            :q
-        else
-            :bd
-        endif
-    endfunction
-]])
-
 
 -------------------------------------------------------------------------------
 -- Jump to the first non-whitespace character in a line, or to the beginning

@@ -8,5 +8,8 @@ if [ -x ~/.xsession_postponed ]; then
     (sleep 2 && ~/.xsession_postponed) &
 fi
 
+# Nautilus 47 crashing on Nvidia. This circumvents the problem for now
+export GSK_RENDERER=cairo
+
 # Now start the real session script
 exec "$@"

@@ -99,7 +99,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 
 -- {{{ Spelling:
 
--- By default, use english and german for spelling, allways enable spell
+-- By default, use english and german for spelling, always enable spell
 -- checking. Writing good code and configs also includes correct spelling!
 vim.opt.spell = true
 vim.opt.spelllang = "en,de"

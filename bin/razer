@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-function rzr()
-{
+function rzr() {
     #echo "razer-cli $@ >" >> /home/seb/clilog
     # LD_PRELOAD="" linux64 razer-cli "$@" >> /home/seb/clilog 2>&1
-    LD_PRELOAD="" razer-cli "$@" > /dev/null 2>&1
+    LD_PRELOAD="" razer-cli "$@" >/dev/null 2>&1
 }
 
-command -v razer-cli >/dev/null 2>&1 || { dunstify -u critical -i error "razer-cli not found!"; exit 1; }
+command -v razer-cli >/dev/null 2>&1 || {
+    dunstify -u critical -i error "razer-cli not found!"
+    exit 1
+}
 
 # Turn off the logo
 rzr write logo ac 0
@@ -25,91 +27,104 @@ powerName="Unknown"
 icon=""
 
 case "$1" in
-    powersave | 0)
-        # White greenish keyboard, subtle
-        rzr effect static 128 255 128
+powersave)
+    # White greenish keyboard, subtle
+    rzr effect static 128 255 128
 
-        # Balanced power profile
-        rzr write power ac 4 0 0
-        rzr write power bat 4 0 0
+    # Silence profile
+    rzr write power ac 3
+    rzr write power bat 3
 
-        powerName="Powersave"
-        icon="power-mode-powersave"
+    powerName="Powersave"
+    icon="power-mode-powersave"
     ;;
-    balance | 0)
-        # White keyboard, subtle
-        rzr effect static 255 255 255
+balance)
+    # White keyboard, subtle
+    rzr effect static 255 255 255
 
-        # Balanced power profile
-        rzr write power ac 0
-        rzr write power bat 0
+    # Balanced power profile
+    rzr write power ac 0
+    rzr write power bat 0
 
-        powerName="Balanced"
-        icon="power-mode-balance"
+    powerName="Balanced"
+    icon="power-mode-balance"
     ;;
-    gaming | 1)
-        # Red keyboard
-        rzr effect static 255 0 10
+gaming)
+    # Red keyboard
+    rzr effect static 255 0 10
 
-        # Brighten the keys
-        rzr write brightness ac 20
-        rzr write brightness bat 20
+    # Brighten the keys
+    rzr write brightness ac 20
+    rzr write brightness bat 20
 
-        # Game mode - GPU focus
-        rzr write power ac 1
-        rzr write power bat 1
+    # Game mode - GPU focus
+    rzr write power ac 1
+    rzr write power bat 1
 
-        powerName="Gaming"
-        icon="power-mode-game"
+    powerName="Gaming"
+    icon="power-mode-game"
     ;;
-    cpu | 2)
-        # CPU Focus - blueish like intel
-        rzr effect static 20 70 255
+creator)
+    # Red keyboard
+    rzr effect static 255 155 10
 
-        # Brighten the keys
-        rzr write brightness ac 20
-        rzr write brightness bat 20
+    # Brighten the keys
+    rzr write brightness ac 20
+    rzr write brightness bat 20
 
-        # Custom: low GPU, boost CPU
-        rzr write power ac 4 3 0
-        rzr write power bat 4 3 0
+    # Game mode - GPU focus
+    rzr write power ac 1
+    rzr write power bat 1
 
-        powerName="CPU Boost"
-        icon="power-mode-cpu"
-     ;;
-    gpu | 2)
-        # GPU Focus - greenish nvidia color
-        rzr effect static 20 255 10
-
-        # Brighten the keys
-        rzr write brightness ac 20
-        rzr write brightness bat 20
-
-        # Custom: low GPU, boost CPU
-        rzr write power ac 4 0 2
-        rzr write power bat 4 0 2
-
-        powerName="GPU Boost"
-        icon="power-mode-gpu"
-     ;;
-    restart | st)
-        echo "Stopping daemon"
-        systemctl --user stop razerdaemon
-        rm -f /tmp/razercontrol-socket
-        echo "Starting daemon"
-        systemctl --user start razerdaemon
-        systemctl --user status razerdaemon
+    powerName="Creator"
+    icon="power-mode-performance"
     ;;
-    status | st)
-        razer-cli read power ac
-        exit 0
+cpu)
+    # CPU Focus - blueish like intel
+    rzr effect static 20 70 255
+
+    # Brighten the keys
+    rzr write brightness ac 20
+    rzr write brightness bat 20
+
+    # Custom: low GPU, boost CPU
+    rzr write power ac 4 3 0
+    rzr write power bat 4 3 0
+
+    powerName="CPU Boost"
+    icon="power-mode-cpu"
     ;;
-    *)
-        echo "razer balance|gaming|cpu|gpu|status"
-        exit 0
+gpu)
+    # GPU Focus - greenish nvidia color
+    rzr effect static 20 255 10
+
+    # Brighten the keys
+    rzr write brightness ac 20
+    rzr write brightness bat 20
+
+    # Custom: low GPU, boost CPU
+    rzr write power ac 4 0 2
+    rzr write power bat 4 0 2
+
+    powerName="GPU Boost"
+    icon="power-mode-gpu"
+    ;;
+restart)
+    echo "Stopping daemon"
+    systemctl --user stop razerdaemon
+    rm -f /tmp/razercontrol-socket
+    echo "Starting daemon"
+    systemctl --user start razerdaemon
+    systemctl --user status razerdaemon
+    ;;
+status | st)
+    razer-cli read power ac
+    exit 0
+    ;;
+*)
+    echo "razer balance|gaming|cpu|gpu|status"
+    exit 0
     ;;
 esac
 
-
 dunstify -a "Razer Control" -u low -i "$icon" -r "75924" "Razer Power Mode" "$powerName"
-
