@@ -68,6 +68,10 @@ M.servers = {
         init_options = {
             fallbackFlags = { "--std=c++23" },
         },
+        cmd = {
+            "clangd",
+            "--experimental-modules-support",
+        },
     },
     cmake = {},
     ts_ls = {},

@@ -241,6 +241,8 @@ return {
             hl.link("NeoTreeNormalNC", "SidebarNormal")
             hl.link("NeoTreeVertSplit", "SidebarVertSplit")
             hl.link("NeoTreeWinSeparator", "SidebarVertSplit")
+            hl.link("NeoTreeDirectoryIcon", "Directory")
+            hl.link("NeoTreeTabActive", "Selected")
 
             hl.link("NeoTreeIndentMarker", "IndentLine")
 

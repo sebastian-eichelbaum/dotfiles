@@ -392,12 +392,20 @@ local highlights = {
     PmenuSbar = { link = "Pmenu" },
     PmenuThumb = { bg = palette.ui.menu.scrollbar.fg },
     PmenuBorder = { palette.ui.menu.border },
+
     -- }}}
 
     -- {{{ Quickfix
 
     QuickFixLine = { link = "Visual" },
 
+    -- }}}
+
+    -- {{{ WinBar
+    -- This is this tab-bar like thing some plugins use.
+
+    WinBar = { link = "CursorLine" },
+    WinBarNC = { link = "CursorLine" },
     -- }}}
 
     -- {{{ Base definition for side-bars/windows. Filebrowser, Code sumbols and others
@@ -414,8 +422,6 @@ local highlights = {
     --WinBar
     --WinBarNC
 
-    WinBar = { fg = palette.wtf },
-    WinBarNC = { fg = palette.wtf },
     SnippetTabstop = { fg = palette.wtf },
     -- }}}
 
