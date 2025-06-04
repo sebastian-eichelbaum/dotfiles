@@ -88,6 +88,15 @@ return {
     },
     -- }}}
 
+    -- {{{ core/util: telescope - a finder/picker for a lot of things like files, commits, lsp stuff, ...
+    {
+        "nvim-telescope/telescope.nvim",
+        tag = "0.1.8",
+        -- or                              , branch = '0.1.x',
+        dependencies = { "nvim-lua/plenary.nvim" },
+    },
+    -- }}}
+
     -- {{{ core/util: vim-startify - start page showing mru, git changes, ...
     {
         "mhinz/vim-startify",
@@ -120,17 +129,25 @@ return {
                 return map(commits, '{"line": v:val}')
             endfunction
 
+            " Color of the header
+            hi! link StartifyHeader Normal
+            hi! link StartifySection Keyword
+
+            " Enable the cursorline
+            autocmd User Startified setlocal cursorline
+
             let g:startify_lists = [
                     "\ { 'type': 'files',                        'header': ['   mru'] },
                     \ { 'type': 'dir',                          'header': ['   mru '. getcwd()] },
                     \ { 'type': 'sessions',                     'header': ['   sessions'] },
                     \ { 'type': function('s:gitmodified'),      'header': ['   modified'] },
                     \ { 'type': function('s:gituntracked'),     'header': ['   untracked'] },
-                    \ { 'type': function('s:gitlistcommits'),   'header': ['   commits'] },
+                    "\ { 'type': function('s:gitlistcommits'),   'header': ['   commits'] },
                     \ { 'type': 'commands',                     'header': ['   commands'] },
                     \ ]
 
-            let g:startify_custom_header =[
+            " By default, the unix fortune command is used. Override with:
+            let g:_____startify_custom_header =[
              \ '    _   _         __     ___           ',
              \ '   | \ | | ___  __\ \   / (_)_ __ ___  ',
              \ '   |  \| |/ _ \/ _ \ \ / /| | `_ ` _ \ ',
@@ -408,7 +425,7 @@ return {
                 lualine_b = {
                     {
                         "branch",
-                        icon = { "", align = "left" },
+                        icon = { "", align = "left" },
                     },
                     {
                         "diff",
@@ -440,13 +457,18 @@ return {
                         "buffers",
 
                         -- Split buffers NOT using the powerline arrows
-                        section_separators = { left = "🭛", right = "" },
+                        section_separators = { left = "X", right = "" },
+
+                        padding = { left = 1, right = 1 },
+                        component_separators = { left = "", right = "" },
 
                         -- Use nvim-web-devicons for file icons?
                         icons_enabled = false,
 
                         -- filenames or a shortened path relative to the CWD
                         show_filename_only = true,
+                        hide_filename_extension = false,
+                        show_modified_status = true,
 
                         mode = 2, -- 0: Shows buffer name
                         -- 1: Shows buffer index
@@ -456,6 +478,7 @@ return {
 
                         buffers_color = {
                             active = { fg = "#dddddd", bg = "background", gui = "bold" },
+                            -- inactive = { fg = "#dd0000", bg = "green", gui = "bold" },
                         },
 
                         symbols = {
@@ -468,49 +491,107 @@ return {
 
                 lualine_x = {
                     {
-                        "filetype",
-                        colored = false, -- Displays filetype icon in color if set to true
-                        icon_only = false, -- Display only an icon for filetype
-                        icon = { align = "left" }, -- Display filetype icon on the right hand side
+                        "diagnostics",
+
+                        -- Table of diagnostic sources, available sources are:
+                        --   'nvim_lsp', 'nvim_diagnostic', 'nvim_workspace_diagnostic', 'coc', 'ale', 'vim_lsp'.
+                        -- or a function that returns a table as such:
+                        --   { error=error_cnt, warn=warn_cnt, info=info_cnt, hint=hint_cnt }
+                        sources = { "nvim_diagnostic", "coc" },
+
+                        -- Displays diagnostics for the defined severity types
+                        sections = {
+                            "error",
+                            "warn",
+                            "info",
+                            "hint",
+                        },
+
+                        diagnostics_color = {
+                            error = "DiagnosticErrorInv",
+                            warn = "DiagnosticWarnInv",
+                            info = "DiagnosticInfoInv",
+                            hint = "DiagnosticHintInv",
+                        },
+                        colored = true,
+
+                        -- symbols = { error = " ", warn = " ", info = " ", hint = " " },
+                        -- symbols = { error = " ", warn = " ", info = " ", hint = " " },
+                        symbols = { error = " ", warn = " ", info = " ", hint = " " },
+
+                        component_separators = { left = "", right = "" },
+
+                        update_in_insert = false,
+                        always_visible = false,
                     },
-                    -- "vim.lsp.status()"
+
+                    {
+                        "lsp_status",
+                        -- icon = "󰒓",
+                        -- icon = "󰅩",
+                        icon = "󱙺",
+
+                        symbols = {
+                            spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
+                            -- done = "✓",
+                            -- done = " ",
+                            done = "",
+                            -- Delimiter inserted between LSP names:
+                            separator = " ",
+                        },
+
+                        -- List of LSP names to ignore (e.g., `null-ls`):
+                        ignore_lsp = {},
+                    },
                 },
 
                 lualine_y = {
                     {
-                        function()
-                            return [[]]
-                        end,
+                        "filetype",
+                        colored = false, -- Displays filetype icon in color if set to true
+                        icon_only = false, -- Display only an icon for filetype
+                        icon = { align = "left" }, -- Display filetype icon on the right hand side
+
+                        component_separators = { left = "", right = "" },
                     },
+                    -- {
+                    --     function()
+                    --         return [[]]
+                    --     end,
+                    -- },
                     {
                         "encoding",
                         -- Show '[BOM]' when the file has a byte-order mark
                         show_bomb = false,
 
-                        padding = { left = 1, right = 0 },
+                        padding = { left = 1, right = 1 },
+                        component_separators = { left = "", right = "" },
                     },
                     {
                         "fileformat",
                         symbols = {
-                            unix = "[unix]",
-                            dos = "[win]",
-                            mac = "[mac]",
+                            unix = "", -- e712
+                            dos = "", -- e70f
+                            mac = "", -- e711
                         },
 
-                        padding = { left = 0, right = 1 },
+                        padding = { left = 1, right = 1 },
                     },
                 },
 
                 lualine_z = {
                     {
                         function()
-                            return [[]]
+                            -- return [[⌽]]
+                            -- return [[   󰓾       @]]
+                            -- return [[]]
+                            -- return [[]]
+                            return [[ ]]
                         end,
                         padding = { left = 1, right = 0 },
                     },
-
                     {
-                        -- 'location' and 'progress' but with a bit nicer
+                        -- 'location' and 'progress' but a bit nicer
                         function()
                             local line = vim.fn.line(".")
                             local col = vim.fn.charcol(".")
@@ -521,7 +602,7 @@ return {
                             if line == 1 then
                                 perc = 0
                             elseif line == total then
-                                perc = "100"
+                                perc = 100
                             end
 
                             return string.format("%2d%%%% %2d/%d:%-3d", perc, line, total, col)
@@ -582,8 +663,6 @@ return {
                     local gitsigns = require("gitsigns")
 
                     -- Actions
-                    local map = require("util.keymap")
-
                     map.group("<leader>v", "Versioning", "")
 
                     map.n("<leader>vs", gitsigns.stage_hunk, { desc = "Stage hunk", icon = "", buffer = bufnr })
@@ -874,7 +953,7 @@ return {
     -- }}}
 
     --------------------------------------------------------------------------------------------------------------------
-    -- Coding Plugins: LSP and IDE-like things.
+    -- Coding Plugins: LSP.
 
     -- {{{ Snippets: luasnip - Snippet engine with support for several snipped types.
     -- Also used for nvim-cmp LSP snippets
@@ -1195,6 +1274,9 @@ return {
     },
     --- }}}
 
+    --------------------------------------------------------------------------------------------------------------------
+    -- Coding Plugins: IDE-like fluff.
+
     -- {{{ UI: trouble.nvim - nicely show lsp and diagnostic info
     {
         "folke/trouble.nvim",
@@ -1275,7 +1357,8 @@ return {
     },
     -- }}}
 
-    -- {{{ LSP UI: lspsaga.nvim
+    -- {{{ LSP UI: lspsaga.nvim - Adds a lot of fluff to your code - light bulbs for code actions, a breadcrump bar and
+    -- a lot of utils to browse your diagnostics and LSP info (refs, declarations,...)
     -- {
     --     "nvimdev/lspsaga.nvim",
     --
@@ -1291,6 +1374,7 @@ return {
     -- },
     -- }}}
 
+    -- {{{ LSP UI: shows the signature of a function as tiny popup while typing
     -- {
     --     "ray-x/lsp_signature.nvim",
     --     event = "VeryLazy",
@@ -1313,8 +1397,9 @@ return {
     --         })
     --     end,
     -- },
+    -- }}}
 
-    -- {{{ Code-helper: vim-doge
+    -- {{{ Code-helper: vim-doge to generate doc for functions.
     {
         "sebastian-eichelbaum/vim-doge",
 
@@ -1327,41 +1412,57 @@ return {
     --------------------------------------------------------------------------------------------------------------------
     -- Nice-to-have Plugins.
 
-    -- {{{ Syntax and Style: nvim-colorizer
-    -- Provides coloring of hex/css colors.
+    -- {{{ Syntax and Style: nvim-colorizer - Provides coloring of hex/css colors.
     {
-        "norcalli/nvim-colorizer.lua",
+        "catgoose/nvim-colorizer.lua",
 
         lazy = true,
         event = "VeryLazy",
 
-        init = function()
-            require("colorizer").setup(
-                {
-                    css = {
-                        css = true,
-                    },
-                    javascript = {},
-                    vim = {},
-                    html = {
-                        mode = "foreground",
-                    },
+        opts = {
+            lazy_load = true,
+
+            filetypes = {
+                -- "*", -- everywhere? Bad Idea. Use :ColorizerToggle to enable the colorizer when needed
+                "css",
+                "html",
+                "vue",
+                "javascript",
+            },
+            user_default_options = {
+                -- Highlighting mode.  'background'|'foreground'|'virtualtext'
+                mode = "virtualtext",
+                -- virtualtext = "■",
+                -- virtualtext = "󱥚 ",
+                virtualtext = " ",
+                virtualtext_inline = "after", -- 'before', 'after', boolean (false = end of line, true = 'after')
+                virtualtext_mode = "foreground",
+                -- update color values even if buffer is not focused
+                always_update = false,
+
+                -- Names like "blue"? Note that names_opts allows for more detailed config options. Refer to the
+                -- official github page.
+                names = true, -- "Name" codes like Blue or red.
+                names_opts = {
+                    lowercase = true,
+                    camelcase = true,
+                    uppercase = true,
+                    strip_digits = true, -- ignore names with digits?
                 },
-                -- Defaults:
-                {
-                    RGB = true, -- #RGB hex codes
-                    RRGGBB = true, -- #RRGGBB hex codes
-                    names = true, -- "Name" codes like Blue
-                    RRGGBBAA = true, -- #RRGGBBAA hex codes
-                    rgb_fn = false, -- CSS rgb() and rgba() functions
-                    hsl_fn = false, -- CSS hsl() and hsla() functions
-                    css = false, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-                    css_fn = false, -- Enable all CSS *functions*: rgb_fn, hsl_fn
-                    -- Available modes: foreground, background
-                    mode = "background", -- Set the display mode.
-                }
-            )
-        end,
+
+                -- RGB hex codes like '#ffaaaa'
+                RGB = true,
+                RGBA = true,
+                RRGGBB = true,
+                -- RGBA? Keep in mind that this blends with the background color.
+                RRGGBBAA = true,
+                AARRGGBB = true, -- 0xAARRGGBB hex codes
+
+                -- Interpret rgb(200, 50, 25), rgba(90,0,0,1), hsl(20, 70%, 50%)
+                rgb_fn = true,
+                hsl_fn = true,
+            },
+        },
     },
     -- }}}
 }

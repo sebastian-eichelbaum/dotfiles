@@ -431,6 +431,12 @@ local highlights = {
     DiagnosticInfo = { palette.highlight.good },
     DiagnosticHint = { palette.highlight.neutral }, -- things like unused vars
 
+    -- Diagnostics to be used in the statusline
+    DiagnosticErrorInv = { fg = palette.highlight.bad.fg, bg = palette.ui.statusLine.inactive.bg, bold = true },
+    DiagnosticWarnInv = { fg = palette.highlight.attention.fg, bg = palette.ui.statusLine.inactive.bg, bold = true },
+    DiagnosticinfoInv = { fg = palette.highlight.good.fg, bg = palette.ui.statusLine.inactive.bg, bold = true },
+    DiagnosticHintInv = { fg = palette.highlight.neutral.fg, bg = palette.ui.statusLine.inactive.bg, bold = true },
+
     DiagnosticUnnecessary = { link = "Comment" },
 
     DiagnosticUnderlineError = { underline = true, special = palette.highlight.bad.fg },
