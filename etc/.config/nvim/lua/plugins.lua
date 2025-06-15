@@ -1478,6 +1478,17 @@ return {
     },
     -- }}}
 
+    -- {{{ Shows key hints in-text in how to move around. Helpful for learner.
+    -- {
+    --     "tris203/precognition.nvim",
+    --
+    --     lazy = true,
+    --     event = "VeryLazy",
+    --
+    --     opts = {},
+    -- },
+    -- }}}
+
     --------------------------------------------------------------------------------------------------------------------
     -- AI integrations
 
