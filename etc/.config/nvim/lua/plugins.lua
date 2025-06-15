@@ -501,6 +501,10 @@ return {
                         --   { error=error_cnt, warn=warn_cnt, info=info_cnt, hint=hint_cnt }
                         sources = { "nvim_diagnostic", "coc" },
 
+                        on_click = function()
+                            require("trouble").toggle("diagnostics")
+                        end,
+
                         -- Displays diagnostics for the defined severity types
                         sections = {
                             "error",
@@ -538,7 +542,7 @@ return {
                             -- done = " ",
                             done = "",
                             -- Delimiter inserted between LSP names:
-                            separator = " ",
+                            separator = "  󱙺 ",
                         },
 
                         -- List of LSP names to ignore (e.g., `null-ls`):
@@ -1229,15 +1233,15 @@ return {
                     end
                 end, { "i", "s" }),
 
-                ["<S-Tab>"] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_prev_item()
-                    elseif luasnip.locally_jumpable(-1) then
-                        luasnip.jump(-1)
-                    else
-                        fallback()
-                    end
-                end, { "i", "s" }),
+                -- ["<S-Tab>"] = cmp.mapping(function(fallback)
+                --     if cmp.visible() then
+                --         cmp.select_prev_item()
+                --     elseif luasnip.locally_jumpable(-1) then
+                --         luasnip.jump(-1)
+                --     else
+                --         fallback()
+                --     end
+                -- end, { "i", "s" }),
             })
             --- }}}
 
@@ -1332,7 +1336,14 @@ return {
             end, { desc = "References", icon = "" })
 
             map.n("|", function()
-                require("trouble").close({})
+                local trouble = require("trouble")
+
+                local diagOpen = trouble.is_open()
+                if not diagOpen then
+                    trouble.toggle("diagnostics")
+                else
+                    trouble.close()
+                end
             end, {})
 
             return {
@@ -1464,6 +1475,24 @@ return {
                 hsl_fn = true,
             },
         },
+    },
+    -- }}}
+
+    --------------------------------------------------------------------------------------------------------------------
+    -- AI integrations
+
+    -- {{{ Tabby integration for code recommendations while typing
+    {
+        "TabbyML/vim-tabby",
+        lazy = false,
+        dependencies = {
+            "neovim/nvim-lspconfig",
+        },
+        init = function()
+            vim.g.tabby_agent_start_command = { "tabby-agent", "--stdio" }
+            vim.g.tabby_inline_completion_trigger = "auto"
+            vim.g.tabby_inline_completion_keybinding_accept = "<A-CR>" -- Use alt-enter to accept. S-Tab and others are mapped to snippets and the completion engine already
+        end,
     },
     -- }}}
 }

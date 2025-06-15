@@ -33,6 +33,9 @@ export PROTON_ENABLE_NVAPI=1
 echo game-run: razer game mode
 razer gaming
 
+echo game-run: Stopping picom
+systemctl --user stop picom.service
+
 jsw_pid=''
 if [ -x "$(command -v joystickwake)" ]; then
     echo game-run: joystickwake starting
@@ -46,11 +49,14 @@ gamemoderun "$@"
 
 # Reset after running:
 
-# Power modes
-echo game-run: razer balance mode
-razer balance
-
 if [ ! -z "$jsw_pid" ]; then
     echo game-run: stopping joystickwake
     kill $jsw_pid || true
 fi
+
+# Power modes
+echo game-run: razer balance mode
+razer balance
+
+echo game-run: Starting picom
+systemctl --user start picom.service
