@@ -12,8 +12,6 @@ vim.opt.termguicolors = true
 local color = require("util/highlight")
 local merge = require("util/table").merge
 
-local colors2 = {}
-
 -- Base palette. This defines the fundamental colors of your color scheme.
 local colors = {
     -- Start with a decision on what will be your BG and FG.
@@ -161,17 +159,20 @@ local palette = merge(colors, {
         },
         menu = {
             border = { fg = colors.bg.L4 },
+            splitter = { fg = colors.bg.L4 },
             scrollbar = { fg = colors.fg.D2 },
-            normal = { fg = colors.fg.D1, bg = colors.bg.L2 },
+            normal = { fg = colors.fg.D1, bg = colors.bg.L1 },
             selected = { bg = colors.bg.L4 },
             matched = {
-                bold = true,
+                -- bold = true,
                 -- fg = colors.highlight.attention.fg,
-                fg = colors.fg.O,
-                --bg = colors.bg.L3
+                -- fg = colors.fg.O,
+                -- bg = colors.bg.L3
+                bg = colors.highlight.attention.bg,
             },
             kind = { fg = colors.fg.O, bg = colors.bg.O, bold = true },
             source = { fg = colors.fg.L1, bg = colors.bg.L2, bold = true },
+            deprecated = { fg = colors.fg.L1, bg = colors.bg.L2, bold = true },
         },
         sidebar = {
             normal = { fg = colors.fg.O, bg = colors.bg.D1 },
@@ -384,26 +385,29 @@ local highlights = {
     FloatBorder = { palette.ui.menu.border },
     FloatTitle = { link = "Title" },
     FloatFooter = { link = "FloatTitle" },
-    NormalFloat = { palette.ui.window.normal },
+    FloatSeparator = { palette.ui.menu.splitter },
+    NormalFloat = { palette.ui.menu.normal },
     -- }}}
 
     -- {{{ PMenu - Styles used several menus (including completion men)
     Pmenu = { palette.ui.menu.normal },
     PmenuSel = { palette.ui.menu.selected },
+    PmenuBorder = { palette.ui.menu.border },
 
     PmenuMatch = { palette.ui.menu.matched },
     PmenuMatchSel = { link = "PmenuMatch" },
 
     PmenuKind = { palette.ui.menu.kind },
+    -- PmenuKindSel = { fg = palette.wtf },
     PmenuSource = { palette.ui.menu.source },
 
-    -- PmenuKindSel = { fg = palette.wtf },
-    -- PmenuExtra = { fg = palette.wtf },
+    -- Used to mark deprecated
+    PmenuExtra = { link = "DiagnosticDeprecated" },
     -- PmenuExtraSel = { fg = palette.wtf },
 
-    PmenuSbar = { link = "Pmenu" },
+    -- Scrollbar
+    PmenuSbar = { link = "Pmenu" }, -- is the gutter
     PmenuThumb = { bg = palette.ui.menu.scrollbar.fg },
-    PmenuBorder = { palette.ui.menu.border },
 
     -- }}}
 
@@ -435,16 +439,18 @@ local highlights = {
     DiagnosticHintInv = { fg = palette.highlight.neutral.fg, bg = palette.ui.statusLine.inactive.bg, bold = true },
 
     DiagnosticUnnecessary = { link = "Comment" },
+    DiagnosticDeprecated = { strikethrough = false, undercurl = true, special = palette.highlight.neutral.fg },
 
-    DiagnosticUnderlineError = { underline = true, special = palette.highlight.bad.fg },
-    DiagnosticUnderlineWarn = { underline = true, special = palette.highlight.attention.fg },
-    DiagnosticUnderlineInfo = { underline = true, special = palette.highlight.good.fg },
-    DiagnosticUnderlineHint = { underline = true, special = palette.highlight.neutral.fg },
+    DiagnosticUnderlineError = { undercurl = true, special = palette.highlight.bad.fg },
+    DiagnosticUnderlineWarn = { undercurl = true, special = palette.highlight.attention.fg },
+    DiagnosticUnderlineInfo = { undercurl = true, special = palette.highlight.good.fg },
+    DiagnosticUnderlineHint = { undercurl = true, special = palette.highlight.neutral.fg },
     -- }}}
 
     -- {{{ LSP Kind styles
     LspItemKind = { link = "PmenuKind" },
     LspItemSource = { link = "PmenuSource" },
+    LspSignatureActiveParameter = { link = "SnippetTabstop" },
 
     LspItemKindFunction = { palette.ui.menu.kind, palette.code.functions },
     LspItemKindType = { palette.ui.menu.kind, palette.code.types },

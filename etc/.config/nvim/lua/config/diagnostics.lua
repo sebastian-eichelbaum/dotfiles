@@ -8,6 +8,14 @@ vim.diagnostic.config({
     virtual_text = {
         prefix = "▍", -- Could be '●', '▉', '┃', '▎', 'x', '❯❯'
     },
+
+    -- Disable virtual text?
+    -- virtual_text = false,
+
+    -- Use a nice arrow+message as virtual text below the issue? Looks fancy at first but creates a lot of flicker and
+    -- noise when scrolling through the text
+    -- virtual_lines = { current_line = true },
+
     -- Gutter signs?
     signs = true,
     -- Underline the affected part of the line?

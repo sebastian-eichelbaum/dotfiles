@@ -165,7 +165,7 @@ return {
             vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "Visual" })
             vim.api.nvim_set_hl(0, "WhichKeyDesc", { link = "Normal" })
             vim.api.nvim_set_hl(0, "WhichKeyIcon", { link = "Normal" })
-            vim.api.nvim_set_hl(0, "WhichKeyNormal", { link = "SidebarNormal" })
+            -- vim.api.nvim_set_hl(0, "WhichKeyNormal", { link = "SidebarNormal" })
 
             return {
                 preset = "helix",
@@ -756,12 +756,12 @@ return {
     -- }}}
 
     -- {{{ telescope (dependency) - a finder/picker for a lot of things like files, commits, lsp stuff, ...
-    {
-        "nvim-telescope/telescope.nvim",
-        tag = "0.1.8",
-        -- or                              , branch = '0.1.x',
-        dependencies = { "nvim-lua/plenary.nvim" },
-    },
+    -- {
+    --     "nvim-telescope/telescope.nvim",
+    --     tag = "0.1.8",
+    --     -- or                              , branch = '0.1.x',
+    --     dependencies = { "nvim-lua/plenary.nvim" },
+    -- },
     -- }}}
 
     -- {{{ nvim-web-devicons (dependency)
@@ -923,12 +923,19 @@ return {
 
                         click = "v:lua.ScFa",
                     },
+                    -- All the other signs
+                    {
+                        sign = { namespace = { ".*" }, maxwidth = 1, auto = true, colwidth = 1 },
+                        click = "v:lua.ScSa",
+                    },
+                    -- Have a separate column for git
                     {
                         sign = { namespace = { "gitsigns" }, maxwidth = 1, auto = false, colwidth = 1 },
                         click = "v:lua.ScSa",
                     },
+                    -- Show diagnostics in the gutter
                     {
-                        sign = { namespace = { ".*" }, maxwidth = 1, auto = false, colwidth = 1 },
+                        sign = { namespace = { "diagnostic" }, maxwidth = 1, auto = false, colwidth = 1 },
                         click = "v:lua.ScSa",
                     },
                     {
@@ -1239,14 +1246,22 @@ return {
         opts = function()
             -- {{{ Color Mapping:
 
-            -- Map Pmenu
+            -- Pmenu fixes
 
-            hl.link("BlinkCmpLabelMatch", "Search")
+            -- Most things properly map to the Pmenu highlights. Fix those that don't
+            hl.link("BlinkCmpMenuBorder", "PmenuBorder")
+            hl.link("BlinkCmpLabelMatch", "PmenuMatch")
 
-            hl.link("BlinkCmpKind", "LspItemKind")
-            hl.link("BlinkCmpSource", "LspItemSource")
+            -- Doc fixes
+            hl.link("BlinkCmpDocBorder", "FloatBorder")
+            hl.link("BlinkCmpDocSeparator", "FloatSeparator")
+
+            -- Signature fixes
+            hl.link("BlinkCmpSignatureHelpBorder", "FloatBorder")
 
             -- Kind symbols
+            hl.link("BlinkCmpKind", "LspItemKind")
+            hl.link("BlinkCmpSource", "LspItemSource")
 
             hl.link("BlinkCmpKindMethod", "LspItemKindFunction")
             hl.link("BlinkCmpKindFunction", "LspItemKindFunction")
@@ -1281,6 +1296,7 @@ return {
             -- }}}
 
             -- {{{ Config:
+            --
             local config = require("config.lsp")
             local result = {
                 -- refer to https://cmp.saghen.dev/configuration/keymap.html
@@ -1325,7 +1341,7 @@ return {
 
                     menu = {
                         --min_width = 15,
-                        max_height = 33,
+                        max_height = 20,
 
                         -- Make it slightly transparent
                         winblend = 0,
@@ -1482,6 +1498,10 @@ return {
                 -- Completion sources. This also allows for a lot of customization
                 sources = {
                     default = { "lsp", "path", "snippets", "buffer" },
+
+                    -- Minimum number of characters in the keyword to trigger all providers
+                    -- May also be `function(ctx: blink.cmp.Context): number`
+                    min_keyword_length = 3,
                 },
 
                 -- Configure fuzzy finding
@@ -1651,7 +1671,14 @@ return {
         lazy = false,
         opts = {
             preview = {
-                filetypes = { "markdown", "codecompanion" },
+                filetypes = {
+                    -- Use it in markdown? Be aware: this switches from preview to native markdown when entering insert
+                    -- mode. This can be annoying!
+                    -- "markdown",
+
+                    -- Make the AI chat a bit more pretty
+                    "codecompanion",
+                },
                 ignore_buftypes = {},
             },
         },
@@ -1765,11 +1792,18 @@ return {
     -- {{{ Code Companion - Provides AI chat and agent workflows - no support for inline suggestions.
     {
         "olimorris/codecompanion.nvim",
-        opts = {},
+
         dependencies = {
             "nvim-lua/plenary.nvim",
             -- "nvim-treesitter/nvim-treesitter",
         },
+
+        lazy = true,
+        event = "VeryLazy",
+
+        opts = function()
+            return {}
+        end,
     },
     -- }}}
 }
