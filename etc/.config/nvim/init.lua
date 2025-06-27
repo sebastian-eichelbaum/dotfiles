@@ -24,4 +24,4 @@ require("config.core.mappings")
 
 -- Diagnostics and LSP setup and key mappings
 require("config.diagnostics")
-require("config.lsp")
+require("config.lsp").apply()

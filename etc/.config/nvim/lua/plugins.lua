@@ -1,7 +1,5 @@
-local stringUtils = require("util.string")
 local hl = require("util.highlight")
 local map = require("util.keymap")
-local table = require("util.table")
 local palette = require("config.core.colorscheme").palette
 
 return {
@@ -9,14 +7,14 @@ return {
     --------------------------------------------------------------------------------------------------------------------
     -- Core Plugins.
 
-    -- {{{ Core/Util: restore_view - Stores and restores settings/folds/... of files
+    -- {{{ restore_view - Stores and restores settings/folds/... of files
     {
         -- Automagically save/restore views
         "vim-scripts/restore_view.vim",
     },
     -- }}}
 
-    -- {{{ Core/Util: vim-rooter - Find the project root
+    -- {{{ vim-rooter - Find the project root
     {
         "notjedi/nvim-rooter.lua",
 
@@ -35,7 +33,7 @@ return {
     },
     -- }}}
 
-    -- {{{ Core/Util: fzf - Fuzzy finding files and search in files
+    -- {{{ fzf - Fuzzy finding files and search in files
     {
         "junegunn/fzf.vim",
         dependencies = { "junegunn/fzf" },
@@ -88,16 +86,7 @@ return {
     },
     -- }}}
 
-    -- {{{ core/util: telescope - a finder/picker for a lot of things like files, commits, lsp stuff, ...
-    {
-        "nvim-telescope/telescope.nvim",
-        tag = "0.1.8",
-        -- or                              , branch = '0.1.x',
-        dependencies = { "nvim-lua/plenary.nvim" },
-    },
-    -- }}}
-
-    -- {{{ core/util: vim-startify - start page showing mru, git changes, ...
+    -- {{{ vim-startify - start page showing mru, git changes, ...
     {
         "mhinz/vim-startify",
 
@@ -160,11 +149,11 @@ return {
     },
     -- }}}
 
-    -- {{{ Core/Util: which-key.nvim - Unobtrusively show key bindings while typing
+    -- {{{ which-key.nvim - Unobtrusively show key bindings while typing
     {
         "folke/which-key.nvim",
 
-        dependencies = { "nvim-tree/nvim-web-devicons" },
+        dependencies = { "nvim-tree/nvim-web-devicons", "echasnovski/mini.icons" },
 
         lazy = true,
         event = "VeryLazy",
@@ -173,14 +162,19 @@ return {
             -- Map the color groups of WhichKey. The defaults do not match my color-scheme nicely
             vim.api.nvim_set_hl(0, "WhichKey", { link = "Operator" })
             vim.api.nvim_set_hl(0, "WhichKeySeperator", { link = "Normal" })
-            vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "IncSearch" })
-            vim.api.nvim_set_hl(0, "WhichKeyDesc", { link = "Function" })
+            vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "Visual" })
+            vim.api.nvim_set_hl(0, "WhichKeyDesc", { link = "Normal" })
             vim.api.nvim_set_hl(0, "WhichKeyIcon", { link = "Normal" })
             vim.api.nvim_set_hl(0, "WhichKeyNormal", { link = "SidebarNormal" })
 
             return {
+                preset = "helix",
+
                 -- Wait until the popup is shown:
                 delay = 500,
+
+                -- In modern and helix, disable the tiny help (the help is a separate window)
+                show_help = false,
 
                 -- en- or disable some plugins.
                 plugins = {
@@ -228,7 +222,10 @@ return {
     },
     -- }}}
 
-    -- {{{ Core/Util: nvim-neo-tree - A file/buffer/git tree
+    --------------------------------------------------------------------------------------------------------------------
+    -- Core UI Plugins
+
+    -- {{{ nvim-neo-tree - A file/buffer/git tree
     {
         "nvim-neo-tree/neo-tree.nvim",
         branch = "v3.x",
@@ -360,7 +357,7 @@ return {
     },
     -- }}}
 
-    -- {{{ Core/UI: lualine.nvim - Configurable status-line
+    -- {{{ lualine.nvim - Configurable status-line
     {
         "nvim-lualine/lualine.nvim",
 
@@ -418,6 +415,18 @@ return {
                     {
                         "mode",
                         fmt = function(str)
+                            -- if str:sub(1, 1) == "C" then
+                            --     return "  "
+                            -- end
+                            -- if str:sub(1, 1) == "V" then
+                            --     return " 󰒇 "
+                            -- end
+                            -- if str:sub(1, 1) == "I" then
+                            --     return " 󰌌 "
+                            -- end
+                            -- if str:sub(1, 1) == "N" then
+                            --     return " 󰆾 "
+                            -- end
                             return str:sub(1, 1)
                         end,
                     },
@@ -433,7 +442,11 @@ return {
                         "diff",
                         -- Re-format de detailed output to only show a small "modified" marker instead of
                         -- add/remove/change counts
-                        fmt = function(str, context)
+                        fmt = function(
+                            str,
+                            -- content:
+                            _
+                        )
                             if str == nil or str == "" then
                                 return ""
                             end
@@ -492,6 +505,7 @@ return {
                 },
 
                 lualine_x = {
+
                     {
                         "diagnostics",
 
@@ -547,6 +561,29 @@ return {
 
                         -- List of LSP names to ignore (e.g., `null-ls`):
                         ignore_lsp = {},
+
+                        component_separators = { left = "", right = "" },
+                    },
+                    {
+                        function()
+                            if vim.v.hlsearch == 0 then
+                                return ""
+                            end
+
+                            local ok, result = pcall(vim.fn.searchcount, { maxcount = 999, timeout = 500 })
+                            if not ok or next(result) == nil then
+                                return ""
+                            end
+
+                            local denominator = math.min(result.total, result.maxcount)
+                            if denominator == 0 then
+                                return ""
+                            end
+                            return ("  %d/%d"):format(result.current, denominator)
+                        end,
+
+                        component_separators = { left = "", right = "" },
+                        color = { fg = hl.fg("Search") },
                     },
                 },
 
@@ -621,7 +658,7 @@ return {
     },
     -- }}}
 
-    -- {{{ Core/UI: gitsigns.nvim - Show changes and provides basic staging/diff features
+    -- {{{ gitsigns.nvim - Show changes and provides basic staging/diff features
     {
         "lewis6991/gitsigns.nvim",
 
@@ -630,9 +667,9 @@ return {
 
         opts = function()
             local function makeSigns()
-                -- ┆ ┋ ┇ ╎ ╏  ░  ▒  ▓ ▍ │ ▏
+                -- ┆ ┋ ┇ ╎ ╏  ░  ▒  ▓ ▍ │  ▏ 🭲
                 --                    ┃
-                local icon = "│" -- "┃"
+                local icon = "▍" -- "🭲" -- "┃"
                 return {
                     add = { text = icon },
                     change = { text = icon },
@@ -718,7 +755,16 @@ return {
     },
     -- }}}
 
-    -- {{{ Core/UI (dependency): nvim-web-devicons
+    -- {{{ telescope (dependency) - a finder/picker for a lot of things like files, commits, lsp stuff, ...
+    {
+        "nvim-telescope/telescope.nvim",
+        tag = "0.1.8",
+        -- or                              , branch = '0.1.x',
+        dependencies = { "nvim-lua/plenary.nvim" },
+    },
+    -- }}}
+
+    -- {{{ nvim-web-devicons (dependency)
     -- Nice icon set used by several UI plugins
     {
         "nvim-tree/nvim-web-devicons",
@@ -743,12 +789,177 @@ return {
     },
     -- }}}
 
+    -- {{{ nvim-hlslens - provide a virtual text next to the current search highlight
+    -- NOTE: nvim-scrollbar uses this too
+    {
+        "kevinhwang91/nvim-hlslens",
+
+        lazy = true,
+        event = "VeryLazy",
+
+        opts = function()
+            local kopts = { noremap = true, silent = true }
+
+            vim.api.nvim_set_keymap(
+                "n",
+                "n",
+                [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+                kopts
+            )
+            vim.api.nvim_set_keymap(
+                "n",
+                "N",
+                [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+                kopts
+            )
+            vim.api.nvim_set_keymap("n", "*", [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+            vim.api.nvim_set_keymap("n", "#", [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+
+            hl.link("HlSearchNear", "CurSearch")
+            hl.link("HlSearchLens", "Visual") -- the lens for a match that is not current
+            hl.link("HlSearchLensNear", "Search") -- the lens for a match that is not current
+
+            return {
+                build_position_cb = function(plist, _, _, _)
+                    require("scrollbar.handlers.search").handler.show(plist.start_pos)
+                end,
+
+                -- If false, also show other matches that are not the current one
+                nearest_only = true,
+
+                -- Customize the virtual text to match the diagnostics style
+                override_lens = function(render, posList, nearest, idx, relIdx)
+                    local sfw = vim.v.searchforward == 1
+                    local indicator, text, chunks
+                    local absRelIdx = math.abs(relIdx)
+                    if absRelIdx > 1 then
+                        indicator = ("%d%s"):format(absRelIdx, sfw ~= (relIdx > 1) and "▲" or "▼")
+                    elseif absRelIdx == 1 then
+                        indicator = sfw ~= (relIdx == 1) and "▲" or "▼"
+                    else
+                        indicator = ""
+                    end
+
+                    local lnum, col = unpack(posList[idx])
+                    if nearest then
+                        local cnt = #posList
+                        if indicator ~= "" then
+                            text = ("┃  %s %d/%d "):format(indicator, idx, cnt)
+                        else
+                            text = ("┃   %d/%d "):format(idx, cnt)
+                        end
+                        chunks = { { " " }, { text, "HlSearchLensNear" } }
+                    else
+                        text = ("┃   %s %d "):format(indicator, idx)
+                        chunks = { { " " }, { text, "HlSearchLens" } }
+                    end
+                    render.setVirt(0, lnum - 1, col - 1, chunks, nearest)
+                end,
+            }
+        end,
+    },
+    -- }}}
+
+    -- {{{ nvim-scrollbar - a fancy scrollbar that shows search matches, diagnostics and git markers
+    {
+        "petertriho/nvim-scrollbar",
+        lazy = true,
+        event = "VeryLazy",
+
+        opts = function()
+            -- require("scrollbar.handlers.gitsigns").setup()
+            return {
+                folds = 0,
+                marks = {},
+                excluded_filetypes = {
+                    "neo-tree",
+                },
+                handle = {
+                    text = " ",
+                    blend = 10, -- Integer between 0 and 100. 0 for fully opaque and 100 to full transparent. Defaults to 30.
+                    color = nil,
+                    color_nr = nil, -- cterm
+                    highlight = "CursorColumn",
+                    hide_if_all_visible = true, -- Hides handle if all lines are visible
+                },
+                handlers = {
+                    cursor = true,
+                    diagnostic = true,
+                    gitsigns = false, -- Requires gitsigns
+                    handle = true,
+                    search = true, -- Requires hlslens
+                    ale = false, -- Requires ALE
+                },
+            }
+        end,
+    },
+    -- }}}
+
+    -- {{{ statuscol.nvim - allows to customize the left status columns
+    {
+        "luukvbaal/statuscol.nvim",
+
+        lazy = false,
+
+        opts = function()
+            local builtin = require("statuscol.builtin")
+            return {
+                ft_ignore = { "neo-tree", "NVimTree", "qf", "fzf", "trouble", "startify" },
+
+                segments = {
+                    {
+                        hl = "FoldColumn",
+                        text = {
+                            function(args)
+                                local t = builtin.foldfunc(args)
+                                if t == "" then
+                                    return ""
+                                end
+                                -- adds some padding
+                                -- HACK: remove the end indicator to ensure proper highlights
+                                return " " .. string.sub(t, 1, -3) .. " %*"
+                            end,
+                        },
+
+                        click = "v:lua.ScFa",
+                    },
+                    {
+                        sign = { namespace = { "gitsigns" }, maxwidth = 1, auto = false, colwidth = 1 },
+                        click = "v:lua.ScSa",
+                    },
+                    {
+                        sign = { namespace = { ".*" }, maxwidth = 1, auto = false, colwidth = 1 },
+                        click = "v:lua.ScSa",
+                    },
+                    {
+                        text = { builtin.lnumfunc, " " },
+                        condition = { true, builtin.not_empty },
+                        click = "v:lua.ScLa",
+                    },
+                },
+
+                clickhandlers = {
+                    -- Disable some "dangerous" handlers. Happened once too often that I accidentally reset a hunk
+                    -- without even noticing.
+                    gitsigns = function(args)
+                        if args.button == "l" then
+                            require("gitsigns").preview_hunk()
+                        elseif args.button == "m" then
+                            --require("gitsigns").reset_hunk()
+                        elseif args.button == "r" then
+                            -- require("gitsigns").stage_hunk()
+                        end
+                    end,
+                },
+            }
+        end,
+    },
+    -- }}}
+
     --------------------------------------------------------------------------------------------------------------------
     -- Coding Base Plugins.
 
-    -- {{{ Language support (important dependency): Treesitter - Provides AST for a lot of languages.
-    -- By itself, it does not have any useful functionality. It is a
-    -- requirement for a lot of tools and enhanced syntax highlighting.
+    -- {{{ nvim-treesitter - Language support (important dependency): Treesitter - Provides AST for a lot of languages.
     {
         "nvim-treesitter/nvim-treesitter",
 
@@ -848,15 +1059,15 @@ return {
         end,
 
         --init = function()
-        -- Enable folds?
-        -- -> keep in mind that setting these will be saved in the view.
+        -- -- Enable folds?
+        -- -- -> keep in mind that setting these will be saved in the view.
         --set foldmethod=expr
         --set foldexpr='v:lua.vim.treesitter.foldexpr()'
         --end,
     },
     -- }}}
 
-    -- {{{ UI: indent-blankline.nvim - Provides indent level lines.
+    -- {{{ indent-blankline.nvim - Provides indent level lines.
     {
         "lukas-reineke/indent-blankline.nvim",
 
@@ -896,15 +1107,16 @@ return {
         },
 
         init = function()
-            -- Disable the line on level 0
             local hooks = require("ibl.hooks")
+
+            -- Disable the line on level 0
             hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
             hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
         end,
     },
     -- }}}
 
-    -- {{{ Util/Auto-close: nvim-autopairs - Automatically close braces, strings, ...
+    -- {{{ Auto-close: nvim-autopairs - Automatically close braces, strings, ...
     {
         "windwp/nvim-autopairs",
 
@@ -915,7 +1127,7 @@ return {
     },
     -- }}}
 
-    -- {{{ Util/Auto-close: nvim-ts-autotag - Automatically close tags in html/xml/...
+    -- {{{ Auto-close: nvim-ts-autotag - Automatically close tags in html/xml/...
     {
         "windwp/nvim-ts-autotag",
 
@@ -938,7 +1150,7 @@ return {
     },
     -- }}}
 
-    --{{{ Util/Auto-close: nvim-treesitter-endwise - Automatically add end/endif/... statements in Lua, Bash, ...
+    --{{{ Auto-close: nvim-treesitter-endwise - Automatically add end/endif/... statements in Lua, Bash, ...
     {
         "RRethy/nvim-treesitter-endwise",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -959,51 +1171,6 @@ return {
 
     --------------------------------------------------------------------------------------------------------------------
     -- Coding Plugins: LSP.
-
-    -- {{{ Snippets: luasnip - Snippet engine with support for several snipped types.
-    -- Also used for nvim-cmp LSP snippets
-    {
-        "L3MON4D3/LuaSnip",
-        version = "v2.*",
-        -- install jsregexp (optional!).
-        build = "make install_jsregexp",
-
-        lazy = true,
-        event = "VeryLazy",
-
-        dependencies = { "rafamadriz/friendly-snippets" },
-
-        opts = { history = true, updateevents = "TextChanged,TextChangedI" },
-        config = function(_, opts)
-            require("luasnip").config.set_config(opts)
-
-            -- vscode format
-            require("luasnip.loaders.from_vscode").lazy_load({ exclude = vim.g.vscode_snippets_exclude or {} })
-            require("luasnip.loaders.from_vscode").lazy_load({ paths = vim.g.vscode_snippets_path or "" })
-
-            -- snipmate format
-            require("luasnip.loaders.from_snipmate").load()
-            require("luasnip.loaders.from_snipmate").lazy_load({ paths = vim.g.snipmate_snippets_path or "" })
-
-            -- lua format
-            require("luasnip.loaders.from_lua").load()
-            require("luasnip.loaders.from_lua").lazy_load({ paths = vim.g.lua_snippets_path or "" })
-
-            vim.api.nvim_create_autocmd("InsertLeave", {
-                callback = function()
-                    if
-                        require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-                        and not require("luasnip").session.jump_active
-                    then
-                        require("luasnip").unlink_current()
-                    end
-                end,
-            })
-
-            -- Key mappings
-        end,
-    },
-    -- }}}
 
     -- {{{ Formatting: conform.nvim - Add formatters support
     {
@@ -1055,234 +1222,330 @@ return {
     },
     -- }}}
 
-    -- {{{ Code-completion: nvim-cmp
-    -- Implements completion using the neovim LSP
+    -- {{{ blink.cmp - An alternative completion tool
     {
-        "hrsh7th/nvim-cmp",
+        "saghen/blink.cmp",
+        -- use a release tag to download pre-built binaries
+        version = "1.*",
 
         dependencies = {
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-cmdline",
-            "saadparwaiz1/cmp_luasnip",
+            -- provides a lot of nice snippets
+            "rafamadriz/friendly-snippets",
+
+            -- Is used properly syntax-highlight completion items
+            "xzbdmw/colorful-menu.nvim",
         },
 
-        lazy = true,
-        event = { "BufReadPost", "BufNewFile" },
-
         opts = function()
-            local cmp = require("cmp")
-            local luasnip = require("luasnip")
-
-            local config = require("config.lsp")
-
-            ----------------------------------------------------------------------------------------------------------------
-            -- {{{ Colors:
+            -- {{{ Color Mapping:
 
             -- Map Pmenu
 
-            hl.link("CmpItemKind", "PmenuKind")
-            -- Attention: setting these will cause issues with highlighting the selected item if PMenu has a bg set!
-            -- Use winhighlight instead to set those
-            --vim.api.nvim_set_hl(0, "CmpItemAbbr", { link = "Pmenu" })
-            --vim.api.nvim_set_hl(0, "CmpItemMenu", { link = "PmenuExtra" })
+            hl.link("BlinkCmpLabelMatch", "Search")
 
-            hl.link("CmpItemAbbrMatch", "PmenuMatch")
-            hl.link("CmpItemAbbrMatchFuzzy", "PmenuMatch")
+            hl.link("BlinkCmpKind", "LspItemKind")
+            hl.link("BlinkCmpSource", "LspItemSource")
 
             -- Kind symbols
 
-            hl.link("CmpItemKindMethod", "LspItemKindFunction")
-            hl.link("CmpItemKindFunction", "LspItemKindFunction")
-            hl.link("CmpItemKindConstructor", "LspItemKindFunction")
-            hl.link("CmpItemKindModule", "LspItemKindFunction")
+            hl.link("BlinkCmpKindMethod", "LspItemKindFunction")
+            hl.link("BlinkCmpKindFunction", "LspItemKindFunction")
+            hl.link("BlinkCmpKindConstructor", "LspItemKindFunction")
+            hl.link("BlinkCmpKindModule", "LspItemKindFunction")
 
-            hl.link("CmpItemKindStruct", "LspItemKindType")
-            hl.link("CmpItemKindClass", "LspItemKindType")
-            hl.link("CmpItemKindInterface", "LspItemKindType")
-            hl.link("CmpItemKindEnum", "LspItemKindType")
-            hl.link("CmpItemKindReference", "LspItemKindType")
-            hl.link("CmpItemKindUnit", "LspItemKindType")
+            hl.link("BlinkCmpKindStruct", "LspItemKindType")
+            hl.link("BlinkCmpKindClass", "LspItemKindType")
+            hl.link("BlinkCmpKindInterface", "LspItemKindType")
+            hl.link("BlinkCmpKindEnum", "LspItemKindType")
+            hl.link("BlinkCmpKindReference", "LspItemKindType")
+            hl.link("BlinkCmpKindUnit", "LspItemKindType")
 
-            hl.link("CmpItemKindText", "LspItemKindString")
-            hl.link("CmpItemKindEnumMember", "LspItemKindValue")
-            hl.link("CmpItemKindTypeParameter", "LspItemKindValue")
-            hl.link("CmpItemKindValue", "LspItemKindValue")
-            hl.link("CmpItemKindColor", "LspItemKindValue")
+            hl.link("BlinkCmpKindText", "LspItemKindString")
+            hl.link("BlinkCmpKindEnumMember", "LspItemKindValue")
+            hl.link("BlinkCmpKindTypeParameter", "LspItemKindValue")
+            hl.link("BlinkCmpKindValue", "LspItemKindValue")
+            hl.link("BlinkCmpKindColor", "LspItemKindValue")
 
-            hl.link("CmpItemKindVariable", "LspItemKindValue")
-            hl.link("CmpItemKindConstant", "LspItemKindValue")
-            hl.link("CmpItemKindField", "LspItemKindValue")
-            hl.link("CmpItemKindProperty", "LspItemKindValue")
-            hl.link("CmpItemKindEvent", "LspItemKindValue")
+            hl.link("BlinkCmpKindVariable", "LspItemKindValue")
+            hl.link("BlinkCmpKindConstant", "LspItemKindValue")
+            hl.link("BlinkCmpKindField", "LspItemKindValue")
+            hl.link("BlinkCmpKindProperty", "LspItemKindValue")
+            hl.link("BlinkCmpKindEvent", "LspItemKindValue")
 
-            hl.link("CmpItemKindFile", "LspItemKindFiles")
-            hl.link("CmpItemKindFolder", "LspItemKindFiles")
-            hl.link("CmpItemKindSnippet", "LspItemKindFiles")
+            hl.link("BlinkCmpKindFile", "LspItemKindFiles")
+            hl.link("BlinkCmpKindFolder", "LspItemKindFiles")
+            hl.link("BlinkCmpKindSnippet", "LspItemKindFiles")
 
-            hl.link("CmpItemKindKeyword", "LspItemKindKeyword")
-            hl.link("CmpItemKindOperator", "LspItemKindKeyword")
-
+            hl.link("BlinkCmpKindKeyword", "LspItemKindKeyword")
+            hl.link("BlinkCmpKindOperator", "LspItemKindKeyword")
             -- }}}
 
-            -- {{{ Configure the completion windows and menus
-            local options = {
-                sources = cmp.config.sources({
-                    { name = "nvim_lsp" },
-                    { name = "buffer" },
-                    { name = "path" },
-                    --{ name = "cmdline" },
-                    { name = "luasnip", keyword_length = 2 },
-                }),
+            -- {{{ Config:
+            local config = require("config.lsp")
+            local result = {
+                -- refer to https://cmp.saghen.dev/configuration/keymap.html
+                keymap = {
+                    preset = "none",
 
-                window = {
-                    completion = cmp.config.window.bordered({
-                        winhighlight = "Normal:Pmenu,FloatBorder:PmenuBorder,CursorLine:PmenuSel,Search:None",
-                        col_offset = 1,
-                        side_padding = 0,
-                        border = config.menuBorder,
-                        scrolloff = 5,
-                    }),
-                    -- completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered({
-                        border = config.infoBorder,
-                        --winhighlight = "Normal:NormalFloat",
-                    }),
+                    -- Basics: open and select
+                    ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+                    ["<CR>"] = { "accept", "fallback" },
+                    -- ["<ESC>"] = { "cancel", "fallback" }, -- cancel bit stay in insert-mode? This feels weird when the menu auto opens!
+                    ["<Up>"] = { "select_prev", "fallback" },
+                    ["<Down>"] = { "select_next", "fallback" },
+
+                    ["<Tab>"] = { "snippet_forward", "fallback" },
+                    ["<S-Tab>"] = { "snippet_backward", "fallback" },
+
+                    ["<C-k>"] = { "scroll_documentation_up" },
+                    ["<C-j>"] = { "scroll_documentation_down" },
+
+                    -- ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
                 },
 
-                -- Format each entry in the completion menu
-                formatting = {
-                    fields = {
-                        "kind",
-                        "abbr",
-                        -- The source (lsp, buffer, ...).
-                        "menu",
+                -- Configure the completion menu and related tools
+                completion = {
+                    list = { selection = { preselect = false, auto_insert = false } },
+
+                    -- Selected entry as ghost text? Keep in mind:
+                    --  * AI completion plugins also show ghost text.
+                    --  * Ghost text can overlap the typed text - sometimes hard to read.
+                    ghost_text = {
+                        enabled = false, -- its basically noise. Disable.
+
+                        -- Show the ghost text when an item has been selected
+                        show_with_selection = true,
+                        -- Show the ghost text when no item has been selected, defaulting to the first item
+                        show_without_selection = true,
+                        -- Show the ghost text when the menu is open
+                        show_with_menu = true,
+                        -- Show the ghost text when the menu is closed
+                        show_without_menu = true,
                     },
 
-                    format = function(entry, vim_item)
-                        local kind = vim_item.kind or "Default"
-                        local icon = config.kindIcons[kind] or "?"
-                        local menu = config.sourceIcons[({
-                            buffer = "buffer",
-                            path = "path",
-                            nvim_lsp = "lsp",
-                            luasnip = "snippet",
-                        })[entry.source.name] or "unknown"] or "?"
+                    menu = {
+                        --min_width = 15,
+                        max_height = 33,
 
-                        -- Completion source mapping to a sexy name
+                        -- Make it slightly transparent
+                        winblend = 0,
 
-                        local abbr = stringUtils.ensureLengthInRange(
-                            vim_item.abbr,
-                            40,
-                            60,
-                            -- Max width as a fraction of available columns
-                            -- math.max(
-                            --     20, -- at least 20
-                            --     math.min(
-                            --         60, -- at most 60
-                            --         math.floor(0.40 * vim.o.columns)
-                            --     )
-                            -- ),
-                            -- Ellipsis
-                            " ",
-                            -- Extender
-                            " "
-                        )
+                        -- Own border or use vim.o.winborder?
+                        -- border = "single",
 
-                        -- Construct the output:
-                        vim_item.kind = "  " .. icon .. "  "
-                        vim_item.abbr = abbr
-                        --vim_item.menu = " (" .. kind .. ")"
-                        --vim_item.menu = ""
-                        --vim_item.menu = " [" .. menu.. "]"
-                        vim_item.menu = "  " .. menu
+                        -- Disable scrollbar.
+                        scrollbar = false,
 
-                        return vim_item
-                    end,
+                        draw = {
+                            -- Gap between components
+                            gap = 1,
+
+                            -- We don't need label_description now because label and label_description are already
+                            -- combined together in label by colorful-menu.nvim.
+                            columns = {
+                                { "kind_icon" },
+                                {
+                                    "label",
+                                    -- Not needed when using colorful-menu. It provides the label_description
+                                    -- "label_description",
+                                    gap = 1,
+                                },
+                                { "source_name" },
+                            },
+
+                            padding = {
+                                -- Padding between the left border and the first component
+                                0,
+
+                                -- Padding between the right border and the last component
+                                0,
+                            },
+
+                            components = {
+                                kind_icon = {
+                                    ellipsis = false,
+                                    text = function(ctx)
+                                        local icon = ctx.kind_icon
+                                        -- A more flexible mapping. Alternative to appearance.kind_icons
+                                        -- local icon = config.kindIcons[ctx.kind] or "?"
+                                        return " " .. ctx.icon_gap .. icon .. ctx.icon_gap .. " "
+                                    end,
+                                },
+
+                                source_name = {
+                                    ellipsis = false,
+                                    text = function(ctx)
+                                        local icon = config.sourceIcons[
+                                            ({
+                                                -- Map the source_name values to those config.sourceIcons uses.
+                                                Buffer = "buffer",
+                                                Path = "path",
+                                                LSP = "lsp",
+                                                Snippets = "snippet",
+                                                Copilot = "ai",
+                                            })[ctx.source_name] or "unknown"
+                                        ] or ctx.source_name
+
+                                        return " " .. ctx.icon_gap .. icon .. ctx.icon_gap .. " "
+                                    end,
+                                },
+
+                                label = {
+                                    text = function(ctx)
+                                        return require("colorful-menu").blink_components_text(ctx)
+                                    end,
+                                    highlight = function(ctx)
+                                        return require("colorful-menu").blink_components_highlight(ctx)
+                                    end,
+                                },
+                            },
+                        },
+                    },
+                    documentation = {
+                        -- Automatically show the doc for the selected symbol
+                        auto_show = true,
+                        -- Delay?
+                        auto_show_delay_ms = 500,
+
+                        -- Styling:
+                        window = {
+                            -- Own border or use vim.o.winborder?
+                            -- border = "single",
+                        },
+                    },
                 },
 
-                -- Couple with luasnip
-                snippet = {
-                    expand = function(args)
-                        require("luasnip").lsp_expand(args.body)
-                    end,
+                -- Displays a signature hover window when typing.
+                signature = {
+                    enabled = true,
+
+                    trigger = {
+                        -- Show the signature help window when entering insert mode
+                        show_on_insert = true,
+                    },
+
+                    -- Styling
+                    window = {
+                        -- Own border or use vim.o.winborder?
+                        -- border = "single",
+                    },
+                },
+
+                -- Completion in command line?
+                cmdline = {
+                    enabled = true,
+
+                    -- The completion menu should only be opened when explicitly pressing tab/c-space.
+                    keymap = {
+                        -- Use the same keymap BUT tab should open the menu
+                        preset = "inherit",
+
+                        ["<Tab>"] = { "show_and_insert", "select_next" },
+                        ["<S-Tab>"] = { "show_and_insert", "select_prev" },
+                        ["<CR>"] = { "accept", "fallback" },
+                        ["<ESC>"] = {
+                            -- This closes the menu of it is open. Thanks to  https://github.com/Saghen/blink.cmp/issues/547
+                            function(cmp)
+                                if cmp.is_visible() then
+                                    cmp.cancel()
+                                else
+                                    vim.api.nvim_feedkeys(
+                                        vim.api.nvim_replace_termcodes("<C-c>", true, true, true),
+                                        "n",
+                                        true
+                                    )
+                                end
+                            end,
+                        },
+                    },
+                    completion = {
+                        list = {
+                            selection = {
+                                preselect = false,
+                                auto_insert = true,
+                            },
+                        },
+
+                        menu = { auto_show = false },
+                        ghost_text = { enabled = false },
+                    },
+                },
+
+                appearance = {
+                    -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+                    -- Adjusts spacing to ensure icons are aligned
+                    nerd_font_variant = "Nerd Font Mono",
+
+                    kind_icons = config.kindIcons,
+                },
+
+                -- Completion sources. This also allows for a lot of customization
+                sources = {
+                    default = { "lsp", "path", "snippets", "buffer" },
+                },
+
+                -- Configure fuzzy finding
+                fuzzy = {
+                    implementation = "prefer_rust_with_warning",
+
+                    -- Allows to customize the sorting of entries.
+                    -- sorts = {
+                    --    -- defaults
+                    --    "score",
+                    --    "sort_text",
+                    -- },
                 },
             }
-            --- }}}
+            -- }}}
 
-            -- {{{ Key mappings
-            -- NOTE: cmp is an insert-mode tool! Most commands don't do anything in normal mode. Define insert-mode bindings
-            -- in options.mapping, others should be defined via util.keymap
-            options.mapping = cmp.mapping.preset.insert({
-                ["<C-Space>"] = cmp.mapping.complete(),
-                ["<CR>"] = cmp.mapping.confirm({
-                    -- Set true to also accept the first match even if it is not selected
-                    select = false,
-                    -- Replace the word at the cursor
-                    behavior = cmp.ConfirmBehavior.Replace,
-                }),
-
-                ["<Tab>"] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_next_item()
-                    elseif luasnip.locally_jumpable(1) then
-                        luasnip.jump(1)
-                    else
-                        fallback()
-                    end
-                end, { "i", "s" }),
-
-                -- ["<S-Tab>"] = cmp.mapping(function(fallback)
-                --     if cmp.visible() then
-                --         cmp.select_prev_item()
-                --     elseif luasnip.locally_jumpable(-1) then
-                --         luasnip.jump(-1)
-                --     else
-                --         fallback()
-                --     end
-                -- end, { "i", "s" }),
-            })
-            --- }}}
-
-            return options
+            return result
         end,
+        opts_extend = { "sources.default" },
     },
-    --- }}}
-
-    -- {{{ LSP: nvim-lspconfig - Configures the LSP servers for neovim.
-    {
-        "neovim/nvim-lspconfig",
-        lazy = true,
-        event = { "BufReadPost", "BufNewFile" },
-        config = function()
-            -- All the LSP/CMP/Mason magic is in this one config
-            local config = require("config.lsp")
-
-            for lsp, lspCfg in pairs(config.servers) do
-                require("lspconfig")[lsp].setup(table.merge(
-                    -- Default settings for all
-                    {
-                        on_attach = function(client, bufnr)
-                            config.mappings(bufnr)
-                            -- Disable semantic highlights/tokens? Also refer to treesitter highlighting.
-                            -- client.server_capabilities.semanticTokensProvider = false
-                        end,
-
-                        capabilities = require("cmp_nvim_lsp").default_capabilities(),
-                    },
-                    -- Additional per-server settings
-                    lspCfg
-                ))
-            end
-        end,
-    },
-    --- }}}
+    -- }}}
 
     --------------------------------------------------------------------------------------------------------------------
     -- Coding Plugins: IDE-like fluff.
 
-    -- {{{ UI: trouble.nvim - nicely show lsp and diagnostic info
+    -- {{{ todo-comments.nvim - Highlight TOOD/FIX/... keywords in comments
+    {
+        "folke/todo-comments.nvim",
+
+        dependencies = { "nvim-lua/plenary.nvim" },
+
+        lazy = true,
+        event = { "BufReadPost", "BufNewFile" },
+
+        opts = {
+            signs = false,
+
+            highlight = {
+
+                -- Hightlight the line before and after the keyword?
+                after = "", -- "fg" or "bg" or empty
+                before = "", -- "fg" or "bg" or empty
+
+                keyword = "fg", -- "fg", "bg", "wide", "wide_bg", "wide_fg" or empty. (wide and wide_bg is the same as bg, but will also highlight surrounding characters, wide_fg acts accordingly but with fg)
+
+                -- The match pattern. To require the ":" after the keyword, mention it here
+                pattern = [[.*<(KEYWORDS)\s*:]],
+                -- Only highlight in comments (requires Treesitter)
+                comments_only = true,
+            },
+            colors = {
+                -- Can be one or more hl groups or hex colors as strings. Uses the first matching color.
+                error = { "DiagnosticError" },
+                warning = { "DiagnosticWarn" },
+                info = { "DiagnosticWarn" },
+                hint = { "DiagnosticHint" },
+                default = { "Identifier" },
+                test = { "Identifier" },
+            },
+        },
+    },
+    -- }}}
+
+    -- {{{ trouble.nvim - nicely show lsp and diagnostic info
     {
         "folke/trouble.nvim",
         lazy = true,
@@ -1347,8 +1610,11 @@ return {
             end, {})
 
             return {
+                -- Show a preview per click?
+                auto_preview = false,
+
                 warn_no_results = false,
-                open_no_results = true,
+                open_no_results = false,
 
                 win = { size = 0.33 },
 
@@ -1359,7 +1625,7 @@ return {
                         filter = { buf = 0 }, -- show buffer local info only
                     },
                     diagnostics = {
-                        focus = false,
+                        focus = true,
                         win = { size = 0.20 },
                         filter = { buf = 0 }, -- show buffer local info only
                     },
@@ -1369,55 +1635,26 @@ return {
     },
     -- }}}
 
-    -- {{{ LSP UI: lspsaga.nvim - Adds a lot of fluff to your code - light bulbs for code actions, a breadcrump bar and
-    -- a lot of utils to browse your diagnostics and LSP info (refs, declarations,...)
-    -- {
-    --     "nvimdev/lspsaga.nvim",
-    --
-    --     lazy = true,
-    --     event = "VeryLazy",
-    --
-    --     opts = {
-    --         -- Breadcrumps (symbol trace in winbar)
-    --         symbol_in_winbar = {
-    --             enable = true,
-    --         },
-    --     },
-    -- },
-    -- }}}
-
-    -- {{{ LSP UI: shows the signature of a function as tiny popup while typing
-    -- {
-    --     "ray-x/lsp_signature.nvim",
-    --     event = "VeryLazy",
-    --     opts = {},
-    --
-    --     config = function(_, opts)
-    --         require("lsp_signature").setup(opts)
-    --
-    --         vim.api.nvim_create_autocmd("LspAttach", {
-    --             callback = function(args)
-    --                 local bufnr = args.buf
-    --                 local client = vim.lsp.get_client_by_id(args.data.client_id)
-    --                 if vim.tbl_contains({ "null-ls" }, client.name) then -- blacklist lsp
-    --                     return
-    --                 end
-    --                 require("lsp_signature").on_attach({
-    --                     -- ... setup options here ...
-    --                 }, bufnr)
-    --             end,
-    --         })
-    --     end,
-    -- },
-    -- }}}
-
-    -- {{{ Code-helper: vim-doge to generate doc for functions.
+    -- {{{ vim-doge to generate doc for functions.
     {
         "sebastian-eichelbaum/vim-doge",
 
         build = ":call doge#install()",
 
         init = function() end,
+    },
+    -- }}}
+
+    -- {{{ markview.nvim - makes markdown a bit more pretty
+    {
+        "OXY2DEV/markview.nvim",
+        lazy = false,
+        opts = {
+            preview = {
+                filetypes = { "markdown", "codecompanion" },
+                ignore_buftypes = {},
+            },
+        },
     },
     -- }}}
 
@@ -1440,6 +1677,7 @@ return {
                 "html",
                 "vue",
                 "javascript",
+                "lua",
             },
             user_default_options = {
                 -- Highlighting mode.  'background'|'foreground'|'virtualtext'
@@ -1478,32 +1716,60 @@ return {
     },
     -- }}}
 
-    -- {{{ Shows key hints in-text in how to move around. Helpful for learner.
-    -- {
-    --     "tris203/precognition.nvim",
-    --
-    --     lazy = true,
-    --     event = "VeryLazy",
-    --
-    --     opts = {},
-    -- },
-    -- }}}
-
     --------------------------------------------------------------------------------------------------------------------
     -- AI integrations
 
     -- {{{ Tabby integration for code recommendations while typing
+    -- {
+    --     "TabbyML/vim-tabby",
+    --     lazy = false,
+    --     dependencies = {
+    --         "neovim/nvim-lspconfig",
+    --     },
+    --     init = function()
+    --         vim.g.tabby_agent_start_command = { "tabby-agent", "--stdio" }
+    --         vim.g.tabby_inline_completion_trigger = "auto"
+    --         vim.g.tabby_inline_completion_keybinding_accept = "<A-CR>" -- Use alt-enter to accept. S-Tab and others are mapped to snippets and the completion engine already
+    --     end,
+    -- },
+    -- }}}
+
+    -- {{{ GitHub Copilot integration
     {
-        "TabbyML/vim-tabby",
-        lazy = false,
-        dependencies = {
-            "neovim/nvim-lspconfig",
-        },
+        "github/copilot.vim",
+
+        lazy = true,
+        event = "VeryLazy",
+
+        -- Remap Copilot to Alt-Enter and Alt-Up/Down to navigate through suggestions.
         init = function()
-            vim.g.tabby_agent_start_command = { "tabby-agent", "--stdio" }
-            vim.g.tabby_inline_completion_trigger = "auto"
-            vim.g.tabby_inline_completion_keybinding_accept = "<A-CR>" -- Use alt-enter to accept. S-Tab and others are mapped to snippets and the completion engine already
+            vim.g.copilot_no_tab_map = true
+
+            vim.keymap.set("i", "<A-CR>", 'copilot#Accept("\\<CR>")', {
+                expr = true,
+                replace_keycodes = false,
+            })
+            vim.keymap.set("i", "<A-Up>", "<Plug>(copilot-previous)")
+            vim.keymap.set("i", "<A-Down>", "<Plug>(copilot-next)")
+            vim.keymap.set("i", "<A-S-CR>", "<Plug>(copilot-accept-line)")
+
+            vim.api.nvim_set_hl(0, "CopilotSuggestion", {
+                fg = "#5f6e81",
+                ctermfg = 8,
+                force = true,
+            })
         end,
+    },
+    -- }}}
+
+    -- {{{ Code Companion - Provides AI chat and agent workflows - no support for inline suggestions.
+    {
+        "olimorris/codecompanion.nvim",
+        opts = {},
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            -- "nvim-treesitter/nvim-treesitter",
+        },
     },
     -- }}}
 }

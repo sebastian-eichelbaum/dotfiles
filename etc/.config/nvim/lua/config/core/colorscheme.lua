@@ -97,7 +97,7 @@ local palette = merge(colors, {
         highlight = { colors.highlight.attention, bold = true },
 
         -- Folded text representation
-        folded = { fg = colors.fg.D1, bg = colors.bg.L2, bold = true },
+        folded = { fg = colors.fg.D3, bg = colors.bg.L2, bold = true },
 
         -- Lines that are deleted. Only really used by diff.
         deleted = { bg = colors.highlight.bad.bg },
@@ -170,7 +170,8 @@ local palette = merge(colors, {
                 fg = colors.fg.O,
                 --bg = colors.bg.L3
             },
-            kind = { fg = colors.fg.O, bg = colors.bg.D1, bold = true },
+            kind = { fg = colors.fg.O, bg = colors.bg.O, bold = true },
+            source = { fg = colors.fg.L1, bg = colors.bg.L2, bold = true },
         },
         sidebar = {
             normal = { fg = colors.fg.O, bg = colors.bg.D1 },
@@ -242,6 +243,11 @@ local highlights = {
     DiffDelete = { palette.text.deleted },
     -- The text that has changed in a line
     DiffText = { palette.text.selected },
+    -- }}}
+
+    -- {{{ Snippets
+    -- The highlight of snippet 'slots'
+    SnippetTabstop = { link = "Visual" },
     -- }}}
 
     -- }}}
@@ -337,12 +343,13 @@ local highlights = {
     FoldColumn = { palette.ui.gutter.base, palette.ui.gutter.folds },
     -- Used for signs like git-changes/lsp icons/...
     SignColumn = { palette.ui.gutter.base },
-    -- }}}
 
     -- Used in the gutter to indicate changes. This is a slightly less bright version of changed/added/removed
     ChangedSign = { fg = color.darken(palette.highlight.neutral.fg, 1.43), bg = palette.ui.gutter.base.bg },
     AddedSign = { fg = color.darken(palette.highlight.good.fg, 1.33), bg = palette.ui.gutter.base.bg },
     RemovedSign = { fg = color.darken(palette.highlight.bad.fg, 1.33), bg = palette.ui.gutter.base.bg },
+
+    -- }}}
 
     -- {{{ Status-line
     StatusLine = { palette.ui.statusLine.active },
@@ -368,10 +375,13 @@ local highlights = {
     VertSplit = { palette.ui.split.border },
     -- Separators between window splits.
     WinSeparator = { link = "VertSplit" },
+    -- This is this tab-bar like thing some plugins use.
+    WinBar = { link = "CursorLine" },
+    WinBarNC = { link = "CursorLine" },
 
     -- {{{ Floats
     -- Floating window border
-    FloatBorder = { palette.ui.window.border },
+    FloatBorder = { palette.ui.menu.border },
     FloatTitle = { link = "Title" },
     FloatFooter = { link = "FloatTitle" },
     NormalFloat = { palette.ui.window.normal },
@@ -385,6 +395,8 @@ local highlights = {
     PmenuMatchSel = { link = "PmenuMatch" },
 
     PmenuKind = { palette.ui.menu.kind },
+    PmenuSource = { palette.ui.menu.source },
+
     -- PmenuKindSel = { fg = palette.wtf },
     -- PmenuExtra = { fg = palette.wtf },
     -- PmenuExtraSel = { fg = palette.wtf },
@@ -401,28 +413,13 @@ local highlights = {
 
     -- }}}
 
-    -- {{{ WinBar
-    -- This is this tab-bar like thing some plugins use.
-
-    WinBar = { link = "CursorLine" },
-    WinBarNC = { link = "CursorLine" },
-    -- }}}
-
-    -- {{{ Base definition for side-bars/windows. Filebrowser, Code sumbols and others
+    -- {{{ Base definition for side-bars/windows. Filebrowser, Code symbols and others
 
     SidebarNormal = { palette.ui.sidebar.normal },
     SidebarVertSplit = { palette.ui.sidebar.border },
 
     -- }}}
 
-    --}}}
-
-    -- {{{ TODO
-    --
-    --WinBar
-    --WinBarNC
-
-    SnippetTabstop = { fg = palette.wtf },
     -- }}}
 
     -- {{{ LSP Diagnostics
@@ -447,6 +444,7 @@ local highlights = {
 
     -- {{{ LSP Kind styles
     LspItemKind = { link = "PmenuKind" },
+    LspItemSource = { link = "PmenuSource" },
 
     LspItemKindFunction = { palette.ui.menu.kind, palette.code.functions },
     LspItemKindType = { palette.ui.menu.kind, palette.code.types },

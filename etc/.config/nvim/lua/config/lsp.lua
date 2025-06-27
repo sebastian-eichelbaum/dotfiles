@@ -1,25 +1,11 @@
 -- Configure the user-facing parts of the LSP in Neovim.
--- LSP servers/clients are configured by a plugin like lspconfig.
--- LSP Completion menus are provided by plugins like nvim-cmp.
---
--- This only provides some style and key binding setup that will be used by those plugins once an LSP is attached to a
--- buffer.
+-- LSP Completion menus are provided by plugins like nvim-cmp/blink.cmp.
 
 local map = require("util.keymap")
 
-local border = {
-    " ",
-    "▁",
-    " ",
-    "▏",
-    " ",
-    "▔",
-    " ",
-    "▕",
-}
-
 local M = {}
 
+--{{{ Key Mappings
 -- Called, once a LSP server is attached to a buffer. Use this to setup key bindings. The bufnr is given.
 M.mappings = function(bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -59,24 +45,104 @@ M.mappings = function(bufnr)
     -- map.buf.n(bufnr, "<leader>cr", vim.lsp.buf.references, { desc = "References", icon = "󰈇" })
     -- map.buf.n(bufnr, "<leader>ch", vim.lsp.buf.typehierarchy, { desc = "Type hierarchy", icon = "" })
 end
+--}}}
 
--- A list of LSP servers to start and configure.
--- Maps the language server to a bunch of settings. They are server and language specific. Refer to lspconfig for
--- details.
+-- {{{ Default LSP configuration
+vim.lsp.config("*", {
+    -- Sets the "root directory" to the parent directory of the file in the
+    -- current buffer that contains either a certain file or dir. Files that share a root directory will reuse
+    -- the connection to the same LSP server. Nested lists indicate equal priority, see |vim.lsp.Config|.
+    -- NOTE: these lists do not merge! You have to add '.git' to each individual LSP root_marker
+    root_markers = {
+        ".git",
+    },
+
+    -- Specific settings to send to the server. The schema for this is  defined by the server itself.
+    settings = {},
+
+    -- Called when attaching a LSP to a buffer. By default, this sets up the mappings and configures capabilities
+    on_attach = function(client, bufnr)
+        M.mappings(bufnr)
+
+        -- Disable semantic highlights/tokens? Also refer to treesitter highlighting.
+        client.server_capabilities.semanticTokensProvider = false
+    end,
+
+    -- Some default capabilities to en/disable. These should actually be set by the completion plugins in most cases.
+    capabilities = {
+        -- Fold code?
+        -- To enable, set foldmethod=expr and vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
+        -- NOTE: treesitter also provides something like that. You might want to enable this per language.
+        -- textDocument = {
+        --     foldingRange = {
+        --         dynamicRegistration = false,
+        --         lineFoldingOnly = true,
+        --     },
+        -- },
+
+        -- Multi-line semantic tokens help to properly highlight single tokens spanning multiple lines. An example would
+        -- be a multi-line string.
+        -- textDocument = {
+        --     semanticTokens = {
+        --       multilineTokenSupport = true,
+        --     }
+        -- }
+    },
+})
+-- }}}
+
+-- {{{ LSP configurations
+--
+-- nvim-lspconfig is basically a collection of default configs. Check their repo for defaults and clues on how to set up
+-- a specific LSP: https://github.com/neovim/nvim-lspconfig/tree/master/lsp
+--
+-- NOTE: as an alternative, just use nvim-lspconfig. It pre-configures everything. (vim.lsp.enable is still needed
+-- though).
 M.servers = {
+    -- {{{ Cmake, C, C++, Cuda, Objective-C, Objective-CPP and similar
     clangd = {
+        cmd = { "clangd", "--experimental-modules-support" },
+        filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
+        root_markers = {
+            ".clangd",
+            ".clang-tidy",
+            ".clang-format",
+            "compile_commands.json",
+            "compile_flags.txt",
+            "configure.ac",
+            ".git",
+        },
+
         init_options = {
             fallbackFlags = { "--std=c++23" },
         },
-        cmd = {
-            "clangd",
-            "--experimental-modules-support",
+    },
+    cmake = {
+        cmd = { "cmake-language-server" },
+        filetypes = { "cmake" },
+        root_markers = { "CMakePresets.json", "CTestConfig.cmake", "build", "cmake", ".git" },
+
+        init_options = {
+            buildDirectory = "build",
         },
     },
-    cmake = {},
-    ts_ls = {},
-    bashls = {},
+    -- }}}
+
+    -- {{{ Lua
     lua_ls = {
+        cmd = { "lua-language-server" },
+        filetypes = { "lua" },
+        root_markers = {
+            ".luarc.json",
+            ".luarc.jsonc",
+            ".luacheckrc",
+            ".stylua.toml",
+            "stylua.toml",
+            "selene.toml",
+            "selene.yml",
+            ".git",
+        },
+
         settings = {
             Lua = {
                 runtime = {
@@ -109,19 +175,87 @@ M.servers = {
             },
         },
     },
+    -- }}}
+
+    -- {{{ Bash
+    bash_ls = {
+        cmd = { "bash-language-server", "start" },
+        filetypes = { "bash", "sh" },
+        root_markers = { ".git" },
+
+        settings = {
+            bashIde = {
+                globPattern = vim.env.GLOB_PATTERN or "*@(.sh|.inc|.bash|.command)",
+            },
+        },
+    },
+    -- }}}
+
+    -- {{{ Javascript, Typescript, Vue, ...
+    ts_ls = {
+        cmd = { "typescript-language-server", "--stdio" },
+        filetypes = {
+            "javascript",
+            "javascriptreact",
+            "javascript.jsx",
+            "typescript",
+            "typescriptreact",
+            "typescript.tsx",
+            "vue",
+        },
+        root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+
+        init_options = { hostInfo = "neovim" },
+    },
+    -- vue_ls = {},
+    -- }}}
+
+    --{{{ JSON
+    json_ls = {
+        cmd = { "vscode-json-language-server", "--stdio" },
+        filetypes = { "json", "jsonc" },
+        root_markers = { ".git" },
+
+        init_options = {
+            provideFormatter = true,
+        },
+
+        capabilities = {
+            -- According to the docs, snippet support must be enabled for this LS
+            textDocument = { completion = { completionItem = { snippetSupport = true } } },
+        },
+    },
+    -- }}}
+
+    -- TODO: python
+    -- TODO: rust
+    -- TODO: c#
 }
+
+-- Apply the defined configurations.
+M.apply = function()
+    -- Enable and configure these.
+    for lsp, lspCfg in pairs(M.servers) do
+        vim.lsp.enable(lsp)
+        vim.lsp.config(lsp, lspCfg)
+    end
+end
+
+-- }}}
+
+------------------------------------------------------------------------------------------------------------------
 
 -- The icons used for each symbol kind in completion menus
 M.kindIcons = {
     -- Callable things
-    Function = "󰅲",
-    Method = "󰅩",
+    Function = "󰊕",
+    Method = "󰊕",
     Constructor = "",
 
     -- Classes and Types
-    Interface = "",
+    Interface = "󱡠", -- ""
     Class = "",
-    Struct = "󰙅",
+    Struct = "",
     Enum = "",
     -- NOTE: this is a namespace in C++
     Module = "",
@@ -149,7 +283,7 @@ M.kindIcons = {
     Color = "",
     Unit = "",
 
-    Snippet = "",
+    Snippet = "󱄽",
 
     -- Required by the plugin config for undefined/new/unknown symbols
     Default = "",
@@ -157,33 +291,12 @@ M.kindIcons = {
 
 -- The icons that denote the source of the completion entry. (aka menu icon)
 M.sourceIcons = {
+    ai = "",
     buffer = "",
     path = "",
     lsp = "󰅴",
-    snippet = "",
+    snippet = "󱄽",
     unknown = "?",
 }
-
-M.menuBorder = {
-    " ",
-    "▁",
-    " ",
-    "▏",
-    " ",
-    "▔",
-    " ",
-    "▕",
-}
-
-M.infoBorder = "rounded"
-
--- Additional Setup
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = M.infoBorder,
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-    border = M.infoBorder,
-})
 
 return M

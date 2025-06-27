@@ -26,7 +26,7 @@ vim.opt.fileencoding = "utf-8"
 vim.opt.updatetime = 300
 
 -- Clipboard: Map "+ register to the X clip buffer. Handy to paste in from X clip
-vim.opt.clipboard:append "unnamedplus"
+vim.opt.clipboard:append("unnamedplus")
 
 -- Use Cursor/Home/End/PgUp/PgDn + Shift to start selection
 vim.opt.keymodel = "startsel"
@@ -35,18 +35,30 @@ vim.opt.keymodel = "startsel"
 vim.opt.foldmethod = "marker"
 
 -- Also match <> pairs
-vim.opt.matchpairs:append "<:>"
+vim.opt.matchpairs:append("<:>")
+
+-- Disable the deprecation messages. Most of them are triggered by plugins and are out of our own control.
+vim.deprecate = function() end
 
 -- {{{ Shortmessages: avoid some noisy messages
 
 -- No completion menu messages
-vim.opt.shortmess:append "c"
+vim.opt.shortmess:append("c")
+-- No Message while searching completions
+vim.opt.shortmess:append("C")
 -- No :intro message
-vim.opt.shortmess:append "I"
+vim.opt.shortmess:append("I")
 -- No ATTENTION message for existing swap files
 -- Be warned: when a VIM instance dies with unwritten
 -- changes, this also prevents you from recovering!
-vim.opt.shortmess:append "A"
+vim.opt.shortmess:append("A")
+-- Hide the 'search hit BOTTOM' messages
+vim.opt.shortmess:append("s")
+-- Hide search counts in the commandline
+vim.opt.shortmess:append("S")
+-- Hide "written" messages on file write
+vim.opt.shortmess:append("W")
+
 
 -- }}}
 
@@ -73,23 +85,25 @@ vim.opt.smartindent = true
 -- NOTE: Be aware that plugins/ftplugins can override these
 
 -- Automatically wrap lines at textwidth
-vim.opt.formatoptions:append "t"
+vim.opt.formatoptions:append("t")
 -- Ensure comment-continuation
-vim.opt.formatoptions:append "r"
-vim.opt.formatoptions:append "o" -- also for new lines via "o"
+vim.opt.formatoptions:append("r")
+vim.opt.formatoptions:append("o") -- also for new lines via "o"
 -- Continuation for numbered lists.
-vim.opt.formatoptions:append "n"
+vim.opt.formatoptions:append("n")
 
 -- }}}
 
 -- {{{ Strip white space at the end of lines when saving
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-    pattern = {"*"},
+    pattern = { "*" },
     callback = function()
         -- Save/restore the cursor position to avoid the cursor jumping to the
         -- beginning of the line after trim.
         local curPos = vim.fn.getpos(".")
-        pcall(function() vim.cmd [[%s/\s\+$//e]] end)
+        pcall(function()
+            vim.cmd([[%s/\s\+$//e]])
+        end)
         vim.fn.setpos(".", curPos)
     end,
 })
@@ -103,8 +117,8 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 -- checking. Writing good code and configs also includes correct spelling!
 vim.opt.spell = true
 vim.opt.spelllang = "en,de"
-vim.opt.spelloptions:append "camel" -- camel case detection
-vim.opt.spelloptions:append "noplainbuffer" -- in buffers without syntax, do not spell check
+vim.opt.spelloptions:append("camel") -- camel case detection
+vim.opt.spelloptions:append("noplainbuffer") -- in buffers without syntax, do not spell check
 
 -- }}}
 
@@ -120,14 +134,14 @@ vim.opt.smartcase = true
 -- {{{ Movement wrapping:
 
 -- Follow breaks via backspace
-vim.opt.whichwrap:append "b"
+vim.opt.whichwrap:append("b")
 -- Follow breaks via space
-vim.opt.whichwrap:append "s"
+vim.opt.whichwrap:append("s")
 -- Follow breaks via cursor
-vim.opt.whichwrap:append "<" -- in normal/visual
-vim.opt.whichwrap:append ">"
-vim.opt.whichwrap:append "]" -- in insert/replace
-vim.opt.whichwrap:append "["
+vim.opt.whichwrap:append("<") -- in normal/visual
+vim.opt.whichwrap:append(">")
+vim.opt.whichwrap:append("]") -- in insert/replace
+vim.opt.whichwrap:append("[")
 
 -- }}}
 
@@ -137,9 +151,9 @@ vim.opt.whichwrap:append "["
 vim.g.mapleader = ","
 
 -- Timeout for key combinations
-vim.opt.timeoutlen=500
+vim.opt.timeoutlen = 500
 -- Timeout for terminal keycodes. This influences ESC for example.
-vim.opt.ttimeoutlen=10
+vim.opt.ttimeoutlen = 10
 
 -- }}}
 

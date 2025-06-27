@@ -6,7 +6,7 @@ local map = require("util.keymap")
 vim.diagnostic.config({
     -- The text right to the code with issues.
     virtual_text = {
-        prefix = "┃", -- Could be '●', '▉', '┃', '▎', 'x', '❯❯'
+        prefix = "▍", -- Could be '●', '▉', '┃', '▎', 'x', '❯❯'
     },
     -- Gutter signs?
     signs = true,
@@ -20,13 +20,14 @@ vim.diagnostic.config({
     -- Diagnostics as floats.
     float = {
         border = "rounded",
-        source = "always", -- Or "if_many"
+        source = true, -- Or "if_many"
     },
 })
 
 -- Gutter signs:
 -- local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = " " }
-local signs = { Error = "┃ ", Warn = "┃ ", Hint = "┃ ", Info = "┃ " }
+--local signs = { Error = "┃ ", Warn = "┃ ", Hint = "┃ ", Info = "┃ " }
+local signs = { Error = "▍", Warn = "▍", Hint = "▍", Info = "▍" }
 for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
@@ -34,10 +35,10 @@ end
 
 -- Key mappings
 
--- Jump through the diagnostics. Also shows the diag-list as float
-map.n("[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic", icon = "󰀪" })
-map.n("]d", vim.diagnostic.goto_next, { desc = "Next diagnostic", icon = "󰀪" })
-
--- NOTE: refer to the plugins config. There are probably plugins that provide nicer lists.
--- map.n("<leader>xd", function() vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" }) end, { desc = "Diagnostic details", icon = "" })
--- map.n("<leader>xD", vim.diagnostic.setloclist, { desc = "Diagnostic quickfix", icon = "" })
+-- Jump through the diagnostics. Also shows the diagnostics-list as float
+map.n("[d", function()
+    vim.diagnostic.jump({ count = 1, float = true })
+end, { desc = "Previous diagnostic", icon = "󰀪" })
+map.n("]d", function()
+    vim.diagnostic.jump({ count = -1, float = true })
+end, { desc = "Next diagnostic", icon = "󰀪" })
