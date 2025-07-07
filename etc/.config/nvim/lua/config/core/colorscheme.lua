@@ -100,6 +100,9 @@ local palette = merge(colors, {
         -- Lines that are deleted. Only really used by diff.
         deleted = { bg = colors.highlight.bad.bg },
 
+        -- Text that is a suggestion by an AI or completion tool
+        suggested = { fg = "#ff0000" },
+
         -- Badly spelled text:
         spell = {
             -- Things that are not really misspelled but are problematic. Mostly relevant for wrong capitalization.
@@ -475,7 +478,7 @@ return {
     palette = palette,
 
     apply = function()
-        local map = require("util.keymap")
+        -- local map = require("util.keymap")
 
         vim.cmd([[
             hi link @lsp.mod.deduced keyword

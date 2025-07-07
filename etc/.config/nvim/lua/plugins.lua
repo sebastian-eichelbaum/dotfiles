@@ -33,55 +33,81 @@ return {
     },
     -- }}}
 
-    -- {{{ fzf - Fuzzy finding files and search in files
+    -- {{{ fzf-lua - Fuzzy finder with Lua
     {
-        "junegunn/fzf.vim",
-        dependencies = { "junegunn/fzf" },
+        "ibhagwan/fzf-lua",
+        --dependencies = { "nvim-tree/nvim-web-devicons" },
 
         lazy = true,
         event = "VeryLazy",
 
-        init = function()
-            vim.cmd([[
+        opts = function()
+            map.n("<leader>e", function()
+                require("fzf-lua").files()
+            end, { desc = "Edit file", icon = "󱇧" })
 
-                " Move FZF down
-                let g:fzf_layout = { 'down': '~40%' }
+            return {
+                -- Space around icons?
+                file_icon_padding = "",
+                winopts = {
+                    -- Visibility of the background (the text window)
+                    backdrop = 60,
 
-                " fzf.vim specific settings go in here
-                let g:fzf_vim = {}
+                    width = 1,
+                    height = 0.6,
+                    row = 1,
 
-                " Preview window. 50 percent at the right but hide the preview if
-                " Less than 70 cols are available
-                let g:fzf_vim.preview_window = ['right,50%,<70(hidden)']
+                    preview = {
+                        title = false,
+                        scrollbar = "float", -- "float" to use the default scrollbar. False disables the scrollbar.
+                    },
+                },
+                hls = {
+                    border = "FloatBorder",
+                    preview_border = "FloatBorder",
 
-                " Mapping of ui elements to Highlights
-                " - ref https://github.com/junegunn/fzf/blob/master/README-VIM.md
-                let g:fzf_colors =
-                \ {
-                  "\ 'fg':      ['fg', 'Normal'],
-                  "\ 'bg':      ['bg', 'Normal'],
-                  "\ 'hl':      ['fg', 'Search'],
-                  "\ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-                  \ 'bg+':     ['bg', 'Visual', 'Visual'],
-                  "\ 'hl+':     ['fg', 'Search'],
-                  "\ 'info':    ['fg', 'Search'],
-                  "\ 'border':  ['fg', 'CursorLine'],
-                  "\ 'prompt':  ['fg', 'Keyword'],
-                  "\ 'pointer': ['fg', 'Keyword'],
-                  "\ 'marker':  ['fg', 'Keyword'],
-                  "\ 'spinner': ['fg', 'Search'],
-                  "\ 'gutter':  ['bg', 'CursorLine'],
-                  "\ 'header':  ['bg', 'Error']
-                \ }
+                    dir_icon = "wtf",
+                    dir_part = "wtf",
+                    file_part = "wtf",
 
-                " Hide the statusline
-                autocmd! FileType fzf set laststatus=0 noshowmode noruler
-                    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-            ]])
+                    -- Scollbars in the preview window (if scrollbar = "float")
+                    scrollfloat_e = "PmenuSbar",
+                    scrollfloat_f = "PmenuThumb",
+                },
 
-            map.n("<leader>e", ":Files<CR>", { desc = "Edit file", icon = "󱇧" })
-            map.n("<leader>/", ":RG<CR>", { desc = "Search in files", icon = "󰱼" })
-            map.n("<leader>#", ":RG <C-R><C-W><CR>", { desc = "Search word in files", icon = "󰱼" })
+                fzf_opts = {
+                    ["--layout"] = "default",
+                },
+
+                files = {
+                    color_icons = false,
+                },
+
+                _fzf_colors = {
+                    true,
+
+                    -- Normal background and foreground
+                    ["fg"] = { "fg", "Normal" },
+                    ["bg"] = { "bg", "Normal" },
+
+                    -- Selected foreground and background
+                    ["fg+"] = { "fg", "Visual" },
+                    ["bg+"] = { "bg", "Visual" },
+
+                    -- Highlight matches and selected matches
+                    ["hl"] = { "fg", "Search" },
+                    ["hl+"] = { "fg", "Search" },
+
+                    -- ["info"] = { "fg", "Search" },
+                    -- ["border"] = { "fg", "CursorLine" },
+                    -- ["prompt"] = { "fg", "Keyword" },
+                    -- ["pointer"] = { "fg", "Keyword" },
+                    -- ["marker"] = { "fg", "Keyword" },
+                    -- ["spinner"] = { "fg", "Search" },
+                    -- ["header"] = { "bg", "Error" },
+                    -- ["gutter"] = -1, -- { "bg", "CursorLine" },
+                },
+            }
         end,
     },
     -- }}}
@@ -755,15 +781,6 @@ return {
     },
     -- }}}
 
-    -- {{{ telescope (dependency) - a finder/picker for a lot of things like files, commits, lsp stuff, ...
-    -- {
-    --     "nvim-telescope/telescope.nvim",
-    --     tag = "0.1.8",
-    --     -- or                              , branch = '0.1.x',
-    --     dependencies = { "nvim-lua/plenary.nvim" },
-    -- },
-    -- }}}
-
     -- {{{ nvim-web-devicons (dependency)
     -- Nice icon set used by several UI plugins
     {
@@ -904,7 +921,7 @@ return {
         opts = function()
             local builtin = require("statuscol.builtin")
             return {
-                ft_ignore = { "neo-tree", "NVimTree", "qf", "fzf", "trouble", "startify" },
+                ft_ignore = { "neo-tree", "NVimTree", "qf", "fzf", "trouble", "startify", "help" },
 
                 segments = {
                     {
@@ -1245,6 +1262,8 @@ return {
 
         opts = function()
             -- {{{ Color Mapping:
+
+            -- hl.link("BlinkCmpGhostText", "NonText")
 
             -- Pmenu fixes
 
@@ -1661,7 +1680,27 @@ return {
 
         build = ":call doge#install()",
 
-        init = function() end,
+        init = function()
+            vim.cmd([[
+                let g:doge_enable_mappings = 0
+                let g:doge_doxygen_settings = {
+                \  'char': '@'
+                \}
+            ]])
+
+            map.n("<Leader>d", "<Plug>(doge-generate)", {
+                desc = "Generate Doc",
+                icon = "󱪞",
+            })
+
+            -- Interactive mode comment todo-jumping
+            vim.keymap.set("n", "<TAB>", "<Plug>(doge-comment-jump-forward)")
+            vim.keymap.set("n", "<S-TAB>", "<Plug>(doge-comment-jump-backward)")
+            vim.keymap.set("i", "<TAB>", "<Plug>(doge-comment-jump-forward)")
+            vim.keymap.set("i", "<S-TAB>", "<Plug>(doge-comment-jump-backward)")
+            vim.keymap.set("x", "<TAB>", "<Plug>(doge-comment-jump-forward)")
+            vim.keymap.set("x", "<S-TAB>", "<Plug>(doge-comment-jump-backward)")
+        end,
     },
     -- }}}
 
@@ -1765,26 +1804,36 @@ return {
     {
         "github/copilot.vim",
 
-        lazy = true,
-        event = "VeryLazy",
+        lazy = false, -- must be loaded when starting!
 
         -- Remap Copilot to Alt-Enter and Alt-Up/Down to navigate through suggestions.
         init = function()
             vim.g.copilot_no_tab_map = true
 
-            vim.keymap.set("i", "<A-CR>", 'copilot#Accept("\\<CR>")', {
+            vim.g.copilot_filetypes = {
+                codecompanion = false,
+            }
+
+            -- vim.keymap.set("i", "<A-Up>", "<Plug>(copilot-previous)")
+            -- vim.keymap.set("i", "<A-Down>", "<Plug>(copilot-next)")
+            -- vim.keymap.set("i", "<A-S-CR>", "<Plug>(copilot-accept-line)")
+            --
+            -- map.group("<leader>c", "AI", "")
+
+            map.i("<A-CR>", 'copilot#Accept("\\<CR>")', {
                 expr = true,
                 replace_keycodes = false,
-            })
-            vim.keymap.set("i", "<A-Up>", "<Plug>(copilot-previous)")
-            vim.keymap.set("i", "<A-Down>", "<Plug>(copilot-next)")
-            vim.keymap.set("i", "<A-S-CR>", "<Plug>(copilot-accept-line)")
 
-            vim.api.nvim_set_hl(0, "CopilotSuggestion", {
-                fg = "#5f6e81",
-                ctermfg = 8,
-                force = true,
+                desc = "AI: accept",
+                icon = "",
             })
+
+            map.i("<A-S-CR>", "<Plug>(copilot-accept-line)", { desc = "AI: accept Line", icon = "󰸟" })
+
+            map.i("<A-Up>", "<Plug>(copilot-previous)", { desc = "AI: prev completion", icon = "󰁭" })
+            map.i("<A-Down>", "<Plug>(copilot-next)", { desc = "AI: next completion", icon = "󰵵" })
+
+            hl.link("CopilotSuggestion", "NonText")
         end,
     },
     -- }}}
@@ -1796,13 +1845,123 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             -- "nvim-treesitter/nvim-treesitter",
+
+            -- Extensions
+            "ravitemer/codecompanion-history.nvim",
         },
 
         lazy = true,
         event = "VeryLazy",
 
         opts = function()
-            return {}
+            map.group("<leader>a", "AI", "")
+
+            map.n("<A-\\>", "<cmd>CodeCompanionChat Toggle<CR>", { desc = "Toggle Chat", icon = "󱋊" })
+            map.v("<A-\\>", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add to Chat", icon = "󱐒" })
+
+            map.n("<leader>ac", "<cmd>CodeCompanionChat Toggle<CR>", { desc = "Togle Chat", icon = "󱋊" })
+            map.v("<leader>ac", "<cmd>CodeCompanionChat Add<CR>", { desc = "Add to Chat", icon = "󱐒" })
+
+            map.n("<leader>aa", "<cmd>CodeCompanionActions<CR>", { desc = "Actions", icon = "" })
+            map.v("<leader>aa", "<cmd>CodeCompanionActions<CR>", { desc = "Actions", icon = "" })
+
+            map.v("<leader>ae", "<cmd>:CodeCompanion /explain<CR>", { desc = "Explain", icon = "󱧣" })
+
+            -- For codecompanion buffers, override some keymaps.
+
+            local group = vim.api.nvim_create_augroup("markdown_autocommands", { clear = true })
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = { "codecompanion" },
+                callback = function(_)
+                    -- NOTE: others are overwritten by the config options below.
+
+                    -- Switch through chat history
+                    map.buf.n(0, "<leader><s-tab>", "<nop>", { desc = "Prev Chat", icon = "" })
+                    map.buf.n(0, "<leader><tab>", "<nop>", { desc = "Next Chat", icon = "" })
+
+                    -- Close chat
+                    map.buf.n(
+                        0,
+                        "<leader>q",
+                        "<cmd>CodeCompanionChat Toggle<CR>",
+                        { desc = "Close Chat", icon = "󱐔" }
+                    )
+                end,
+
+                group = group,
+            })
+
+            return {
+                display = {
+                    chat = {
+                        auto_scroll = false, -- do not scroll with LLM responses. This is annoying when reading.
+                    },
+                },
+                strategies = {
+                    chat = {
+                        keymaps = {
+                            send = {
+                                modes = { n = "<A-CR>", i = "<A-CR>" },
+                                opts = {},
+                            },
+                        },
+                        opts = {
+                            ---Decorate the user message before it's sent to the LLM? VSCode wraps the user prompt in a
+                            ---<prompt> tag. Replicate this here.
+                            prompt_decorator = function(message, adapter, context)
+                                return string.format([[<prompt>%s</prompt>]], message)
+                            end,
+
+                            slash_commands = {
+                                ["file"] = {
+                                    opts = { provider = "fzf_lua" },
+                                },
+                                ["buffer"] = {
+                                    opts = { provider = "fzf_lua" },
+                                },
+                            },
+                        },
+                    },
+                },
+                extensions = {
+                    history = {
+                        enabled = true,
+                        opts = {
+                            keymap = "<leader>e",
+                            save_chat_keymap = "<leader>w",
+                            auto_save = false,
+                            expiration_days = 0,
+                            picker = "telescope", --- ("telescope", "snacks", "fzf-lua", or "default")
+                            -- Customize picker keymaps (optional)
+                            picker_keymaps = {
+                                rename = { n = "r", i = "<M-r>" },
+                                delete = { n = "d", i = "<M-d>" },
+                                duplicate = { n = "<C-y>", i = "<C-y>" },
+                            },
+
+                            -- Automatically generate titles for new chats
+                            auto_generate_title = true,
+                            title_generation_opts = {
+                                adapter = nil, -- nil = current
+                                model = nil,
+                                refresh_every_n_prompts = 3,
+                                max_refreshes = 3,
+                            },
+
+                            continue_last_chat = false, -- buggy!
+                            delete_on_clearing_chat = true,
+
+                            ---Directory path to save the chats
+
+                            -- Load history based on the project root
+                            -- NOTE: the project root and cwd are the same in this config (managed by nvim-rooter).
+                            chat_filter = function(chat_data)
+                                return chat_data.cwd == vim.fn.getcwd()
+                            end,
+                        },
+                    },
+                },
+            }
         end,
     },
     -- }}}
