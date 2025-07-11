@@ -97,11 +97,13 @@ local palette = merge(colors, {
         -- Folded text representation
         folded = { fg = colors.fg.D3, bg = colors.bg.L2, bold = true },
 
-        -- Lines that are deleted. Only really used by diff.
-        deleted = { bg = colors.highlight.bad.bg },
-
-        -- Text that is a suggestion by an AI or completion tool
-        suggested = { fg = "#ff0000" },
+        -- Lines that are deleted, added, changed. Only really used by diff.
+        deleted = { fg = color.lighten(colors.highlight.bad.bg, 1.3), bg = color.darken(colors.highlight.bad.bg, 1.3) },
+        -- added = { bg = "#212826" },
+        added = { bg = colors.bg.L1 },
+        -- added = { bg = color.darken(colors.highlight.informational.bg, 1.3) },
+        -- changed = { bg = colors.bg.L1 },
+        changed = { bg = color.darken(colors.highlight.informational.bg, 1.0) },
 
         -- Badly spelled text:
         spell = {
@@ -241,8 +243,8 @@ local highlights = {
     -- {{{ Diff
     -- Used in Diff mode (side-by-side)
     -- In a side-by-side diff, ADD and CHANGE is implicitly given by not being "deleted" + its DiffText
-    DiffAdd = {},
-    DiffChange = {},
+    DiffAdd = { palette.text.added },
+    DiffChange = { palette.text.changed },
     -- Highlight deleted line backgrounds
     DiffDelete = { palette.text.deleted },
     -- The text that has changed in a line

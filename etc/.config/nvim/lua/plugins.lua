@@ -397,7 +397,7 @@ return {
         opts = {
             options = {
                 -- Disable in some file-types
-                disabled_filetypes = { "neo-tree", "NVimTree", "qf", "fzf", "trouble" },
+                disabled_filetypes = { "neo-tree", "NVimTree", "qf", "fzf", "trouble", "DiffviewFiles" },
 
                 icons_enabled = true,
                 theme = {
@@ -1193,6 +1193,23 @@ return {
 
     -- }}}
 
+    -- {{{ diffview - pretty diffs
+    {
+        "sindrets/diffview.nvim",
+
+        lazy = true,
+        cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
+
+        opts = {
+            enhanced_diff_hl = false,
+            keymaps = {
+                disable_defaults = true,
+            },
+        },
+    },
+
+    -- }}}
+
     --------------------------------------------------------------------------------------------------------------------
     -- Coding Plugins: LSP.
 
@@ -1845,6 +1862,7 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             -- "nvim-treesitter/nvim-treesitter",
+            -- "nvim-treesitter/nvim-treesitter",
 
             -- Extensions
             "ravitemer/codecompanion-history.nvim",
@@ -1931,7 +1949,7 @@ return {
                             save_chat_keymap = "<leader>w",
                             auto_save = false,
                             expiration_days = 0,
-                            picker = "telescope", --- ("telescope", "snacks", "fzf-lua", or "default")
+                            picker = "fzf-lua", --- ("telescope", "snacks", "fzf-lua", or "default")
                             -- Customize picker keymaps (optional)
                             picker_keymaps = {
                                 rename = { n = "r", i = "<M-r>" },

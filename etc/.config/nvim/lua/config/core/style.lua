@@ -74,6 +74,9 @@ vim.opt.fillchars:append("foldsep: ")
 --vim.opt.fillchars:append("foldsep:│")
 vim.opt.fillchars:append("eob: ")
 
+-- Those filler chars used to represent deleted lines in diff mode
+vim.opt.fillchars:append("diff:╱")
+
 -- {{{ Highlight the yanked text
 vim.cmd([[
     augroup highlight_yank
