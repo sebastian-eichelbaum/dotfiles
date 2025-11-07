@@ -89,6 +89,7 @@ local style = {
                 -- Content viewers
                 "Eog",
                 "Totem",
+                "org.gnome.Totem",
                 "vlc",
                 "Evince",
 
@@ -200,6 +201,7 @@ local tagging = {
             {
                 ids = { "media" },
                 name = " ",
+                -- name = " ",
                 layout = awful.layout.suit.tile,
                 master_count = 1,
                 master_width_factor = 0.60,
@@ -319,7 +321,7 @@ local rules = {
     {
         tagId = "draw",
         rules = {
-            { rule = { class = "Gimp" }, properties = { floating = true, focusFollowsMouseNoRaise = true } },
+            { rule = { class = "Gimp" }, properties = { floating = false, focusFollowsMouseNoRaise = true } },
             -- Keep those utility windows on top.
             {
                 rule = { class = "Gimp", type = "dialog" },

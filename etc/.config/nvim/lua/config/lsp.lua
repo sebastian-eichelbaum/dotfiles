@@ -5,6 +5,14 @@ local map = require("util.keymap")
 
 local M = {}
 
+-- {{{ LSP Base Setup
+
+-- Disable logging as it can grow quite large over time.
+-- Available levels: "off", "error", "warn", "info", "debug", "trace"
+vim.lsp.set_log_level("off")
+
+-- }}}
+
 --{{{ Key Mappings
 -- Called, once a LSP server is attached to a buffer. Use this to setup key bindings. The bufnr is given.
 M.mappings = function(bufnr)

@@ -1729,13 +1729,16 @@ return {
             preview = {
                 filetypes = {
                     -- Use it in markdown? Be aware: this switches from preview to native markdown when entering insert
-                    -- mode. This can be annoying!
+                    -- mode. This can be annoying and shifts the text (visually)!
                     -- "markdown",
 
                     -- Make the AI chat a bit more pretty
                     "codecompanion",
                 },
                 ignore_buftypes = {},
+
+                -- Preview in all Modes. This reduces the nasty "flicker" when switching between normal and insert mode.
+                modes = { "n", "no", "c", "i", "v", "V", "s" },
             },
         },
     },
@@ -1801,21 +1804,6 @@ return {
 
     --------------------------------------------------------------------------------------------------------------------
     -- AI integrations
-
-    -- {{{ Tabby integration for code recommendations while typing
-    -- {
-    --     "TabbyML/vim-tabby",
-    --     lazy = false,
-    --     dependencies = {
-    --         "neovim/nvim-lspconfig",
-    --     },
-    --     init = function()
-    --         vim.g.tabby_agent_start_command = { "tabby-agent", "--stdio" }
-    --         vim.g.tabby_inline_completion_trigger = "auto"
-    --         vim.g.tabby_inline_completion_keybinding_accept = "<A-CR>" -- Use alt-enter to accept. S-Tab and others are mapped to snippets and the completion engine already
-    --     end,
-    -- },
-    -- }}}
 
     -- {{{ GitHub Copilot integration
     {
@@ -1897,6 +1885,8 @@ return {
                     map.buf.n(0, "<leader><s-tab>", "<nop>", { desc = "Prev Chat", icon = "" })
                     map.buf.n(0, "<leader><tab>", "<nop>", { desc = "Next Chat", icon = "" })
 
+                    map.buf.n(0, "<leader>ax", function() end, { desc = "Clear Chat", icon = "󰧧" })
+
                     -- Close chat
                     map.buf.n(
                         0,
@@ -1913,6 +1903,18 @@ return {
                 display = {
                     chat = {
                         auto_scroll = false, -- do not scroll with LLM responses. This is annoying when reading.
+
+                        window = {
+                            layout = "float", -- float|vertical|horizontal|buffer
+                            position = "top", -- left|right|top|bottom (nil will default depending on vim.opt.splitright|vim.opt.splitbelow)
+                            border = "rounded",
+                            height = 0.8,
+                            width = 0.75,
+
+                            opts = {
+                                -- signcolumn = "yes:2",
+                            },
+                        },
                     },
                 },
                 strategies = {
@@ -1920,6 +1922,10 @@ return {
                         keymaps = {
                             send = {
                                 modes = { n = "<A-CR>", i = "<A-CR>" },
+                                opts = {},
+                            },
+                            clear = {
+                                modes = { n = "<leader>ax" },
                                 opts = {},
                             },
                         },
