@@ -314,6 +314,11 @@ local rules = {
                 properties = { size_hints_honor = true, floating = false },
                 callback = awful.client.setslave,
             },
+            {
+                rule = { class = "Proton Mail" },
+                properties = { size_hints_honor = true, floating = false },
+                callback = awful.client.setslave,
+            },
         },
     },
 

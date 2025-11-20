@@ -7,7 +7,9 @@
 -- Awesome rule configuration.
 ---------------------------------------------------------------------------------------------------
 
-local ruled = require("ruled")
+-- local ruled = require("ruled")
+local awful = require("awful")
+local gears = require("gears")
 
 local lib = require("lib")
 local config = require("config")
@@ -33,16 +35,13 @@ end
 
 return {
     setup = function()
-        -- Rules to apply to new clients.
-        ruled.client.connect_signal("request::rules", function()
-            -- All clients will match this rule.
-            ruled.client.append_rule({
-                id = "global",
-                rule = {},
-                properties = config.clients.properties,
-            })
+        -- All clients will match this rule.
+        awful.rules.rules = gears.table.join(awful.rules.rules, {
+            id = "global",
+            rule = {},
+            properties = config.clients.properties,
+        })
 
-            ruled.client.append_rules(flatten(config.rules))
-        end)
+        awful.rules.rules = flatten(config.rules)
     end,
 }

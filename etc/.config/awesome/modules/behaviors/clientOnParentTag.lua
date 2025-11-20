@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
--- 
+--
 -- ░█▄█░█▀█░█▀▄░█░█░█░░░█▀▀
 -- ░█░█░█░█░█░█░█░█░█░░░█▀▀
 -- ░▀░▀░▀▀▀░▀▀░░▀▀▀░▀▀▀░▀▀▀
@@ -11,7 +11,7 @@ local awful = require("awful")
 
 return {
     setup = function()
-        -- Open client on the same tag than parent tag
+        -- Open client on the same tag as parent tag
         client.connect_signal("request::tag",
             function(c)
                 if c.transient_for then

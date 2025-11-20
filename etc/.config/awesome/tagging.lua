@@ -10,7 +10,7 @@
 local awful = require("awful")
 local gears = require("gears")
 
-local hasLain, lain = pcall(require, "lain")
+local cascade = require("modules.layouts.cascade")
 
 local config = require("config")
 
@@ -18,7 +18,6 @@ local config = require("config")
 
 -- Generate Tags for a given screen
 local function getLayout(layout)
-
     if not layout then
         return awful.layout.suit.tile
     end
@@ -48,33 +47,26 @@ local function makeTag(screen, tagCfg)
         tagCfg.name,
 
         -- Use the properties as given but ensure layout and screen are resolved.
-        gears.table.join(
-            tagCfg,
-            {
-                layout = getLayout(tagCfg.layout),
-                screen = screen,
-                selected = false
-            }
-        )
+        gears.table.join(tagCfg, {
+            layout = getLayout(tagCfg.layout),
+            screen = screen,
+            selected = false,
+        })
     )
     return tag
 end
 
 -- Generate Tags for a given screen
 local function createTags(s)
-
     local si = s.index
     local cfg = {}
 
     -- Fallback if no tagging for this screen exists:
     if si > #config.tagging.screens then
         for i = 1, 9 do
-            cfg[i] = gears.table.join(
-                config.tagging.default,
-                {
-                    name = tostring(i)
-                }
-            )
+            cfg[i] = gears.table.join(config.tagging.default, {
+                name = tostring(i),
+            })
         end
     else
         cfg = config.tagging.screens[si]
@@ -93,7 +85,6 @@ end
 return {
     -- {{{ Tag setup - conmnect signals and set defaults
     setup = function()
-
         -- Dynamic Tagging? Filter unused tags.
         if config.tagging.hideEmpty then
             awful.widget.taglist.filter.all = awful.widget.taglist.filter.noempty
@@ -101,62 +92,49 @@ return {
 
         -- {{{ Tag layout
         -- Table of layouts to cover with awful.layout.inc, order matters.
-        tag.connect_signal("request::default_layouts", function()
-            -- Default aweful layouts
-            awful.layout.append_default_layouts({
-                -- awful.layout.suit.floating,
+        -- Default aweful layouts
+        awful.layout.layouts = {
+            -- awful.layout.suit.floating,
 
-                awful.layout.suit.tile,
-                awful.layout.suit.tile.left,
-                awful.layout.suit.tile.bottom,
+            awful.layout.suit.tile,
+            awful.layout.suit.tile.left,
+            awful.layout.suit.tile.bottom,
 
-                -- awful.layout.suit.tile.top,
-                -- awful.layout.suit.fair,
-                -- awful.layout.suit.fair.horizontal,
-                -- awful.layout.suit.spiral,
-                -- awful.layout.suit.spiral.dwindle,
+            -- awful.layout.suit.tile.top,
+            -- awful.layout.suit.fair,
+            -- awful.layout.suit.fair.horizontal,
+            -- awful.layout.suit.spiral,
+            -- awful.layout.suit.spiral.dwindle,
 
-                awful.layout.suit.max,
-                awful.layout.suit.max.fullscreen,
+            awful.layout.suit.max,
+            awful.layout.suit.max.fullscreen,
 
-                -- awful.layout.suit.magnifier,
-                --
-                -- awful.layout.suit.corner.nw,
-                -- awful.layout.suit.corner.ne,
-                -- awful.layout.suit.corner.sw,
-                -- awful.layout.suit.corner.se,
-            })
+            -- awful.layout.suit.magnifier,
+            --
+            -- awful.layout.suit.corner.nw,
+            -- awful.layout.suit.corner.ne,
+            -- awful.layout.suit.corner.sw,
+            -- awful.layout.suit.corner.se,
 
-            -- Add some lain layouts
-            -- See: https://github.com/lcpz/lain/wiki/Layouts
-            if hasLain then
-                awful.layout.append_default_layouts({
-                    -- lain.layout.termfair,
-                    -- lain.layout.termfair.center,
-                    -- lain.layout.cascade,
-                    lain.layout.cascade.tile,
-                    -- lain.layout.centerwork,
-                    -- lain.layout.centerwork.horizontal
-                })
+            cascade.tile,
+        }
 
-                -- Configure the cascade layyout.
-                lain.layout.cascade.tile.offset_x      = 0
-                lain.layout.cascade.tile.offset_y      = 128
-                lain.layout.cascade.tile.extra_padding = 0
-                --lain.layout.cascade.tile.nmaster       = 0
-                lain.layout.cascade.tile.ncol          = 2
-                --lain.layout.cascade.tile.mwfact        = 0.5
-            end
-        end)
+        -- Configure the cascade layyout.
+        cascade.tile.offset_x = 0
+        cascade.tile.offset_y = 128
+        cascade.tile.extra_padding = 0
+        --cascade.tile.nmaster       = 0
+        cascade.tile.ncol = 2
+        --cascade.tile.mwfact        = 0.5
         -- }}}
 
         -- {{{ Add tag set to each screen
-        screen.connect_signal("request::desktop_decoration", function(s)
+        awful.screen.connect_for_each_screen(function(s)
             local tags = createTags(s)
             -- I'm sure you want to see at least one tag.
             tags[1].selected = true
         end)
         -- }}}
-    end
+    end,
     -- }}}
 }

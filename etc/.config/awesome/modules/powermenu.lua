@@ -38,10 +38,11 @@ end
 return {
     setup = function()
         local powerMenu = createMenu()
-        awful.keyboard.append_global_keybindings({
+        root.keys(awful.util.table.join(
+            root.keys(),
             awful.key({ modkey }, "w", function()
                 powerMenu:show()
-            end, { description = "show main menu", group = "awesome" }),
-        })
+            end, { description = "show power menu", group = "awesome" })
+        ))
     end,
 }

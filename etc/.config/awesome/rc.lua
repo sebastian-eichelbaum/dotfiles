@@ -1,4 +1,5 @@
 -- awesome_mode: api-level=4:screen=on
+
 ---------------------------------------------------------------------------------------------------
 --
 -- ░█▀█░█░█░█▀▀░█▀▀░█▀█░█▄█░█▀▀░█░█░█▄█░░░█▀▀░█▀█░█▀█░█▀▀░▀█▀░█▀▀
@@ -76,7 +77,7 @@ require("modules.titlebar").setup()
 
 -- Wibar setup
 require("modules.wibar").setup()
-
+--
 -- More features:
 require("modules.powermenu").setup()
 require("modules.behaviors.centerInParent").setup()
@@ -90,4 +91,3 @@ require("modules.quirks.unityRefresh").setup()
 
 -- Notification library - Hack to avoid overriding DBUS notification daemons like dunst
 -- package.loaded["naughty.dbus"] = {}
-

@@ -9,26 +9,29 @@
 
 local awful = require("awful")
 local beautiful = require("beautiful")
+local gears = require("gears")
 
 local style = require("config").style
 local modkey = require("config").modkey
 
 -- {{{ Mouse bindings
-local buttons = {
+local buttons = gears.table.join(
     awful.button({}, 1, function(c)
-        c:activate({ context = "mouse_click" })
+        c:emit_signal("request::activate", "mouse_click", { raise = true })
     end),
     awful.button({ modkey }, 1, function(c)
-        c:activate({ context = "mouse_click", action = "mouse_move" })
+        c:emit_signal("request::activate", "mouse_click", { raise = true })
+        awful.mouse.client.move(c)
     end),
     awful.button({ modkey }, 3, function(c)
-        c:activate({ context = "mouse_click", action = "mouse_resize" })
-    end),
-}
+        c:emit_signal("request::activate", "mouse_click", { raise = true })
+        awful.mouse.client.resize(c)
+    end)
+)
 -- }}}
 
 -- {{{ Key bindings
-local keys = {
+local keys = gears.table.join(
     awful.key({ modkey }, "f", function(c)
         c.fullscreen = not c.fullscreen
         c:raise()
@@ -67,8 +70,8 @@ local keys = {
     awful.key({ modkey, "Shift" }, "m", function(c)
         c.maximized_horizontal = not c.maximized_horizontal
         c:raise()
-    end, { description = "(un)maximize horizontally", group = "client" }),
-}
+    end, { description = "(un)maximize horizontally", group = "client" })
+)
 -- }}}
 
 return {
@@ -87,6 +90,10 @@ return {
                 -- Prevent clients from being unreachable after screen count changes.
                 awful.placement.no_offscreen(c)
             end
+
+            -- Define buttons and keys
+            c:keys(keys)
+            c:buttons(buttons)
         end)
 
         -- Add a titlebar? Refer to the titlebar module.
@@ -117,16 +124,6 @@ return {
             if style.singleOrMaxWindow == nil then
                 c.border_color = beautiful.border_normal
             end
-        end)
-
-        -- Default mouse bindings
-        client.connect_signal("request::default_mousebindings", function()
-            awful.mouse.append_client_mousebindings(buttons)
-        end)
-
-        -- Default key bindings
-        client.connect_signal("request::default_keybindings", function()
-            awful.keyboard.append_client_keybindings(keys)
         end)
     end,
     -- }}}

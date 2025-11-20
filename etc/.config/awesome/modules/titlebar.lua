@@ -34,7 +34,6 @@ local function updateTitlebarVisibility(c, hideOnly)
             awful.titlebar.hide(c)
         end
     end
-
 end
 
 return {
@@ -43,16 +42,18 @@ return {
         -- Add a titlebar if titlebars_enabled is set to true in the rules.
         client.connect_signal("request::titlebars", function(c)
             -- buttons for the titlebar
-            local buttons = {
-                awful.button({ }, 1, function()
-                    c:activate { context = "titlebar", action = "mouse_move"  }
+            local buttons = gears.table.join(
+                awful.button({}, 1, function()
+                    c:emit_signal("request::activate", "titlebar", { raise = true })
+                    awful.mouse.client.move(c)
                 end),
-                awful.button({ }, 3, function()
-                    c:activate { context = "titlebar", action = "mouse_resize"}
-                end),
-            }
+                awful.button({}, 3, function()
+                    c:emit_signal("request::activate", "titlebar", { raise = true })
+                    awful.mouse.client.resize(c)
+                end)
+            )
 
-            local buttonsTray = wibox.widget {
+            local buttonsTray = wibox.widget({
                 {
                     {
                         --[[
@@ -91,73 +92,74 @@ return {
                         },
                         --]]
                         {
-                            awful.titlebar.widget.minimizebutton (c),
-                            left   = lib.dpi(3),
-                            top    = lib.dpi(3),
+                            awful.titlebar.widget.minimizebutton(c),
+                            left = lib.dpi(3),
+                            top = lib.dpi(3),
                             bottom = lib.dpi(3),
-                            right  = lib.dpi(3),
+                            right = lib.dpi(3),
                             widget = wibox.container.margin,
                         },
                         {
-                            awful.titlebar.widget.closebutton    (c),
-                            left   = lib.dpi(3),
-                            top    = lib.dpi(3),
+                            awful.titlebar.widget.closebutton(c),
+                            left = lib.dpi(3),
+                            top = lib.dpi(3),
                             bottom = lib.dpi(3),
-                            right  = lib.dpi(3),
+                            right = lib.dpi(3),
                             widget = wibox.container.margin,
                         },
-                        layout  = wibox.layout.fixed.horizontal
+                        layout = wibox.layout.fixed.horizontal,
                     },
-                    left   = lib.dpi(3),
-                    top    = lib.dpi(0),
+                    left = lib.dpi(3),
+                    top = lib.dpi(0),
                     bottom = lib.dpi(0),
-                    right  = lib.dpi(3),
+                    right = lib.dpi(3),
                     widget = wibox.container.margin,
                 },
 
-                bg         = "alpha", --beautiful.palette.bg_lighter3,
-                shape      = function(cr, w, h) gears.shape.rounded_rect(cr, w, h, lib.dpi(5)) end,
+                bg = "alpha", --beautiful.palette.bg_lighter3,
+                shape = function(cr, w, h)
+                    gears.shape.rounded_rect(cr, w, h, lib.dpi(5))
+                end,
                 shape_clip = true,
-                widget     = wibox.container.background,
-            }
+                widget = wibox.container.background,
+            })
 
             awful.titlebar(c, {
-                    size = beautiful.titlebar_height,
-                })
-            .widget = {
+                size = beautiful.titlebar_height,
+            }).widget = {
                 { -- Left
                     {
                         awful.titlebar.widget.iconwidget(c),
                         buttons = buttons,
-                        layout  = wibox.layout.fixed.horizontal
+                        layout = wibox.layout.fixed.horizontal,
                     },
-                    left   = lib.dpi(5),
-                    top    = lib.dpi(5),
+                    left = lib.dpi(5),
+                    top = lib.dpi(5),
                     bottom = lib.dpi(5),
-                    right  = lib.dpi(5),
+                    right = lib.dpi(5),
                     widget = wibox.container.margin,
                 },
                 { -- Middle
                     { -- Title
                         halign = "center",
-                        widget = awful.titlebar.widget.titlewidget(c)
+                        widget = awful.titlebar.widget.titlewidget(c),
                     },
                     buttons = buttons,
-                    layout  = wibox.layout.flex.horizontal
+                    layout = wibox.layout.flex.horizontal,
                 },
                 { -- Right
                     {
                         buttonsTray,
-                        left   = lib.dpi(3),
-                        top    = lib.dpi(2),
+                        left = lib.dpi(3),
+                        top = lib.dpi(2),
                         bottom = lib.dpi(2),
-                        right  = lib.dpi(3),
+                        right = lib.dpi(3),
                         widget = wibox.container.margin,
                     },
 
-                    layout = wibox.layout.fixed.horizontal()
+                    layout = wibox.layout.fixed.horizontal(),
                 },
-                layout = wibox.layout.align.horizontal
+                layout = wibox.layout.align.horizontal,
             }
 
             -- Ensure the titlebar visibility is toggled for floats/non-floats
@@ -168,6 +170,6 @@ return {
         client.connect_signal("property::floating", function(c)
             updateTitlebarVisibility(c)
         end)
-    end
+    end,
     -- }}}
 }

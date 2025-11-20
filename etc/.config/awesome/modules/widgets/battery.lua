@@ -15,23 +15,26 @@ local config = require("config")
 local util = require("modules.widgets.util")
 
 -- Get the icon for a certain level
-local function getIcon( charging, discharging, level )
-    local base =  beautiful.iconPath .. "widgets/"
+local function getIcon(charging, discharging, level)
+    local base = beautiful.iconPath .. "widgets/"
 
     local n = ""
     local llevel = 0
     if level then
-        llevel = tonumber(level)
+        local asInt = tonumber(level)
+        if asInt then
+            llevel = asInt
+        end
     end
 
-    local l = string.format("%.0f", 10 * math.floor( ( llevel / 10 ) + 0.5 ) )
+    local l = string.format("%.0f", 10 * math.floor((llevel / 10) + 0.5))
 
-    if charging and dischargin then
+    if charging and discharging then
         n = "missing-symbolic"
     elseif not charging and not discharging then
         n = "ac"
     elseif charging then
-        n = "level-" .. l ..  "-charging-symbolic"
+        n = "level-" .. l .. "-charging-symbolic"
     elseif discharging then
         n = "level-" .. l .. "-symbolic"
     end
@@ -69,7 +72,7 @@ return {
                 end
 
                 return result
-           end,
+            end,
 
             -- And convert to some useful output
             function(v)
@@ -82,20 +85,19 @@ return {
 
                 return {
                     value = texts,
-                    unit = {"%", "W"},
+                    unit = { "%", "W" },
                     -- splitter = " - ",
-                    icon = getIcon( v.charging, v.discharging, v.perc )
+                    icon = getIcon(v.charging, v.discharging, v.perc),
                 }
             end,
 
             -- Overrides for image and text widgets (margins, ...)
             gears.table.join(options or {}, {
                 -- Button bindings
-                buttons = {
-                    awful.button( {}, 1, function () awful.spawn( config.commands.monitors.bat ) end )
-                }
+                buttons = gears.table.join(awful.button({}, 1, function()
+                    awful.spawn(config.commands.monitors.bat)
+                end)),
             })
         )
     end,
 }
-

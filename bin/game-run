@@ -30,8 +30,8 @@ echo game-run: NVAPI on
 export PROTON_ENABLE_NVAPI=1
 
 # Switch power modes
-echo game-run: razer game mode
-razer gaming
+#echo game-run: razer game mode
+#razer gaming
 
 echo game-run: Stopping picom
 systemctl --user stop picom.service
@@ -55,8 +55,8 @@ if [ ! -z "$jsw_pid" ]; then
 fi
 
 # Power modes
-echo game-run: razer balance mode
-razer balance
+#echo game-run: razer balance mode
+#razer balance
 
 echo game-run: Starting picom
 systemctl --user start picom.service

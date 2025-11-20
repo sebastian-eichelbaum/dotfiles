@@ -30,12 +30,7 @@ local widgets = {
 
 local widgetContainer = function(widget, bg)
     -- Nothing at all
-    return
-        containers.box(
-            widget,
-            "transparent",
-            lib.dpi(6), lib.dpi(5), lib.dpi(6), lib.dpi(6)
-        )
+    return containers.box(widget, "transparent", lib.dpi(6), lib.dpi(5), lib.dpi(6), lib.dpi(6))
 
     -- box-style?
     --[[return
@@ -69,60 +64,56 @@ local widgetContainer = function(widget, bg)
 end
 
 local makeSpacer = function(width)
-    return
-        containers.box(
-           nil,
-           "transparent",
-           lib.dpi(0), lib.dpi(5), lib.dpi(0), lib.dpi(0)
-       )
+    return containers.box(nil, "transparent", lib.dpi(0), lib.dpi(5), lib.dpi(0), lib.dpi(0))
 end
 
 return {
     -- {{{ Setup client titlebars
     setup = function()
-        screen.connect_signal("request::desktop_decoration", function(s)
-
+        awful.screen.connect_for_each_screen(function(s)
             -- {{{ Base widgets
 
             -- Create an imagebox widget which will contain an icon indicating which layout we're using.
             -- We need one layoutbox per screen.
+            local awfulLayoutBox = awful.widget.layoutbox(s)
+            awfulLayoutBox:buttons(gears.table.join(
+                awful.button({}, 1, function()
+                    awful.layout.inc(1)
+                end),
+                awful.button({}, 3, function()
+                    awful.layout.inc(-1)
+                end)
+            ))
+            -- Create a taglist widget
             local layoutBox = containers.roundedBox(
-                awful.widget.layoutbox {
-                    screen  = s,
-                    buttons = {
-                        awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                        awful.button({ }, 3, function () awful.layout.inc(-1) end),
-                    }
-                },
+                awfulLayoutBox,
+
                 --beautiful.palette.bg_lighter3,
                 "alpha",
-                lib.dpi(10), lib.dpi(10), lib.dpi(3), lib.dpi(3)
+                lib.dpi(10),
+                lib.dpi(10),
+                lib.dpi(3),
+                lib.dpi(3)
             )
 
             -- Create a taglist and tasklist widget
             local taglist = taglistWidget.make(s)
             local tasklist = tasklistWidget.focussed.make(s, {
-                    -- The tasklist should be strechted in the middle of the screen. If the task name is very long, this will overflow and look strange.
-                    -- Setting a max width avoids that.
-                    fill_space = true,
-                    forced_width = s.geometry.width * 0.35
+                -- The tasklist should be strechted in the middle of the screen. If the task name is very long, this will overflow and look strange.
+                -- Setting a max width avoids that.
+                fill_space = true,
+                forced_width = s.geometry.width * 0.35,
             })
 
             local tasklistMinimized = tasklistWidget.minimizedIcons.make(s)
 
             -- Clock
-            local clock = widgetContainer(
-                widgets.clock.make(),
-                beautiful.widgets.bg.clock
-            )
+            local clock = widgetContainer(widgets.clock.make(), beautiful.widgets.bg.clock)
 
             -- Systray
             beautiful.systray_icon_spacing = lib.dpi(8)
             beautiful.bg_systray = beautiful.widgets.bg.systrayBuiltin
-            local systray = widgetContainer(
-                wibox.widget.systray(),
-                beautiful.widgets.bg.systray
-            )
+            local systray = widgetContainer(wibox.widget.systray(), beautiful.widgets.bg.systray)
             -- }}}
 
             -- {{{ Additional Widgets - seperate
@@ -138,15 +129,12 @@ return {
                 --beautiful.widgets.bg.brightness
             )
 
-            local battery = widgetContainer(
-                widgets.battery.make(),
-                beautiful.widgets.bg.battery
-            )
+            local battery = widgetContainer(widgets.battery.make(), beautiful.widgets.bg.battery)
 
             local monitors = widgetContainer(
-                wibox.widget {
-                    widgets.cpu.make({hideIcon = false}),
-                    widgets.memory.make({hideIcon = true}),
+                wibox.widget({
+                    widgets.cpu.make({ hideIcon = false }),
+                    widgets.memory.make({ hideIcon = true }),
                     --widgets.temperature.make({hideIcon = false}),
                     --widgets.brightness.make(),
                     --widgets.volume.make(),
@@ -155,18 +143,18 @@ return {
                     spacing = lib.dpi(20),
                     spacing_widget = {
                         {
-                            markup = lib.markup.fg( "#888888", "│"),
+                            markup = lib.markup.fg("#888888", "│"),
                             align = "center",
                             widget = wibox.widget.textbox,
                         },
                         widget = wibox.container.background,
                     },
-                    layout = wibox.layout.fixed.horizontal
-                },
+                    layout = wibox.layout.fixed.horizontal,
+                }),
                 --beautiful.widgets.bg.monitors
                 "#444"
             )
-            -- }}}
+            --}}}
 
             -- The actual contents
             local wiboxContent = {
@@ -193,7 +181,6 @@ return {
 
                     layout = wibox.layout.fixed.horizontal,
 
-
                     -- The common monitor widgets
                     -- Use different containers per widget:
 
@@ -207,8 +194,7 @@ return {
                     clock,
 
                     makeSpacer(1),
-
-              },
+                },
             }
 
             -- This could be nested to add colored borders and such things.
@@ -216,14 +202,16 @@ return {
             -- local n2 = containers.box( n1, beautiful.border_focus, 0,0,0,3)
 
             -- Create the wibox
-            s.mywibox = awful.wibar {
-                screen   = s,
+            s.mywibox = awful.wibar({
+                screen = s,
 
                 position = "top",
                 height = beautiful.wibox_height,
 
-                widget = wiboxContent,
-            }
+                -- widget = wiboxContent,
+            })
+
+            s.mywibox:setup(wiboxContent)
         end)
-    end
+    end,
 }
