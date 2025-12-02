@@ -45,6 +45,7 @@ fi
 
 # Use gamemode
 echo game-run: gamemode on
+# gamemoderun gamescope -h 720 -H 1440 -F fsr "$@"
 gamemoderun "$@"
 
 # Reset after running:

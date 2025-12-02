@@ -11,5 +11,8 @@ fi
 # Nautilus 47 crashing on Nvidia. This circumvents the problem for now
 export GSK_RENDERER=cairo
 
+#export GDK_SCALE=2
+#export GDK_DPI_SCALE=0.5
+
 # Now start the real session script
 exec "$@"
