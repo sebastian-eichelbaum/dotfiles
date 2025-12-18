@@ -6,6 +6,7 @@
 [user]
     name = Sophia Eichelbaum
     email = code@nemtics.com
+	signingkey = ~/.ssh/id_ed25519.pub
 
 # Defines the global user and includes project specific setups
 [include]
@@ -82,3 +83,7 @@
 	required = true
 [commit]
 	gpgsign = true
+[tag]
+	gpgSign = true
+[gpg]
+	format = ssh
