@@ -4,7 +4,7 @@
 
 # Default if something goes wrong
 [user]
-    name = Sebastian Eichelbaum
+    name = Sophia Eichelbaum
     email = code@nemtics.com
 
 # Defines the global user and includes project specific setups
