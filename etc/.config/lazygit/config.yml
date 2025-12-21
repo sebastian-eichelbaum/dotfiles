@@ -1,5 +1,5 @@
 gui:
-  screenMode: 'normal' # one of 'normal' | 'half' | 'full' default is 'normal'
+  screenMode: "normal" # one of 'normal' | 'half' | 'full' default is 'normal'
   sidePanelWidth: 0.3333 # number from 0 to 1
   expandFocusedSidePanel: true
   showFileTree: true # for rendering changes files in a tree format
@@ -12,31 +12,33 @@ gui:
   commandLogSize: 6
   theme:
     activeBorderColor:
-      - '#4a88cc'
+      - "#4a88cc"
       - bold
     inactiveBorderColor:
-      - '#555557'
+      - "#555557"
     selectedLineBgColor:
-      - '#555557'
+      - "#555557"
     defaultFgColor:
-      - '#dddddd'
+      - "#dddddd"
     unstagedChangesColor:
-      - '#cccccd'
+      - "#cccccd"
     searchingActiveBorderColor:
-      - '#e79d31'
+      - "#e79d31"
     optionsTextColor:
-      - '#ff0000' # ?
+      - "#ff0000" # ?
     selectedRangeBgColor:
-      - '#ff0000' # ?
+      - "#ff0000" # ?
     cherryPickedCommitBgColor:
-      - '#ff00ff' # ?
+      - "#ff00ff" # ?
     cherryPickedCommitFgColor:
-      - '#ff00ff' # ?
+      - "#ff00ff" # ?
   authorColors:
-    'Sebastian Eichelbaum': '#777778'
-    'Dr. Sebastian Eichelbaum': '#777778'
+    "Sophia Eichelbaum": "#777778"
+    "Dr. Sophia Eichelbaum": "#777778"
+    "Sebastian Eichelbaum": "#777778"
+    "Dr. Sebastian Eichelbaum": "#777778"
     # use blue for other authors
-    '*': '#aaaaab'
+    "*": "#aaaaab"
 git:
   pagers:
     - colorArg: always
