@@ -1091,6 +1091,59 @@ return {
     },
     -- }}}
 
+    --{{{ Auto-close: nvim-treesitter-endwise - Automatically add end/endif/... statements in Lua, Bash, ...
+    -- NOTE: disabled right now. Only works for a few languages.
+    -- {
+    --     "brianhuster/treesitter-endwise.nvim",
+    --     dependencies = { "nvim-treesitter/nvim-treesitter" },
+    --
+    --     lazy = true,
+    --     event = { "InsertEnter" },
+    --
+    --     config = function()
+    --         require("nvim-treesitter.configs").setup({
+    --             endwise = {
+    --                 enable = true,
+    --             },
+    --         })
+    --     end,
+    -- },
+    -- }}}
+
+    -- {{{ Auto-close: nvim-autopairs - Automatically close braces, strings, ...
+    {
+        "windwp/nvim-autopairs",
+
+        lazy = true,
+        event = "InsertEnter",
+
+        opts = {},
+    },
+    -- }}}
+
+    -- {{{ Auto-close: nvim-ts-autotag - Automatically close tags in html/xml/...
+    {
+        "windwp/nvim-ts-autotag",
+
+        lazy = true,
+        event = { "InsertEnter" },
+
+        opts = {
+            opts = {
+                -- Defaults
+                enable_close = true, -- Auto close tags
+                enable_rename = true, -- Auto rename pairs of tags
+                enable_close_on_slash = false, -- Auto close on trailing </
+            },
+
+            -- Override settings:
+            per_filetype = {
+                --["html"] = { enable_close = false },
+            },
+        },
+    },
+    -- }}}
+
     -- {{{ indent-blankline.nvim - Provides indent level lines.
     {
         "lukas-reineke/indent-blankline.nvim",
@@ -1138,59 +1191,6 @@ return {
             hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
         end,
     },
-    -- }}}
-
-    -- {{{ Auto-close: nvim-autopairs - Automatically close braces, strings, ...
-    {
-        "windwp/nvim-autopairs",
-
-        lazy = true,
-        event = "InsertEnter",
-
-        opts = {},
-    },
-    -- }}}
-
-    -- {{{ Auto-close: nvim-ts-autotag - Automatically close tags in html/xml/...
-    {
-        "windwp/nvim-ts-autotag",
-
-        lazy = true,
-        event = { "InsertEnter" },
-
-        opts = {
-            opts = {
-                -- Defaults
-                enable_close = true, -- Auto close tags
-                enable_rename = true, -- Auto rename pairs of tags
-                enable_close_on_slash = false, -- Auto close on trailing </
-            },
-
-            -- Override settings:
-            per_filetype = {
-                --["html"] = { enable_close = false },
-            },
-        },
-    },
-    -- }}}
-
-    --{{{ Auto-close: nvim-treesitter-endwise - Automatically add end/endif/... statements in Lua, Bash, ...
-    {
-        "RRethy/nvim-treesitter-endwise",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-
-        lazy = true,
-        event = { "InsertEnter" },
-
-        config = function()
-            require("nvim-treesitter.configs").setup({
-                endwise = {
-                    enable = true,
-                },
-            })
-        end,
-    },
-
     -- }}}
 
     -- {{{ diffview - pretty diffs
