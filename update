@@ -106,7 +106,7 @@ find $TARGET -type l -xtype l -print0 | while IFS= read -r -d '' file; do
 
         # Projects, Data and Archives
         [[ "$file" == $HOME/Projekte/* ]] ||
-        [[ "$file" == $HOME/Daten/* ]]
+        [[ "$file" == $HOME/Daten/* ]] ||
         [[ "$file" == $HOME/Archiv/* ]]
     then
         continue
