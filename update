@@ -104,8 +104,10 @@ find $TARGET -type l -xtype l -print0 | while IFS= read -r -d '' file; do
         [[ "$file" == $HOME/.cache/* ]] ||
         [[ "$file" == $HOME/.var/app/* ]] ||
 
+        # Projects, Data and Archives
         [[ "$file" == $HOME/Projekte/* ]] ||
         [[ "$file" == $HOME/Daten/* ]]
+        [[ "$file" == $HOME/Archiv/* ]]
     then
         continue
     fi
