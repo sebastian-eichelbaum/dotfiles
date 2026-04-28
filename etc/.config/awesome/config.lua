@@ -89,6 +89,7 @@ local style = {
                 -- Content viewers
                 "Eog",
                 "Totem",
+                "showtime",
                 "org.gnome.Totem",
                 "vlc",
                 "Evince",
@@ -262,6 +263,7 @@ local rules = {
         tagId = "media",
         rules = {
             { rule = { class = "Totem" }, properties = {} },
+            { rule = { class = "showtime" }, properties = {} },
             { rule = { class = "vlc" }, properties = {} },
             { rule = { class = "[Ss]potify" }, properties = { floating = false } },
         },
