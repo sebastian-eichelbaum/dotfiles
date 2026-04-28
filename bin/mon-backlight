@@ -18,9 +18,11 @@
 # }
 
 getBrightness() {
-    l=$(light -G)
-    roundedbrightness=$(echo "($l + 0.5)/1" | bc)
-    echo "$roundedbrightness"
+    l=$(xbacklight -get)
+    # l=$(light -G)
+    # roundedbrightness=$(echo "($l + 0.5)/1" | bc)
+    # echo "$roundedbrightness"
+    echo "$l"
 }
 
 report() {
@@ -31,17 +33,18 @@ report() {
     # Arbitrary but unique message id
     msgId="991059"
 
-    icon=mon-brightness-off
+    iconPath="$HOME/.icons/"
+    icon="mon-brightness-off.svg"
     if (($(echo "$brightness > 75" | bc -l))); then
-        icon=mon-brightness-high
+        icon="mon-brightness-high.svg"
     elif (($(echo "$brightness > 35" | bc -l))); then
-        icon=mon-brightness-medium
+        icon="mon-brightness-medium.svg"
     elif (($(echo "$brightness > 4" | bc -l))); then
-        icon=mon-brightness-low
+        icon="mon-brightness-low.svg"
     fi
 
     # Show the volume notification
-    dunstify -a $apptitle -u low -i $icon -r "$msgId" \
+    dunstify -a $apptitle -u low -i $iconPath$icon -r "$msgId" \
         -h "int:value:$brightness" \
         "Brightness: ${brightness}%"
     # "$(getProgressString $brightness)"
@@ -62,11 +65,11 @@ getStepSize() {
 
 case "$1" in
 incr)
-    light -A $(getStepSize 4)
+    xbacklight -inc $(getStepSize 4)
     report
     ;;
 decr)
-    light -U $(getStepSize 5)
+    xbacklight -dec $(getStepSize 5)
     report
     ;;
 get)
