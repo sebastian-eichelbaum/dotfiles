@@ -93,6 +93,7 @@ local style = {
                 "org.gnome.Totem",
                 "vlc",
                 "Evince",
+                "papers",
 
                 -- Content editors
                 "Gimp",
@@ -317,12 +318,12 @@ local rules = {
                 callback = awful.client.setslave,
             },
             {
-                rule = { class = "Proton Mail" },
+                rule = { class = "proton-mail" },
                 properties = { size_hints_honor = true, floating = false },
                 callback = awful.client.setslave,
             },
             {
-                rule = { class = "Proton Pass" },
+                rule = { class = "proton-pass" },
                 properties = { size_hints_honor = true, floating = false },
                 callback = awful.client.setslave,
             },

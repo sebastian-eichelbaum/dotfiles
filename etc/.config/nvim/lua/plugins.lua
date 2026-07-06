@@ -986,6 +986,7 @@ return {
     -- {{{ nvim-treesitter - Language support (important dependency): Treesitter - Provides AST for a lot of languages.
     {
         "nvim-treesitter/nvim-treesitter",
+        branch = "main",
 
         lazy = true,
         event = { "VeryLazy" },
@@ -993,101 +994,100 @@ return {
 
         build = ":TSUpdate",
 
-        config = function()
-            require("nvim-treesitter.configs").setup({
-                -- Install parsers synchronously (only applied to `ensure_installed`)
-                sync_install = false,
+        init = function()
+            local ts = require("nvim-treesitter")
+            -- The parsers to install and configure
+            local parsers = {
+                -- C, CPP
+                "c",
+                "cpp",
+                "cmake",
+                "doxygen",
 
-                -- Automatically install missing parsers when entering buffer
-                -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-                auto_install = false,
+                -- GPU programming
+                "glsl", -- "cuda", "opencl"
 
-                -- List of parsers to ignore installing (or "all")
-                -- ignore_install = { },
+                -- Rust
+                "rust",
 
-                -- Use for highlighting additional syntax elements.
-                -- Be warned: this sometimes works nicely, sometimes it messes up things. Example: doxygen tags are
-                -- highlighted nicely. This interferes with language server highlights too.
-                highlight = {
-                    enable = true,
-                },
+                -- C#
+                "c_sharp",
 
-                -- Enable to indent code.
-                -- WARN: It assumes some style rules. For example, in C++, indenting in namespaces is assumed to be 0. If
-                -- you type 'o' to get a new line, indentation might be off if the thing is inside an indented namespace.
-                --
-                -- Use smartindent and cindent. They perform equally or even better in 99.9% of the time so far.
-                indent = {
-                    enable = false,
-                },
+                -- Python
+                "python",
 
-                -- A list of parser names, or "all" (the listed parsers MUST always be installed)
-                ensure_installed = {
-                    -- C, CPP
-                    "c",
-                    "cpp",
-                    "cmake",
-                    "doxygen",
+                -- Webdev
+                "json",
+                "yaml",
+                "css",
+                "scss",
+                "html",
+                "javascript",
+                "typescript",
+                "jsdoc",
+                "vue",
 
-                    -- GPU programming
-                    "glsl", -- "cuda", "opencl"
+                -- Writing
+                "markdown",
+                "markdown_inline",
 
-                    -- Rust
-                    "rust",
+                -- System, Scripting, ...
+                "nix",
+                "bash",
+                "lua",
+                "luadoc", -- for vim, awesome, ...
+                "vim",
+                "vimdoc",
+                "query", -- tree-sitter query syntax
 
-                    -- C#
-                    "c_sharp",
+                -- QUIRK: neovim on Nix comes with these pre-installed. This caused runtime errors from time to time
+                -- (probably version mismatches). Manually installing these grammars fixes the issue by compiling them
+                -- for the correct tree-sitter version delivered with this plugin.
+                "bash",
+                "c",
+                "lua",
+                "python",
+                "vimdoc",
+                "vim",
+                "query",
+                "markdown",
+                "markdown_inline",
+            }
 
-                    -- Python
-                    "python",
+            -- Setup Treesitter as we like it for a given parser
+            local function setupParser(parser)
+                -- Ensure the parser is installed?
+                local WAIT_TIME = 1000 * 30 -- 30 seconds
+                -- Requires the tree-sitter cli tool!
+                ts.install(parser):wait(WAIT_TIME)
 
-                    -- Webdev
-                    "json",
-                    "jsonc",
-                    "yaml",
-                    "css",
-                    "scss",
-                    "html",
-                    "javascript",
-                    "typescript",
-                    "jsdoc",
-                    "vue",
+                -- Enable TS for this parser
+                vim.api.nvim_create_autocmd("FileType", {
+                    desc = "Enable Treesitter features for " .. parser,
+                    pattern = vim.treesitter.language.get_filetypes(parser),
+                    callback = function()
+                        -- To use highlights
+                        pcall(vim.treesitter.start)
 
-                    -- Writing
-                    "markdown",
-                    "markdown_inline",
+                        -- Enable to indent code?
+                        -- WARN: It assumes some style rules. For example, in C++, indenting in namespaces is assumed to be 0. If
+                        -- you type 'o' to get a new line, indentation might be off if the thing is inside an indented namespace.
+                        --
+                        -- Use smartindent and cindent. They perform equally or even better in 99.9% of the time so far.
+                        -- vim.bo.indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
 
-                    -- System, Scripting, ...
-                    "nix",
-                    "bash",
-                    "lua",
-                    "luadoc", -- for vim, awesome, ...
-                    "vim",
-                    "vimdoc",
-                    "query", -- tree-sitter query syntax
+                        -- Enable folds?
+                        -- -> keep in mind that setting these will be saved in the view.
+                        -- vim.wo.foldmethod = "expr"
+                        -- vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+                    end,
+                })
+            end
 
-                    -- QUIRK: neovim on Nix comes with these pre-installed. This caused runtime errors from time to time
-                    -- (probably version mismatches). Manually installing these grammars fixes the issue by compiling them
-                    -- for the correct tree-sitter version delivered with this plugin.
-                    "bash",
-                    "c",
-                    "lua",
-                    "python",
-                    "vimdoc",
-                    "vim",
-                    "query",
-                    "markdown",
-                    "markdown_inline",
-                },
-            })
+            for _, parser in ipairs(parsers) do
+                setupParser(parser)
+            end
         end,
-
-        --init = function()
-        -- -- Enable folds?
-        -- -- -> keep in mind that setting these will be saved in the view.
-        --set foldmethod=expr
-        --set foldexpr='v:lua.vim.treesitter.foldexpr()'
-        --end,
     },
     -- }}}
 
